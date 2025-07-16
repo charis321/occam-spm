@@ -1,0 +1,11 @@
+.oc-dev-tool{
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+    color: aliceblue;
+    background-color: #000;
+    border-radius: 5px;
+}
+.oc-dev-tool .oc-dev-close-btn{
+
+}

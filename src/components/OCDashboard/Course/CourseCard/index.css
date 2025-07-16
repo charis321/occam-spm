@@ -1,0 +1,17 @@
+.oc-course-card{
+    width: 20%;
+    min-width: 300px;
+    height: fit-content;
+    background: linear-gradient(to left, #b8d0f8 0%, #eee 100%);
+    border-radius: 1rem;
+    margin: 1rem;
+    padding: 0.5rem;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
+}
+.oc-course-card ul{
+    padding: 0rem 1rem;
+    text-align: left;
+}
+.oc-course-card ul li{
+    margin: 0.5rem 0;
+}

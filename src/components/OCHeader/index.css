@@ -1,0 +1,40 @@
+.oc-header{   
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; */
+}
+.oc-user-menu{
+    margin-left: auto;
+    margin-right: 1rem;
+    display: flex;
+    position: relative;
+}
+.oc-user-menu-btn{
+    background: none;
+    border: none;
+}
+.oc-user-menu-btn span{
+    transition: all 0.3s ease-in-out;
+}
+.oc-user-menu-btn:active span{
+    transform: rotateZ(60deg);
+}
+
+.oc-user-menu-list{
+    position: absolute;
+    width: 100%;
+    height: auto;
+    top: 2rem;
+    background-color: aliceblue;
+    z-index: var(--oc-z-index-menu);
+}
+.oc-user-menu-list li{
+    padding: 0.5rem 1rem;
+}
+
+
+.oc-previous-page-btn{
+    margin: 0 1rem;
+}

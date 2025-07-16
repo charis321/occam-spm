@@ -1,0 +1,7 @@
+.oc-breadcrumb {
+    display: flex;
+    align-items: center;
+}
+.oc-breadcrumb-item {
+    margin: 0 0.2rem;
+}

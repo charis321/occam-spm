@@ -1,0 +1,92 @@
+.oc-course-page{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.oc-lesson-table{
+    width: 100%;
+}
+.oc-lesson-content{
+    width: 60%;
+}
+.oc-lesson-content-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.oc-lesson-control-btns button{
+    margin: 0 0.5rem;
+}
+.oc-lesson-mode-switch{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+}
+.oc-lesson-calendar{
+    width: 100%;    
+}
+
+.oc-new-lesson-block{
+    position: fixed;
+    width: 84vw;
+    height: 100%;
+    top: 0; 
+    left: 16vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0, 0, 0.6);
+    z-index: var(--oc-z-index-screen-mark);
+}
+.oc-new-lesson-block-form{
+    width: 50vw;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    position: relative;
+
+
+}
+.oc-new-lesson-block-form-item{
+    width: 80%;
+    margin: 1rem;
+    text-align: left;
+}
+
+.oc-new-lesson-block .close-btn{
+    position: absolute;
+    top: 1rem;
+    right: 1rem
+}
+/*   oc-lesson-block */
+.oc-lesson-block{
+    position: fixed;
+    width: 84vw;
+    height: 100%;
+    top: 0; 
+    left: 16vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0, 0, 0.6);
+    z-index: var(--oc-z-index-screen-mark);
+}
+.oc-lesson-block-body{
+    width: 50vw;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    position: relative;
+}
+
+
+.close-btn{
+    position: absolute;
+    top: 1rem;
+    right: 1rem
+}

@@ -1,0 +1,38 @@
+.oc-user-center-dashboard{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.oc-user-info-card{
+    width: 80%;
+    margin: 1rem;
+    background: linear-gradient(180deg, #F5F5F5 0%, #FFFFFF 100%);
+    border-radius: 1rem;
+    padding: 0.5rem;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
+}
+.oc-user-info-header{
+    display: flex;
+    align-items: center;
+}
+.oc-user-avatar{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 1rem;
+    background: #eee;
+    box-shadow:  10px 10px 20px rgba(0, 0, 0, 0.1);
+}
+.oc-user-info-list{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    border-radius: 1rem;
+    background: #eee;
+    padding: 1rem;
+}
+.oc-user-info-list li{
+    text-indent: 10rem;
+}

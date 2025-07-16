@@ -1,0 +1,17 @@
+.oc-course-new{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.oc-course-new-form{
+    background: #f1f1f1;
+    padding: 1rem;
+}
+.oc-course-new-form-item{
+    margin: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
