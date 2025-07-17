@@ -6,16 +6,28 @@ export const setAuthLocal = (authObj) =>{
     }
 }
 export const getAuthLocal = () => {
-    const user = JSON.parse(localStorage.getItem('user'))
-    const token = JSON.parse(localStorage.getItem('token'))
+    const userRaw = localStorage.getItem('user')
+    const tokenRaw = localStorage.getItem('token')
+    let user, token;
     // console.log({user, token})
-    if(!user||!token){
-        return null
+    if(!userRaw||!tokenRaw) return null
+
+    try{
+        user = JSON.parse(userRaw)
+        token = JSON.parse(tokenRaw)     
+        return {user, token}
+
+    }catch (error) {
+        console.error('Error parsing JSON from localStorage:', error);
+        return null;
     }
-    return {user, token}
 }
 
 export const getAuthLocalToken = () =>{
+    const token = localStorage.getItem('token')
+
+    if(token === null)return null
+    
     return JSON.parse(localStorage.getItem('token'))
 }
 export const clearAuthLocal = () =>{
