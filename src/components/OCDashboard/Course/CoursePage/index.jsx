@@ -11,7 +11,7 @@ import OCLessonTable from "../../Lesson/LessonTable";
 // import OCLessonBlock from "../../Lesson/LessonBlock";
 
 import { apiUtil } from "../../../../Util/WebApi";
-import { WEEKDAY, WEEKTIME } from "../../../../config/time";
+import { useAuth } from "../../../../Util/AuthContext";
 
 import './index.css'
 
@@ -19,6 +19,7 @@ import './index.css'
 
 export default function OCCoursePage(props){
   const { courseId } = useParams();
+  const { user } = useAuth()
   const navigate = useNavigate()
   const [courseData, setCourseData] = useState()
   const [lessonData, setLessonData] = useState([])
@@ -62,16 +63,13 @@ export default function OCCoursePage(props){
     const res = await apiUtil(path, "GET")
     if(res.code===200){
       
-      setLessonData(addSerialKey(res.data))
+      setLessonData(res.data)
     }else{
       alert("無法取得課堂資料")
     }
     console.log(res)
   }
-  const addSerialKey = (list)=>{
-    list = list.map((item, index)=>{return {...item, "key": index + 1}})
-    return list   
-  }
+
 
   const handleLessonDisplayToggle = (checked) => setLessonDisplayMode(checked ? "calendar" : "table" ) 
   const handleLessonAddDisplayToggle = (mode) => { return (e) => setLessonAddDisplay(mode)}
@@ -83,21 +81,25 @@ export default function OCCoursePage(props){
  
 
 return  <div className="oc-course-page">
-            <OCCourseCard courseData={courseData} readOnly={false}></OCCourseCard>
+            <OCCourseCard courseData={courseData} readOnly={user.role === 0} user={user}></OCCourseCard>
             <div className="oc-lesson-content">
               <div className="oc-lesson-content-header">
                 <h3>課程安排</h3>
-                <div className="oc-lesson-control-btns">
-                  <Button type="primary" onClick={handleLessonAddDisplayToggle("single")}>
-                    <PlusCircleOutlined />新增課堂
-                  </Button>
-                  <Button color="purple" variant="solid" onClick={handleLessonAddDisplayToggle("auto")}>
-                    <AppstoreAddOutlined />自動新增課堂
-                    <Popover content={<p>自動將課程期間內所有符合的時間段加上課堂</p>} title="提示">
-                        <QuestionCircleOutlined />
-                    </Popover>
-                  </Button>
+                {
+                  user.role!==0 && 
+                  <div className="oc-lesson-control-btns">
+                    <Button type="primary" onClick={handleLessonAddDisplayToggle("single")}>
+                      <PlusCircleOutlined />新增課堂
+                    </Button>
+                    <Button color="purple" variant="solid" onClick={handleLessonAddDisplayToggle("auto")}>
+                      <AppstoreAddOutlined />自動新增課堂
+                      <Popover content={<p>自動將課程期間內所有符合的時間段加上課堂</p>} title="提示">
+                          <QuestionCircleOutlined />
+                      </Popover>
+                    </Button>
                 </div>
+                }
+                
                 <div className="oc-lesson-mode-switch">
                   <p>模式: 日曆</p>
                   <Switch defaultChecked={true} onChange={handleLessonDisplayToggle}></Switch> 
@@ -108,7 +110,9 @@ return  <div className="oc-course-page">
                 lessonDisplayMode === "table" ? 
                 <OCLessonTable className='oc-lesson-table'
                                lessonData={lessonData}
-                               resetLesson= {()=>{getLessonData()}}/>
+                               pageSize={10}
+                               resetLesson= {()=>{getLessonData()}}
+                               readOnly={user.role === 0}/>
                 : 
                 <OCLessonCalendar className="oc-lesson-calendar"
                                   lessonData={lessonData}
@@ -202,14 +206,16 @@ function  OCNewLessonBlock(props){
         originDate = originDate.add(offset, "day")
 
         while(originDate.isBefore(newLessonData.endPeriod)){
+          let startTime = dayjs(`${originDate.format("YYYY-MM-DD")} ${courseData.scheduleStartTime}`).toISOString()
+          let endTime = dayjs(`${originDate.format("YYYY-MM-DD")} ${courseData.scheduleEndTime}`).toISOString()
+          console.log("new lesson: ", courseData)
           newLessonList.push(
             {
               courseId: courseData.id,
               teacherId: courseData.teacherId,
-              date: originDate.format("YYYY-MM-DD"),
               classroom: courseData.classroom,
-              startTime: courseData.scheduleStartTime,
-              endTime: courseData.scheduleEndTime,
+              startTime,
+              endTime,
             }
           )
           originDate = originDate.add(7, "day")
@@ -245,11 +251,9 @@ function  OCNewLessonBlock(props){
       <div className="oc-new-lesson-block-form-item">
           <label>選擇時段: </label>
           <input type="date" name="startPeriod" 
-                defaultValue={courseData.scheduleStartTime} 
                 onChange={handleNewLessonChange}></input>
           <span> 到 </span>
           <input type="date" name="endPeriod" 
-                defaultValue={courseData.scheduleEndTime}
                 onChange={handleNewLessonChange}></input>
         </div>
         <Button type="primary" onClick={handleSubmitNewLesson("auto")}>確定</Button>

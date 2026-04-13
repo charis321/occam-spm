@@ -1,18 +1,23 @@
+import { useNavigate } from 'react-router-dom'
 import { Calendar, Button } from 'antd';
 import { AuditOutlined } from '@ant-design/icons'
+import dayjs from 'dayjs';
+
 
 export default function OCLessonCalendar(props) {
   const { lessonData, lessonClick } = props
+  const navigator = useNavigate()
 
-  const dateCellRender = (value) => {
-    const date = value.format("YYYY-MM-DD")
+  const dateCellRender = (current) => {
+    const date = current.format("YYYY-MM-DD")
     const cells = []
 
     for(const lesson of lessonData){
-      if(lesson.date === date){
+      const lessonDate = dayjs(lesson.startTime).format("YYYY-MM-DD")
+      if(lessonDate === date){
         cells.push(
-          <Button type="primary" shape="circle" key={lesson.key} onClick={handleLessonClick(lesson)}>
-            <AuditOutlined/>
+          <Button size='small' color="primary" variant="solid" key={lesson.id}  onClick={handleLessonClick(lesson)}>
+            <span style={{fontSize: "0.75rem"}}><AuditOutlined/>{lesson.courseName}</span>
           </Button>
         )
       }
@@ -29,7 +34,7 @@ export default function OCLessonCalendar(props) {
   };
   const handleLessonClick = (lesson) => {
     return () => {
-      lessonClick(lesson)
+      navigator(`/dashboard/course/${lesson.courseId}/lesson/${lesson.id}`)
     }
   }
   return (

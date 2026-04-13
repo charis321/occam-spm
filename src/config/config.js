@@ -20,14 +20,17 @@ export const ATTENDANCE_MAP = {
 export const ROLE_INDEX = {
     0: {
         title:'學生',
+        path_name: 'student',
         color: 'blue',
     },
     1: {
         title:'教師',
+        path_name: 'teacher',       
         color: 'green',
     },
     2: {
         title: '管理員',
+        path_name: 'admin',
         color: 'red',
     }
 }
@@ -65,6 +68,10 @@ export const USER_STATUS = {
     },
 }
 
+export const USER_SEX_INDEX = ["未知", "男", "女"]
+export const USER_ROLE_INDEX = ["學生", "教師", "管理員"]
+export const USER_STATUS_INDEX = ["正常", "停用"]
+
 //path
 export const PATH_MAP = {
     '': {
@@ -94,10 +101,16 @@ export const PATH_MAP = {
     'course': {
         title: '課程管理',
     },
+    'lesson': {
+        title: '課堂',
+    },
     'student': {
         title: '學生管理',
     },
     'new' : {
         title: '新增',
+    },
+    'calendar' : {
+        title: '行事曆',
     }
 }

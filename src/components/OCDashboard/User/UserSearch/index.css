@@ -1,0 +1,24 @@
+.oc-user-search{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #eee;
+}
+.oc-user-search-group{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #eee;
+}
+
+.oc-user-search-group-item{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #eee;
+}

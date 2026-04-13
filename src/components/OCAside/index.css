@@ -6,14 +6,17 @@
   color: lightcyan;
   box-shadow: 5px 0 6px rgba(0,0,0,0.3);
   z-index: var(--oc-z-index-aside);
+  display: none;
 }
 .oc-aside ul{
 
 }
 .oc-aside ul li{
-  padding: 1rem 0;
+  padding: 1rem 1rem ;
   cursor: pointer;
   border-top: #555 solid 1px;
+  text-align: start;
+  font-size: 0.8rem;
 }
 .oc-aside ul li:hover{
   background-color: lightcyan;
@@ -31,8 +34,8 @@
   background-repeat: no-repeat;
   margin: 1rem 0;
 }
-@media screen and (max-width: 768px) {
+@media screen and (min-width: 768px) {
   .oc-aside{
-    display: none;
+    display: block;
   }
 }

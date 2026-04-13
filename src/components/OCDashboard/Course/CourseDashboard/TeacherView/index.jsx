@@ -3,24 +3,20 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Table, Tag, Select, Input } from 'antd'
 import { PlusCircleOutlined, SearchOutlined } from '@ant-design/icons'
 
-import OCLoading from '../../OCCommon/OCLoading'
+import OCLoading from '@components/OCCommon/OCLoading'
 
-import { apiUtil } from '../../../Util/WebApi'
-import { useAuth } from '../../../Util/AuthContext'
-import { WEEKDAY } from '../../../config/time'
-import { testCourseList } from '../../../test/testData'
-import { nanoid } from 'nanoid'
+import { apiUtil } from '@utils/WebApi'
+import { useAuth } from '@utils/AuthContext'
+import { WEEKDAY } from '@config/time'
 import './index.css'
 
 
-export default function OCCourseDashboard(props){
-
+export default function OCCourseDashboardTeacherView(props){
+    const { user } = useAuth()
     const [ courseData , setCourseData] = useState([]) 
     const [ isLoading , setIsLoading ] = useState(false)
-    const { user } = useAuth()
     const navigate = useNavigate()
-    const ROLE_NAME = ["student", "teacher", "admin"]
-
+    
     useEffect(()=>{
       getCourseList()
     },[])
@@ -97,9 +93,8 @@ export default function OCCourseDashboard(props){
     ]
     const getCourseList = async()=>{
       setIsLoading(true)
-      const res = await apiUtil(`/course/list/${user.id}`,"get")
-      setIsLoading(false)
-      
+      const res = await apiUtil(`/teacher/${user.id}/course`,"get")
+
       if(res.code===200){
         const courseData = res.data.map(item=>{
           return{
@@ -109,6 +104,7 @@ export default function OCCourseDashboard(props){
         })
         setCourseData(courseData)
       }
+      setIsLoading(false)
     }
     const handleEditCourse = (course_id)=>{
       return ()=>{
@@ -127,19 +123,18 @@ export default function OCCourseDashboard(props){
           isLoading ?
           <OCLoading/>
           :
-          <div className='oc-course-dashboard'>
+          <div className='oc-course-teacher-main-page'>
             <h2>課程管理</h2>
             <div className="oc-course-controller">
               <Button type='primary' onClick={handleAddCourse}><PlusCircleOutlined />新增課程</Button>
             </div>
-            <div className='oc-course-seacrh'>
+            <div className='oc-course-search'>
               <label>課程名:</label>
               <Input type="text" placeholder='輸入課程名' style={{ width: 120 }}/>
               <label>開課學校:</label>
               <Input type="text" placeholder='輸入開課學校' style={{ width: 120 }}/>
               <label>開課單位:</label>
               <Input type="text" placeholder='輸入開課單位' style={{ width: 120 }}/>
-              <label>用戶狀態:</label>
               <Select defaultValue="已停用?"
                       style={{ width: 120 }}
                       options={[
@@ -148,14 +143,15 @@ export default function OCCourseDashboard(props){
                         { value: 2,  label: '全部' },
                       ]}
               />
+
               <Button type="primary" icon={<SearchOutlined/>}>查詢</Button>
             </div>
-            <Table  className='oc-user-table'
-              dataSource={courseData} 
-              columns={columns} 
-              scroll={{ x: "80%"}}
-              pagination={{pageSize: 5}}
-              rowKey={record => record.id}></Table>
+            <Table  className='oc-course-teacher-table'
+                    dataSource={courseData} 
+                    columns={columns} 
+                    scroll={{ x: "80%"}}
+                    pagination={{pageSize: 5}}
+                    rowKey={record => record.id}></Table>
           </div>
         }
       </>

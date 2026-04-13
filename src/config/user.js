@@ -8,3 +8,6 @@ export const USER_STATUS = {
         color: 'red',
     },
 }
+export const USER_INDEX = {
+    
+}

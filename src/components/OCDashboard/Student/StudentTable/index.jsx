@@ -55,6 +55,11 @@ export default function OCStudentTable(props){
       key: "name",
       title: "姓名",
       dataIndex: "name",
+    },
+    {
+      key: "email",
+      title: "Email",
+      dataIndex: "email",
     }
   ]
 

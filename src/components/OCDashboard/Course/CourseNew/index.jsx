@@ -43,7 +43,7 @@ export default function CourseNew(){
         teacherId : user.id,
     }
     console.log(newCourse)
-    const res  = await apiUtil("/course/save","POST", newCourse)
+    const res  = await apiUtil("/course","POST", newCourse)
     console.log(res)
     if(res.code === 200){
       alert("新增課程成功")

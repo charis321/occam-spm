@@ -1,0 +1,16 @@
+.oc-user-info-list{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    border-radius: 1rem;
+    background: #eee;
+    padding: 1rem;
+}
+
+.oc-user-info-list li{
+    width: 50%;
+    min-width: 300px;
+    display: flex;
+    justify-content: space-between;
+    margin-left: 10%;
+}

@@ -57,10 +57,12 @@ export default function OCCourseStudent(props){
     },
   ]
   const getStudentData = async() => {
-    const path = `/course/${courseId}/student/list`
+    const path = `/course/${courseId}/enrollment`
     const res = await apiUtil(path, "GET")
     if(res.code === 200){
       setStudentData(res.data)
+    }else{
+      alert("無法取得學生資料")
     }
   }
   const getCourseData = async ()=>{
@@ -88,10 +90,12 @@ export default function OCCourseStudent(props){
       jsonData = jsonData.map((item) => {
         return {
           key: item["__EMPTY"],
-          school: item["學校"],
-          department: item["學系"],
-          no: item["學號"],
-          name: item["姓名"],
+          school: item["school"],
+          department: item["department"],
+          no: item["no"],
+          name: item["name"],
+          email: item["email"]
+
         };
       })
       setNewStudentData(jsonData)
@@ -108,10 +112,13 @@ export default function OCCourseStudent(props){
     if(newStudentData.length === 0){
       return alert("請先上傳檔案")
     }
-    const path = `/course/${courseId}/student/saveList`
+    const path = `/course/${courseId}/enrollment`
     const res =  await apiUtil(path, "POST", newStudentData)
     if(res.code === 200){
       alert("新增學生成功")
+      getStudentData()
+    }else{
+      console.log("新增學生失敗", res)
     }
   }
   const handleAddStudent = () => {

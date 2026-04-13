@@ -1,3 +1,13 @@
+import {
+    HomeOutlined,
+    UserOutlined,
+    CalendarOutlined,
+    BookOutlined,
+    CheckCircleOutlined,
+    TeamOutlined,
+    AuditOutlined,
+} from '@ant-design/icons';
+
 export const user_menu = {
     0: {
         "role": {
@@ -12,28 +22,40 @@ export const user_menu = {
                 "name": "Home",
                 "title": "首頁",
                 "component": "OCHome",
-                "path": "/dashboard"
+                "path": "/dashboard",
+                "icon": <HomeOutlined />
             },
             {   
-                "id": 1,
+                "id": 2,
                 "name": "UserCneter",
                 "title": "個人中心",
                 "component": "OCUserCenter",
-                "path": "/dashboard/user-center"
-            },
-            {
-                "id": 2,
-                "name": "CourseManager",
-                "title": "課程管理",
-                "component": "OCCourse",
-                "path": "/dashboard/course"
+                "path": "/dashboard/user-center",
+                "icon": <UserOutlined />
             },
             {
                 "id": 3,
+                "name": "Calendar",
+                "title": "課程行事曆",
+                "component": "OCCalendar",
+                "path": "/dashboard/calendar",
+                "icon": <CalendarOutlined />
+            },
+            {
+                "id": 4,
+                "name": "CourseManager",
+                "title": "我的課程",
+                "component": "OCCourse",
+                "path": "/dashboard/course",
+                "icon": <BookOutlined />
+            },
+            {
+                "id": 5,
                 "name": "AttendanceManager",
                 "title": "點名管理",
                 "component": "OCAttendance",
-                "path": "/dashboard/attendance"
+                "path": "/dashboard/attendance",
+                "icon": <CheckCircleOutlined />
             },
 
         ]
@@ -51,37 +73,41 @@ export const user_menu = {
                 "name": "Home",
                 "title": "首頁",
                 "component": "OCHome",
-                "path": "/dashboard"
+                "path": "/dashboard",
+                "icon": <HomeOutlined />
             },
             {   
                 "id": 1,
                 "name": "UserCneter",
                 "title": "個人中心",
                 "component": "OCUserCenter",
-                "path": "/dashboard/user-center"
+                "path": "/dashboard/user-center",
+                "icon": <UserOutlined />
             },
-            {
+             {
                 "id": 2,
-                "name": "CourseManager",
-                "title": "課程管理",
-                "component": "OCCourse",
-                "path": "/dashboard/course"
+                "name": "Calendar",
+                "title": "課程行事曆",
+                "component": "OCCalendar",
+                "path": "/dashboard/calendar",
+                "icon": <CalendarOutlined />
             },
             {
                 "id": 3,
-                "name": "StudentManager",
-                "title": "學生管理",
-                "component": "OCStudent",
-                "path": "/dashboard/student"
+                "name": "CourseManager",
+                "title": "課程管理",
+                "component": "OCCourse",
+                "path": "/dashboard/course",
+                "icon": <BookOutlined />
             },
             {
                 "id": 4,
                 "name": "AttendanceManager",
                 "title": "點名管理",
                 "component": "OCAttendance",
-                "path": "/dashboard/attendance"
+                "path": "/dashboard/attendance",
+                "icon": <CheckCircleOutlined />
             },
-
         ]
     },
     2: {
@@ -97,28 +123,24 @@ export const user_menu = {
                 "name": "Home",
                 "title": "首頁",
                 "component": "OCHome",
-                "path": "/dashboard"
+                "path": "/dashboard",
+                "icon": <HomeOutlined />
             },
             {   
                 "id": 1,
                 "name": "UserCneter",
                 "title": "個人中心",
                 "component": "OCUserCenter",
-                "path": "/dashboard/user-center"
+                "path": "/dashboard/user-center",
+                "icon": <UserOutlined />
             },
             {
                 "id": 2,
-                "name": "CourseManager",
-                "title": "課程管理",
-                "component": "OCCourse",
-                "path": "/dashboard/course"
-            },
-            {
-                "id": 3,
                 "name": "UserManager",
                 "title": "用戶管理",
                 "component": "OCUser",
-                "path": "/dashboard/user"
+                "path": "/dashboard/user",
+                "icon": <TeamOutlined />
             },
 
         ]

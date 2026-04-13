@@ -1,12 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../Util/AuthContext";
+import { apiUtil } from "../../../../Util/WebApi";
 import { Button } from "antd";
 import { WEEKTIME } from "../../../../config/time";
+import { ROLE_INDEX} from "../../../../config/config";
+
 
 import './index.css';
 
 export default function OCCourseCard(props) {
-  const { courseData, readOnly} = props;
+  const { courseData, readOnly} = props
+  const { user } = useAuth()
   const navigate = useNavigate();
   
   const deleteCourseData = async () =>{
@@ -14,7 +19,7 @@ export default function OCCourseCard(props) {
     const res = await apiUtil(path, "DELETE")
     if(res.code === 200){
       alert("刪除課堂成功")
-      navigate('/dashboard/course')
+      navigate('/dashboard/teacher/course')
     }else{
       alert('刪除失敗')
       console.log(res)

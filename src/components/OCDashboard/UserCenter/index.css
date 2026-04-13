@@ -5,14 +5,24 @@
     justify-content: center;
     align-items: center;
 }
-.oc-user-info-card{
-    width: 80%;
+.oc-user-center-dashboard section{
+    width: 60%;
+    display: flex;
+    flex-direction: column;
     margin: 1rem;
     background: linear-gradient(180deg, #F5F5F5 0%, #FFFFFF 100%);
     border-radius: 1rem;
     padding: 0.5rem;
     box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
 }
+/* .oc-user-info-card{
+    width: 80%;
+    margin: 1rem;
+    background: linear-gradient(180deg, #F5F5F5 0%, #FFFFFF 100%);
+    border-radius: 1rem;
+    padding: 0.5rem;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
+} */
 .oc-user-info-header{
     display: flex;
     align-items: center;
@@ -25,14 +35,15 @@
     background: #eee;
     box-shadow:  10px 10px 20px rgba(0, 0, 0, 0.1);
 }
-.oc-user-info-list{
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    border-radius: 1rem;
-    background: #eee;
-    padding: 1rem;
+
+.oc-user-pwd-change-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.oc-user-info-list li{
-    text-indent: 10rem;
+.oc-user-pwd-change-form .form-item {
+  min-width: 300px;
+  margin: 0.5rem;
+  display: flex;
+  justify-content: space-between;
 }

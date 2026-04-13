@@ -12,3 +12,17 @@ export const ATTENDANCE_MAP = {
         color: 'red',
     }
 }
+export const ATTENDANCE_STATUS_MAP = {
+    0: {
+        title:'尚未點名',
+
+    },
+    1: {
+        title:'點名進行中...',
+
+    },
+    2: {
+        title: '點名已結束',
+
+    }
+}

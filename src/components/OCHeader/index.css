@@ -33,8 +33,17 @@
 .oc-user-menu-list li{
     padding: 0.5rem 1rem;
 }
-
+.oc-breadcrumb{
+    display: none;
+    
+}
 
 .oc-previous-page-btn{
     margin: 0 1rem;
 }
+@media screen and (min-width: 768px) {
+    .oc-breadcrumb{
+        display: flex;
+    }
+}
+

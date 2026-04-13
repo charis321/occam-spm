@@ -39,6 +39,15 @@ export const getUser = async() =>{
 }
 
 export const apiUtil = async( path, method ,data)=>{
+    if(method.toLowerCase() === "get" && data){
+        const filteredData = Object.fromEntries(  Object.entries(data)
+                                                        .filter(([_, value]) => value!==undefined && 
+                                                                                value!==""&&
+                                                                                value!==null)  )    
+        const queryString = new URLSearchParams(filteredData).toString()
+        path += queryString=="" ? "" :`?${queryString}`
+    }
+
     return axios({
         method,
         url: BASE_URL + path,
@@ -46,18 +55,24 @@ export const apiUtil = async( path, method ,data)=>{
             "Authorization": `Bearer ${getAuthLocalToken()}`,
             "Content-Type": 'application/json',
         },
-        data
+        // timeout: 10000,
+        data: method.toLowerCase() === "get" ? null : data,
     })
     .then((response)=>{
         console.log("response", response.data)
         return response.data
     })
     .catch((error)=>{
-        const { data } = error.response
-        if(data.msg === "JWT_EXPIRED"){
-            alert(TEXT_JWT_EXPIRED_ORINVALID)
-            window.location.href = '/login'
+        // const { data } = error.response
+        // if(data.msg === "JWT_EXPIRED"){
+        //     alert(TEXT_JWT_EXPIRED_ORINVALID)
+        //     window.location.href = '/login'
+        // }
+        console.log("apiUtil Error", error)
+        if(error.code==="ERR_NETWORK"){
+            alert(TEXT_NETWORK_ERROR)
         }
+        
         return error
     })
 
@@ -99,3 +114,4 @@ export const TEXT_JWT_EXPIRED_ORINVALID = "Token expired or invalid, please logi
 export const TEXT_NO_PERMISSION = "You do not have permission to access this resource."
 export const TEXT_RESOURCE_NOT_FOUND = "Resource not found."
 export const TEXT_OTHER_ERROR = "An error occurred. Please try again later."
+export const TEXT_NETWORK_ERROR = "Network error. Please check your connection and try again."

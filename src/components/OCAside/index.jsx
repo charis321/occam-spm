@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../Util/AuthContext'
-import { user_menu } from './dashboard_menu.js'
+import { user_menu } from './dashboard_menu'
 import './index.css'
 
 export default function OCAside() {
@@ -24,7 +24,7 @@ function OCNav(props) {
       {
         user_menu[role]["menu"].map(item=>{
           return <Link to={item.path} key={item.id}>
-                    <li>{item.title}</li>
+                    <li>{item.icon} {item.title}</li>
                   </Link>
         })
       }

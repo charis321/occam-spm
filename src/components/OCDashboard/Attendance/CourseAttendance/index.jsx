@@ -17,10 +17,12 @@ export default function OCAttendanceCourse(props) {
   //     alert("無法取得課程點名資料")
   //   }
   // }
+  
   return(
     <div className='oc-attendance-course'>
       <h2>課程點名</h2>
       <h2>{ courseId }</h2>
+      <button className="oc-attendance-course-button">開始點名</button>
     </div>
   )
 }

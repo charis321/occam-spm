@@ -4,7 +4,7 @@ import OCMain from "../../components/OCMain"
 import OCAside from "../../components/OCAside"
 import OCHeader from "../../components/OCHeader"
 import { useAuth } from '../../Util/AuthContext'
-// import './index.css'
+import './index.css'
 
 export default function OCDashboard() {
     const { auth } = useAuth()

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Tag, Button } from 'antd'
-import { ArrowLeftOutlined, SettingOutlined } from '@ant-design/icons'
+import { ArrowLeftOutlined, SettingOutlined, LogoutOutlined} from '@ant-design/icons'
 import { useAuth } from '../../Util/AuthContext'
-import './index.css'
+
 import OCBreadcrumb from '../OCCommon/OCBreadcrumb'
+import './index.css'
 
 export default function OCHeader(props) {
   const [ isOpen, setOpen ] = useState(false)
@@ -52,7 +53,7 @@ export default function OCHeader(props) {
               color='cyan'
               onClick={handleReturnPreviousPage}><ArrowLeftOutlined />回上頁</Button>
 
-      <OCBreadcrumb/>
+      <OCBreadcrumb className='oc-breadcrumb'/>
       {
         !user?
         <h2>未登入</h2>
@@ -66,8 +67,7 @@ export default function OCHeader(props) {
             <SettingOutlined />
           </button>
           <ul className='oc-user-menu-list' style={{display: isOpen ? 'block' : 'none'}}>
-            <Link to="/user/edit"><li>個人資料</li></Link>
-            <li onClick={handleLogout}>登出</li>
+            <li onClick={handleLogout}><LogoutOutlined /> 登出</li>
           </ul>
         </div>
       }

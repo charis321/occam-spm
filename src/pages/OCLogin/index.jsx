@@ -1,5 +1,6 @@
 import { useState, useEffect} from 'react'
 import { useNavigate, Link} from 'react-router-dom'
+import { Button } from 'antd'
 import { login } from '../../Util/WebApi'
 import { useAuth } from '../../Util/AuthContext'
 import './index.css'
@@ -9,6 +10,7 @@ export default function OCLogin() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [msg, setMsg] = useState('')
+  const [isWaiting, setIsWaiting] = useState(false)
   const {loginAuth} = useAuth()
   const navigator = useNavigate()
   
@@ -31,7 +33,14 @@ export default function OCLogin() {
   }
   const handleSubmit = async(e) => {
     e.preventDefault()
+    
+    if(isWaiting) return
+    setMsg('')
+    setIsWaiting(true)
+
     const res = await login({"name": username, "email": email, "password": password})
+    setIsWaiting(false)
+
     if(res.code === 200){
       console.log('登入成功', res)
       loginAuth({
@@ -65,10 +74,10 @@ export default function OCLogin() {
           <h2>登入</h2>
         </div>
         <div className='oc-login-form'>
-          <div className='oc-login-form-item'>
+          {/* <div className='oc-login-form-item'>
             <label htmlFor='username'>帳號：</label>
             <input type='text' id='username' name='username' onChange={handleChange} />
-          </div>
+          </div> */}
           <div className='oc-login-form-item'>
             <label htmlFor='email'>Email：</label>
             <input type='email' id='email' name='email' onChange={handleChange} />
@@ -78,12 +87,14 @@ export default function OCLogin() {
             <input type='password' id='password' name='password' onChange={handleChange} />
           </div>
           <div className='oc-login-form-item'>
-            <button type='submit' onClick={handleSubmit}>登入</button>
+            <Button type='primary' htmlType='submit' onClick={handleSubmit} disabled={isWaiting}>登入</Button>
           </div>
           <span className='system-msg' style={{"color": "red"}}>{msg}</span>
         </div>
       </form>
-      <p style={{"color": "#fff"}}>還沒註冊? <Link to="/register">點此前去註冊頁!</Link></p>
+      <p style={{ color: "#fff", textAlign: 'center', marginTop: '1rem' }}>
+        還沒註冊? <Link to="/register">點此前去註冊頁!</Link>
+      </p>
     </div>
   )
 }
