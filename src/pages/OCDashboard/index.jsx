@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import OCMain from "../../components/OCMain"
 import OCAside from "../../components/OCAside"
 import OCHeader from "../../components/OCHeader"
+import OCFooter from '../../components/OCFooter'
 import { useAuth } from '../../Util/AuthContext'
 import './index.css'
 

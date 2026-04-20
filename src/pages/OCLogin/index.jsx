@@ -51,8 +51,8 @@ export default function OCLogin() {
         },
         "token": res.data.token
       })
-      alert('登入成功，將導向至首頁')
-      navigator('/dashboard')  
+      alert('登入成功，將導向至上一頁')
+      navigator(-2) 
     }else{
       console.log('登入失敗' , res)
       if(res.code==="ERR_NETWORK"){
@@ -62,10 +62,6 @@ export default function OCLogin() {
       }
     }
   }
-  // const login = async (userObj) => {
-   
-  //   console.log(res)
-  // }
 
   return (
     <div className='oc-login-page'>

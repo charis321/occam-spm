@@ -2,6 +2,8 @@
   --oc-z-index-aside: 100;
   --oc-z-index-screen-mark: 100;
   --oc-z-index-menu: 100;
+
+  --oc-height-nav: 10vh;
 }
 
 #root{

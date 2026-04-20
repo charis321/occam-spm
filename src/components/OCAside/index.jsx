@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../../Util/AuthContext'
 import { user_menu } from './dashboard_menu'
 import './index.css'
@@ -15,6 +15,23 @@ export default function OCAside() {
   )
 }
 
+// function OCNav(props) {
+//   const {role} = props
+  
+//   return (
+//     <nav>
+//       <ul>
+//       {
+//         user_menu[role]["menu"].map(item=>{
+//           return <Link to={item.path} key={item.id}>
+//                     <li>{item.icon} <p>{item.title}</p></li>
+//                   </Link>
+//         })
+//       }
+//       </ul>
+//     </nav>
+//   )
+// }
 function OCNav(props) {
   const {role} = props
   
@@ -23,9 +40,13 @@ function OCNav(props) {
       <ul>
       {
         user_menu[role]["menu"].map(item=>{
-          return <Link to={item.path} key={item.id}>
-                    <li>{item.icon} {item.title}</li>
-                  </Link>
+          return  <li>
+                    <NavLink className="nav-link" to={item.path}>
+                      <span>{item.icon}</span>
+                      <p>{item.title}</p>
+                    </NavLink>
+                  </li>
+                  
         })
       }
       </ul>

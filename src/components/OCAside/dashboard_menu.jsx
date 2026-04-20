@@ -36,7 +36,7 @@ export const user_menu = {
             {
                 "id": 3,
                 "name": "Calendar",
-                "title": "課程行事曆",
+                "title": "行事曆",
                 "component": "OCCalendar",
                 "path": "/dashboard/calendar",
                 "icon": <CalendarOutlined />
@@ -87,7 +87,7 @@ export const user_menu = {
              {
                 "id": 2,
                 "name": "Calendar",
-                "title": "課程行事曆",
+                "title": "行事曆",
                 "component": "OCCalendar",
                 "path": "/dashboard/calendar",
                 "icon": <CalendarOutlined />

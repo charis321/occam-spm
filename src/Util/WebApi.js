@@ -115,3 +115,4 @@ export const TEXT_NO_PERMISSION = "You do not have permission to access this res
 export const TEXT_RESOURCE_NOT_FOUND = "Resource not found."
 export const TEXT_OTHER_ERROR = "An error occurred. Please try again later."
 export const TEXT_NETWORK_ERROR = "Network error. Please check your connection and try again."
+export const TEXT_SESSION_EXPIRED = "登入連線已逾時，請重新登入。"

@@ -1,24 +1,47 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams} from 'react-router-dom'
+import { Button, Input } from 'antd'
 import { QRCodeSVG } from 'qrcode.react'
 import { useAuth } from '@utils/AuthContext'
 import { apiUtil } from '@utils/WebApi'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-tw';
+import './index.css'
+
 
 
 export default function OCLessonStudentPage(props){
     const { user } = useAuth()
     const { lessonId , courseId } = useParams()
+    const [ searchParams ] = useSearchParams()
+    const attendingFromUrl = searchParams.get('attending') === 'true';
+    const codeFromUrl = searchParams.get('code');
+
     const [ lessonData , setLessonData] = useState() 
     const [ attendanceData , setAttendanceData] = useState()
     const [ attendanceCode , setAttendanceCode] = useState()
+    const [ isAttending , setIsAttending ] = useState(false)
     const [ isLoading , setIsLoading ] = useState(false) 
     const navigator = useNavigate()
+
     useEffect(()=>{
         setIsLoading(true)
         getLessonWithAttendance()
+        if(isAttending){
+            setAttendanceCode(code)
+            handleRollcall()
+        }
     }, [])  
+    const initPage= async()=>{
+        setIsLoading(true)
+        const res = await getLessonWithAttendance()
+        
+        if(isAttending){
+            await setAttendanceCode(code)
+            handleRollcall()
+        }
+        setIsLoading(false)
+    }
 
     const getLessonWithAttendance= async()=>{
         const path = `/lesson/${lessonId}/attendance/${user.id}`
@@ -35,7 +58,7 @@ export default function OCLessonStudentPage(props){
     const checkAttendanceTime = ()=>{
         if(lessonData){
             const now = new Date()
-            return lessonData.startTime > now && lessonData.endTime < now
+            return lessonData.startTime <= now && lessonData.endTime >= now
         }
         return false
     }
@@ -108,11 +131,22 @@ export default function OCLessonStudentPage(props){
                     </div>   
                     :
                     <div>
-                        <input placeholder="請輸入點名碼" onChange={(e) => setAttendanceCode(e.target.value)}></input>
-                        <button className='oc-start-attendance-btn' onClick={handleRollcall}>開始點名</button>
+                        <button className='oc-start-attendance-btn' onClick={() => setIsAttending(true)}>開始點名</button>
                     </div>  
-                }
+                    }
                 </div>
+                {
+                    isAttending && 
+                    <div className='oc-lesson-attendance-block'>
+                        <div className='oc-lesson-attendance-block-body'>
+
+                            <Input placeholder="請輸入點名碼" onChange={(e) => setAttendanceCode(e.target.value)}></Input>
+                            <Button type="primary" onClick={handleRollcall} disabled={!checkAttendanceTime()}>送出點名碼</Button>      
+                        </div>
+                        <Button className='close-btn' onClick={() => setIsAttending(false)}>X</Button>
+                     </div>
+                }
+                
             </section>
         </div>      
     )
