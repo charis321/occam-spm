@@ -1,0 +1,39 @@
+.oc-lesson-attendance {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.oc-lesson-attendance section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 1rem;
+}
+.oc-lesson-attendance section:nth-of-type(2) {
+  flex: 1;
+}
+
+.oc-lesson-attendance .oc-lesson-info {
+  border-radius: 5px;
+  background-color: azure;
+  padding: 0rem;
+  width: 100%;
+}
+.oc-lesson-attendance-table {
+  width: 100%;
+}
+
+.nowrap-column {
+  width: 1%;
+  white-space: nowrap;
+}
+
+@media screen and (min-width: 768px) {
+  .oc-lesson-attendance {
+    flex-direction: row;
+  }
+  .oc-lesson-attendance .oc-lesson-info {
+    padding: 1rem;
+    width: auto;
+  }
+}

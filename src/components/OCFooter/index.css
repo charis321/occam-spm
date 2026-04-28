@@ -1,4 +1,5 @@
-.oc-footer{
-    position: sticky;
-    top: 100%;
+.oc-footer {
+  position: sticky;
+  top: 100%;
+  width: 100%;
 }

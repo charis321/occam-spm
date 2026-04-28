@@ -1,51 +1,63 @@
-import { useState } from 'react'
-import {Form, Button, Input, Select, Space} from 'antd'
-import { PlusCircleOutlined, SearchOutlined,ReloadOutlined } from '@ant-design/icons'
-import './index.css'    
-import { useEffect } from 'react'
+import { useState } from 'react';
+import { Form, Button, Input, Select, Space } from 'antd';
+import {
+  PlusCircleOutlined,
+  SearchOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
+import './index.css';
+import { useEffect } from 'react';
 
-export default function OCUserSearch(props){
-    const [ isPreciseSearch, setIsPreciseSearch ] = useState(false)
-    const [ userFilter, setUserFilter ] = Form.useForm();
-    const { changeUserFilter } = props
-    
-    const handleSubmit = () => {
-        console.log("submit", userFilter.getFieldsValue())
-        changeUserFilter(userFilter.getFieldsValue())
-    }
-    const handleReset = () => {
-        userFilter.resetFields();
-    }
-    
-    return(
-      <Form
-        form={userFilter}
-        onFinish={handleSubmit}
-        layout="vertical" // 使用垂直佈局，搭配 Row/Col 會更好看
-        className="oc-user-search-form">
+export default function OCUserSearch(props) {
+  const [isPreciseSearch, setIsPreciseSearch] = useState(false);
+  const [userFilter, setUserFilter] = Form.useForm();
+  const { changeUserFilter } = props;
+
+  const handleSubmit = () => {
+    console.log('submit', userFilter.getFieldsValue());
+    changeUserFilter(userFilter.getFieldsValue());
+  };
+  const handleReset = () => {
+    userFilter.resetFields();
+  };
+
+  return (
+    <Form
+      form={userFilter}
+      onFinish={handleSubmit}
+      layout="vertical"
+      className="oc-user-search-form"
+    >
       <Space wrap align="end" style={{ marginBottom: 16 }}>
         <Form.Item name="role" label="用戶身分">
-          <Select style={{ width: 120 }} options={[
-            { value: '', label: '無指定' },
-            { value: '0', label: '學生' },
-            { value: '1', label: '教師' },
-            { value: '2', label: '管理員' },
-          ]} />
+          <Select
+            style={{ width: 120 }}
+            options={[
+              { value: '', label: '無指定' },
+              { value: '0', label: '學生' },
+              { value: '1', label: '教師' },
+              { value: '2', label: '管理員' },
+            ]}
+          />
         </Form.Item>
 
         <Form.Item name="status" label="用戶狀態">
-          <Select allowClear style={{ width: 120 }} options={[
-            { value: '', label: '無指定'},
-            { value: 0, label: '正常' },
-            { value: 1, label: '已停用' },
-          ]} />
+          <Select
+            allowClear
+            style={{ width: 120 }}
+            options={[
+              { value: '', label: '無指定' },
+              { value: 0, label: '正常' },
+              { value: 1, label: '已停用' },
+            ]}
+          />
         </Form.Item>
 
         <Form.Item>
           <Space>
-            <Button 
+            <Button
               danger={isPreciseSearch}
-              icon={<PlusCircleOutlined />} 
+              icon={<PlusCircleOutlined />}
               onClick={() => setIsPreciseSearch(!isPreciseSearch)}
             >
               {isPreciseSearch ? '關閉精確' : '精確查詢'}
@@ -61,7 +73,13 @@ export default function OCUserSearch(props){
       </Space>
 
       {isPreciseSearch && (
-        <div style={{ background: '#f5f5f5', padding: '16px', borderRadius: '8px' }}>
+        <div
+          style={{
+            background: '#f5f5f5',
+            padding: '16px',
+            borderRadius: '8px',
+          }}
+        >
           <Space wrap>
             <Form.Item name="id" label="用戶 ID">
               <Input placeholder="輸入 ID" style={{ width: 120 }} />
@@ -85,5 +103,5 @@ export default function OCUserSearch(props){
         </div>
       )}
     </Form>
-    )
+  );
 }

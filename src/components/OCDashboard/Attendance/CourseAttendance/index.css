@@ -1,0 +1,43 @@
+.oc-course-attendance {
+  width: 100%;
+  /* overflow: scroll; */
+}
+.oc-course-attendance section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.attendance-stats-list {
+  width: 50%;
+}
+.attendance-stats-list li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f8f8;
+}
+/* 已完成：使用成功的青綠色 */
+.attendance-stats-table .rollcalled {
+  border-left: 4px solid #52c41a; /* 左側邊框增加視覺提示 */
+  background-color: #f6ffed; /* AntD Success-1 */
+  color: #000;
+}
+
+/* 進行中：使用品牌藍色或亮橘色 */
+.attendance-stats-table .rollcalling {
+  border-left: 4px solid #1890ff;
+  background-color: #e6f7ff; /* AntD Info-1 */
+  color: #096dd9;
+}
+
+/* 未開始：使用輕微的灰色 */
+.attendance-stats-table .unrollcall {
+  border-left: 4px solid #d9d9d9;
+  background-color: #fafafa; /* AntD Normal-Gray */
+  color: #8c8c8c;
+}
+.attendance-stats-table .unrollcall p,
+.attendance-stats-table .unrollcall span {
+  color: #8c8c8c !important;
+}

@@ -1,20 +1,20 @@
-:root{
+:root {
   --oc-z-index-aside: 100;
   --oc-z-index-screen-mark: 100;
   --oc-z-index-menu: 100;
 
-  --oc-height-nav: 10vh;
+  --oc-height-nav: 64px;
 }
 
-#root{
+#root {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 a {
-  font-size: 16px;
-  font-weight: 500;
   color: #646cff;
+  font-weight: 500;
+  font-size: 16px;
   text-decoration: none;
 }
 a:hover {
@@ -22,18 +22,22 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  padding: 0;
   display: flex;
   place-items: center;
+  margin: 0;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
+}
+.flex-row {
+  display: flex;
+  align-items: center;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
     background-color: #ffffff;
+    color: #213547;
   }
   a:hover {
     color: #747bff;
@@ -42,7 +46,8 @@ body {
     background-color: #f9f9f9;
   }
 }
-ul,li{
-  list-style: none;
+ul,
+li {
   padding: 0;
+  list-style: none;
 }

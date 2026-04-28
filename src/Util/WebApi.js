@@ -1,118 +1,113 @@
-import axios from "axios"
+import axios from 'axios';
 
-import { getAuthLocalToken } from "./AuthUtils"
+import { getAuthLocalToken } from './AuthUtils';
 
+const BASE_URL = import.meta.env.VITE_SERVER_HOST + '/api';
 
-const BASE_URL = import.meta.env.VITE_SERVER_HOST + "/api"
-
-export const login =  async(userObj) => {
-   
-    return axios.post(BASE_URL+"/auth/login", userObj)
+export const login = async (userObj) => {
+  return axios
+    .post(BASE_URL + '/auth/login', userObj)
     .then((response) => {
-        return response.data
+      return response.data;
     })
     .catch((error) => {
-        return error
-    })
-}
+      return error;
+    });
+};
 
-export const register =  async(userObj) => {
-
-    return axios.post(BASE_URL+"/auth/register", userObj)
+export const register = async (userObj) => {
+  return axios
+    .post(BASE_URL + '/auth/register', userObj)
     .then((response) => {
-        return response.data
+      return response.data;
     })
     .catch((error) => {
-        return error
-    })
+      return error;
+    });
+};
 
-}
-
-export const getUser = async() =>{
-    return axios.get(BASE_URL + "/user/list")
+export const getUser = async () => {
+  return axios
+    .get(BASE_URL + '/user/list')
     .then((response) => {
-        return response.data
+      return response.data;
     })
     .catch((error) => {
-        return error
+      return error;
+    });
+};
+
+export const apiUtil = async (path, method, signal = null, data = null) => {
+  if (method.toLowerCase() === 'get' && data) {
+    const filteredData = Object.fromEntries(
+      Object.entries(data).filter(
+        ([_, value]) => value !== undefined && value !== '' && value !== null,
+      ),
+    );
+    const queryString = new URLSearchParams(filteredData).toString();
+    path += queryString == '' ? '' : `?${queryString}`;
+  }
+
+  return axios({
+    method,
+    url: BASE_URL + path,
+    headers: {
+      Authorization: `Bearer ${getAuthLocalToken()}`,
+      'Content-Type': 'application/json',
+    },
+    // timeout: 10000,
+    signal: signal,
+    data: method.toLowerCase() === 'get' ? null : data,
+  })
+    .then((response) => {
+      console.log('response', response.data);
+      return response.data;
     })
-}
+    .catch((error) => {
+      if (axios.isCancel(error)) return new Promise(() => {});
+      const errorData = error.response?.data;
+      console.error('讀取失敗:', errorData?.msg || '連線伺服器失敗');
+    });
+};
 
-export const apiUtil = async( path, method ,data)=>{
-    if(method.toLowerCase() === "get" && data){
-        const filteredData = Object.fromEntries(  Object.entries(data)
-                                                        .filter(([_, value]) => value!==undefined && 
-                                                                                value!==""&&
-                                                                                value!==null)  )    
-        const queryString = new URLSearchParams(filteredData).toString()
-        path += queryString=="" ? "" :`?${queryString}`
-    }
+export const handleException = (response) => {
+  if (response.status === 401) {
+    // Token expired or invalid, redirect to login page
+    alert(TEXT_JWT_EXPIRED_ORINVALID);
+    window.location.href = '/login';
+    return;
+  } else if (response.status === 403) {
+    // Forbidden, show error message
+    return alert(TEXT_NO_PERMISSION);
+  } else if (response.status === 404) {
+    // Not found, show error message
+    return alert(TEXT_RESOURCE_NOT_FOUND);
+  } else if (response.status !== 200) {
+    // Other errors, show generic error message
+    return alert(TEXT_OTHER_ERROR);
+  }
+  return false;
+};
 
-    return axios({
-        method,
-        url: BASE_URL + path,
-        headers: {
-            "Authorization": `Bearer ${getAuthLocalToken()}`,
-            "Content-Type": 'application/json',
-        },
-        // timeout: 10000,
-        data: method.toLowerCase() === "get" ? null : data,
-    })
-    .then((response)=>{
-        console.log("response", response.data)
-        return response.data
-    })
-    .catch((error)=>{
-        // const { data } = error.response
-        // if(data.msg === "JWT_EXPIRED"){
-        //     alert(TEXT_JWT_EXPIRED_ORINVALID)
-        //     window.location.href = '/login'
-        // }
-        console.log("apiUtil Error", error)
-        if(error.code==="ERR_NETWORK"){
-            alert(TEXT_NETWORK_ERROR)
-        }
-        
-        return error
-    })
+export const handleErrer = (error) => {
+  if (error.code === 'ERR_NETWORK') {
+    return alert(TEXT_NETWORK_ERROR);
+  } else if (response.status === 403) {
+    return alert(TEXT_NO_PERMISSION);
+  } else if (response.status === 404) {
+    return alert(TEXT_RESOURCE_NOT_FOUND);
+  } else if (response.status !== 200) {
+    return alert(TEXT_OTHER_ERROR);
+  }
+  return false;
+};
 
-}
-
-export const handleException = (response) =>{
-    if (response.status === 401) {
-        // Token expired or invalid, redirect to login page
-        alert(TEXT_JWT_EXPIRED_ORINVALID)
-        window.location.href = '/login'
-        return 
-    } else if (response.status === 403) {
-        // Forbidden, show error message
-        return alert(TEXT_NO_PERMISSION)
-    } else if (response.status === 404) {
-        // Not found, show error message
-        return alert(TEXT_RESOURCE_NOT_FOUND)
-    } else if (response.status !== 200) {
-        // Other errors, show generic error message
-        return alert(TEXT_OTHER_ERROR)
-    }
-    return false
-} 
-
-export const handleErrer = (error) =>{
-    if (error.code === "ERR_NETWORK") {       
-        return alert(TEXT_NETWORK_ERROR)
-    } else if (response.status === 403) {
-        return alert(TEXT_NO_PERMISSION)
-    } else if (response.status === 404) {
-        return alert(TEXT_RESOURCE_NOT_FOUND)
-    } else if (response.status !== 200) {
-        return alert(TEXT_OTHER_ERROR)
-    }
-    return false
-}
-
-export const TEXT_JWT_EXPIRED_ORINVALID = "Token expired or invalid, please login again"
-export const TEXT_NO_PERMISSION = "You do not have permission to access this resource."
-export const TEXT_RESOURCE_NOT_FOUND = "Resource not found."
-export const TEXT_OTHER_ERROR = "An error occurred. Please try again later."
-export const TEXT_NETWORK_ERROR = "Network error. Please check your connection and try again."
-export const TEXT_SESSION_EXPIRED = "登入連線已逾時，請重新登入。"
+export const TEXT_JWT_EXPIRED_ORINVALID =
+  'Token expired or invalid, please login again';
+export const TEXT_NO_PERMISSION =
+  'You do not have permission to access this resource.';
+export const TEXT_RESOURCE_NOT_FOUND = 'Resource not found.';
+export const TEXT_OTHER_ERROR = 'An error occurred. Please try again later.';
+export const TEXT_NETWORK_ERROR =
+  'Network error. Please check your connection and try again.';
+export const TEXT_SESSION_EXPIRED = '登入連線已逾時，請重新登入。';

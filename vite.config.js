@@ -1,12 +1,10 @@
-import { defineConfig, loadEnv } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
 import path from 'path';
 
-
 // https://vite.dev/config/
-export default defineConfig(({ command, mode, ssrBuild }) =>{
-
-  const env = loadEnv(mode, process.cwd())
+export default defineConfig(({ command, mode, ssrBuild }) => {
+  const env = loadEnv(mode, process.cwd());
 
   return {
     plugins: [react()],
@@ -22,6 +20,15 @@ export default defineConfig(({ command, mode, ssrBuild }) =>{
         '@config': path.resolve(__dirname, './src/config'),
         '@utils': path.resolve(__dirname, './src/Util'),
       },
-   },
-  }
-})
+    },
+    build: {
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+        },
+      },
+    },
+  };
+});

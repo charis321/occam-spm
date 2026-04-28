@@ -1,23 +1,23 @@
-import { Link, NavLink } from 'react-router-dom'
-import { useAuth } from '../../Util/AuthContext'
-import { user_menu } from './dashboard_menu'
-import './index.css'
+import { Link, NavLink } from 'react-router-dom';
+import { useAuth } from '../../Util/AuthContext';
+import { user_menu } from './dashboard_menu';
+import './index.css';
 
 export default function OCAside() {
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   return (
-    <div className='oc-aside'>
+    <div className="oc-aside">
       <div className="logo">logo</div>
       {/* <h1 style={{padding: "1rem 2rem"}}>OCCAM</h1> */}
-      <OCNav role={user.role}/>
+      <OCNav role={user.role} />
     </div>
-  )
+  );
 }
 
 // function OCNav(props) {
 //   const {role} = props
-  
+
 //   return (
 //     <nav>
 //       <ul>
@@ -33,23 +33,22 @@ export default function OCAside() {
 //   )
 // }
 function OCNav(props) {
-  const {role} = props
-  
+  const { role } = props;
+
   return (
     <nav>
       <ul>
-      {
-        user_menu[role]["menu"].map(item=>{
-          return  <li>
-                    <NavLink className="nav-link" to={item.path}>
-                      <span>{item.icon}</span>
-                      <p>{item.title}</p>
-                    </NavLink>
-                  </li>
-                  
-        })
-      }
+        {user_menu[role]['menu'].map((item) => {
+          return (
+            <li key={item.id}>
+              <NavLink className="nav-link" to={item.path} end>
+                <span>{item.icon}</span>
+                <p>{item.title}</p>
+              </NavLink>
+            </li>
+          );
+        })}
       </ul>
     </nav>
-  )
+  );
 }

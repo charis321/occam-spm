@@ -1,12 +1,15 @@
-.oc-course-search{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #eee;
-    padding: 0.5rem;
-    margin: 0.5rem;
+.oc-course-search {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5rem;
+  background-color: #eee;
+  padding: 0.5rem;
 }
-.oc-course-controller{
-    display: flex;
-    justify-content: end;
+.oc-course-controller {
+  display: flex;
+  justify-content: end;
+}
+.oc-course-teacher-table {
+  width: 90%;
 }

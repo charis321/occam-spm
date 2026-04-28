@@ -1,58 +1,45 @@
-.oc-user-center-dashboard{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.oc-user-center-dashboard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
-.oc-user-center-dashboard section{
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    margin: 1rem;
-    background: linear-gradient(180deg, #F5F5F5 0%, #FFFFFF 100%);
-    border-radius: 1rem;
-    padding: 1rem;
-    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
+.oc-user-center-dashboard section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
-/* .oc-user-info-card{
-    width: 80%;
-    margin: 1rem;
-    background: linear-gradient(180deg, #F5F5F5 0%, #FFFFFF 100%);
-    border-radius: 1rem;
-    padding: 0.5rem;
-    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
-} */
-.oc-user-info-header{
-    display: flex;
-    align-items: center;
+.oc-user-pwd-change {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, #f4f4f4 0%, #ffffff 100%);
+  padding: 1rem;
+  width: 80%;
 }
-.oc-user-avatar{
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 1rem;
-    background: #eee;
-    box-shadow:  10px 10px 20px rgba(0, 0, 0, 0.1);
-}
-
 .oc-user-pwd-change-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 .oc-user-pwd-change-form .form-item {
-    width: 90%;
-    min-width: 250px;
-    margin: 0.75rem 0;
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  width: 90%;
+  min-width: 250px;
 }
 @media screen and (min-width: 768px) {
-    .oc-user-center-dashboard section{
-        width: 60%;
-    }
-    .oc-user-pwd-change-form .form-item {
-        width: 60%;
-    }
+  .oc-user-pwd-change {
+    width: 60%;
+  }
+  .oc-user-pwd-change-form .form-item {
+    width: 70%;
+  }
 }
