@@ -1,5 +1,5 @@
 const CACHE_NAME = 'occam-spm';
-const urlsToCache = ['/'];
+const urlsToCache = [];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
