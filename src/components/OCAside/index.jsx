@@ -8,8 +8,9 @@ export default function OCAside() {
 
   return (
     <div className="oc-aside">
-      <div className="logo">logo</div>
-      {/* <h1 style={{padding: "1rem 2rem"}}>OCCAM</h1> */}
+      <div className="oc-logo">logo</div>
+      {/* <img src=""></img> */}
+      {/* <span className="oc-logo-text">occam</span> */}
       <OCNav role={user.role} />
     </div>
   );

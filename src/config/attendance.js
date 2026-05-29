@@ -26,3 +26,24 @@ export const ATTENDANCE_STATUS_MAP = {
     title: '點名已結束',
   },
 };
+
+export const ROLLCALL_MAP = {
+  0: {
+    title: '點名尚未開始',
+    color: 'gray',
+    bg: 'gray',
+    class: 'unrollcall',
+  },
+  1: {
+    title: '點名進行中...',
+    color: 'red',
+    bg: '#fff',
+    class: 'rollcalling',
+  },
+  2: {
+    title: '點名已結束',
+    color: 'blue',
+    bg: '#fff',
+    class: 'rollcalled',
+  },
+};

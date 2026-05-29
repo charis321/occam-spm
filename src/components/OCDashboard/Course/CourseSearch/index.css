@@ -1,0 +1,33 @@
+.oc-user-search {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #eee;
+  width: 80%;
+}
+/* .oc-user-search-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #eee;
+  width: 100%;
+} */
+.oc-course-search-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+  background-color: #eee;
+  width: 90%;
+}
+
+.oc-user-search-group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #eee;
+  width: 100%;
+}

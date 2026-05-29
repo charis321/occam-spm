@@ -1,4 +1,4 @@
-.oc-lesson-attendance-block {
+/* .oc-lesson-attendance-block {
   display: flex;
   position: fixed;
   top: 0;
@@ -14,9 +14,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: backgroundColor 1s ease-in;
+  border: 3px solid #eee;
   border-radius: 10px;
   background-color: aliceblue;
   padding: 2rem;
+}
+.oc-lesson-attendance-block-body.success {
+  animation: success 1s forwards;
+}
+.oc-lesson-attendance-block-body.success h2 {
+  animation: fadeIn 1s backwards;
 }
 .oc-lesson-attendance-block-body .code-input {
   margin: 1rem 0;
@@ -38,3 +46,21 @@
     width: 84vw;
   }
 }
+@keyframes success {
+  0% {
+    background-color: aliceblue;
+  }
+  100% {
+    background-color: rgb(182, 213, 177);
+  }
+}
+@keyframes fadeIn {
+  0% {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+} */

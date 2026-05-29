@@ -51,8 +51,9 @@ import { Select } from 'antd';
 // }
 
 export function OCLessonAttendanceTable(props) {
-  const { attendanceData, resetData } = props;
+  const { attendanceData, resetData, readOnly } = props;
   const { message } = App.useApp();
+  const [isWaiting, setIsWaiting] = useState(false);
 
   const coloumns = [
     {
@@ -87,7 +88,6 @@ export function OCLessonAttendanceTable(props) {
       render: (_, record, index) => {
         const { status } = record;
         let tmp_status = status ? status : 0;
-        let isWaiting = false;
 
         return (
           <>
@@ -109,7 +109,49 @@ export function OCLessonAttendanceTable(props) {
                 { value: 2, label: '請假' },
               ]}
               disabled={isWaiting}
+              loading={isWaiting}
             />
+          </>
+        );
+      },
+    },
+  ];
+  const coloumns_readOnly = [
+    {
+      title: '學生',
+      key: 'studentNameNo',
+      render: (record) => {
+        return (
+          <div>
+            <h3 style={{ margin: 0 }}>{record.studentName}</h3>
+            <p style={{ margin: 0 }}>{record.studentNo}</p>
+          </div>
+        );
+      },
+    },
+    {
+      title: '學生單位',
+      key: 'placement',
+      render: (record) => {
+        return (
+          <div>
+            <p style={{ margin: 0 }}>{record.studentSchool}</p>
+            <p style={{ margin: 0 }}>{record.studentDepartment}</p>
+          </div>
+        );
+      },
+    },
+    {
+      title: '點名狀態',
+      key: 'status',
+      //   minWidth: 100,
+      className: 'nowrap-column',
+      render: (_, record, index) => {
+        const { status } = record;
+        let tmp_status = status ? status : 0;
+        return (
+          <>
+            <span>{getStatusTag(tmp_status)}</span>
           </>
         );
       },
@@ -143,22 +185,30 @@ export function OCLessonAttendanceTable(props) {
     }
   };
   const updateAttendance = async (data) => {
+    setIsWaiting(true);
     const path = `/attendance`;
-    const res = await apiUtil(path, 'PUT', data);
-    if (res.code === 200) {
-      //   alert('更新成功');
+    const res = await apiUtil(path, 'PUT', null, data);
+    if (res?.code === 200) {
       message.success('更新成功');
       resetData();
     } else {
       message.warning('更新失敗');
     }
+    setIsWaiting(false);
   };
   return (
     <Table
       className="oc-lesson-attendance-table"
       dataSource={attendanceData}
-      columns={coloumns}
+      columns={readOnly ? coloumns_readOnly : coloumns}
       rowKey={(record) => record.key}
+      pagination={{
+        pageSize: 10,
+        position: ['bottomCenter'],
+        pageSizeOptions: ['10', '20', '50'],
+        size: 'large',
+        showTotal: (total) => `共 ${total} 筆資料`,
+      }}
       size="middle"
       //   showHeader={false}
     />

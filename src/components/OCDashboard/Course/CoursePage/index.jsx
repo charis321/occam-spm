@@ -1,16 +1,27 @@
 import { useState, useEffect } from 'react';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
-import { Button, Table, Calendar, Switch, Popover, Tag } from 'antd';
+import {
+  Button,
+  Table,
+  Calendar,
+  Switch,
+  Popover,
+  Tag,
+  Radio,
+  Space,
+  Flex,
+} from 'antd';
 import {
   AppstoreAddOutlined,
   QuestionCircleOutlined,
   PlusCircleOutlined,
   CloseOutlined,
   AuditOutlined,
+  CalendarOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
-import OCCourseCard from '../CourseInfo';
+import OCCourseInfo from '../CourseInfo';
 import OCLessonCalendar from '../../Lesson/LessonCalendar';
 import OCLessonTable from '../../Lesson/LessonTable';
 // import OCLessonBlock from "../../Lesson/LessonBlock";
@@ -20,11 +31,12 @@ import { apiUtil } from '../../../../Util/WebApi';
 import { useAuth } from '../../../../Util/AuthContext';
 
 import './index.css';
+import OCCourseMenu from '../CourseMenu';
 
 export default function OCCoursePage(props) {
   const { courseId } = useParams();
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const navigator = useNavigate();
   const [courseData, setCourseData] = useState();
   const [lessonData, setLessonData] = useState([]);
   const [lessonDisplayMode, setLessonDisplayMode] = useState('calendar');
@@ -41,35 +53,36 @@ export default function OCCoursePage(props) {
     };
   }, [courseId]);
 
-  const init = async (signal) => {
+  const init = async (signal = null) => {
     try {
       setIsLoading(true);
-      await Promise.all([getCourseData(signal), getLessonData(signal)]);
+      await Promise.allSettled([getCourseData(signal), getLessonData(signal)]);
     } catch (error) {
       console.error('Init error:', error);
     } finally {
-      if (!signal.aborted) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
 
   const getCourseData = async (signal) => {
     const path = `/course/${courseId}`;
     const res = await apiUtil(path, 'GET', signal);
+    if (res?.isSystemError) return;
     if (res?.code === 200) {
       setCourseData(res.data);
-    } else {
-      alert('無法取得課程資料');
+    } else if (res?.code === 400) {
+      alert('找不到課程，即將返回課程管理頁面!');
+      navigator('/dashboard/course');
     }
   };
 
   const deleteCourseData = async (signal) => {
     const path = `/course/${courseId}`;
     const res = await apiUtil(path, 'DELETE', signal);
+    if (res?.isSystemError) return;
     if (res?.code === 200) {
       alert('刪除課堂成功');
-      navigate('/dashboard/course');
+      navigator('/dashboard/course');
     } else {
       alert('刪除失敗');
     }
@@ -77,6 +90,7 @@ export default function OCCoursePage(props) {
   const getLessonData = async (signal) => {
     const path = `/course/${courseId}/lesson`;
     const res = await apiUtil(path, 'GET', signal);
+    if (res?.isSystemError) return;
     if (res?.code === 200) {
       setLessonData(res.data);
     } else {
@@ -84,14 +98,14 @@ export default function OCCoursePage(props) {
     }
   };
 
-  const handleLessonDisplayToggle = (checked) =>
-    setLessonDisplayMode(checked ? 'calendar' : 'table');
+  const handleLessonDisplayToggle = (e) => {
+    setLessonDisplayMode(e.target.value);
+  };
   const handleLessonAddDisplayToggle = (mode) => {
     return (e) => setLessonAddDisplay(mode);
   };
 
   const handleLessonClick = (lesson) => {
-    console.log(lesson);
     setLessonFocus(lesson);
   };
 
@@ -101,15 +115,16 @@ export default function OCCoursePage(props) {
         <OCLoading />
       ) : (
         <div className="oc-course-page">
-          <section>
-            <OCCourseCard
+          <section className="flex-row">
+            <OCCourseInfo
               courseData={courseData}
-              readOnly={user.role === 0}
+              readOnly={true}
               user={user}
               resetData={() => {
                 init();
               }}
             />
+            <OCCourseMenu courseData={courseData} resetCourse={init} />
           </section>
           <section>
             <div className="oc-lesson-content">
@@ -142,14 +157,23 @@ export default function OCCoursePage(props) {
                     </Button>
                   </div>
                 )}
-
                 <div className="oc-lesson-mode-switch">
-                  <p>模式: 日曆</p>
-                  <Switch
-                    defaultChecked={true}
+                  <p>展示方式:</p>
+                  &nbsp;
+                  <Radio.Group
+                    block
+                    options={[
+                      {
+                        label: <p>日曆</p>,
+                        value: 'calendar',
+                      },
+                      { label: '表單', value: 'table' },
+                    ]}
+                    defaultValue={lessonDisplayMode}
                     onChange={handleLessonDisplayToggle}
-                  ></Switch>
-                  <p>表單</p>
+                    optionType="button"
+                    buttonStyle="solid"
+                  />
                 </div>
               </div>
               {lessonDisplayMode === 'table' ? (
@@ -221,15 +245,15 @@ function OCNewLessonBlock(props) {
       (lessonData.length === 1 ? '' : '/batch');
 
     lessonData = lessonData.length === 1 ? lessonData[0] : lessonData;
-    console.log(lessonData);
-    const res = await apiUtil(path, 'POST', lessonData);
-    if (res.code === 200) {
+
+    const res = await apiUtil(path, 'POST', null, lessonData);
+    if (res?.isSystemError) return;
+    if (res?.code === 200) {
       alert('新增課堂成功');
       resetLesson();
     } else {
       alert('無法新增課堂資料');
     }
-    console.log(res);
     closeBlock();
   };
 
@@ -276,14 +300,16 @@ function OCNewLessonBlock(props) {
             : 7 + courseWeekday - originWeekday;
         originDate = originDate.add(offset, 'day');
 
-        while (originDate.isBefore(newLessonData.endPeriod)) {
+        while (
+          originDate.isBefore(newLessonData.endPeriod) ||
+          originDate.isSame(newLessonData.endPeriod)
+        ) {
           let startTime = dayjs(
             `${originDate.format('YYYY-MM-DD')} ${courseData.scheduleStartTime}`,
           ).toISOString();
           let endTime = dayjs(
             `${originDate.format('YYYY-MM-DD')} ${courseData.scheduleEndTime}`,
           ).toISOString();
-          console.log('new lesson: ', courseData);
           newLessonList.push({
             courseId: courseData.id,
             teacherId: courseData.teacherId,
@@ -365,7 +391,6 @@ function OCNewLessonBlock(props) {
     </div>
   );
 }
-function OCEditCourseBlock(props) {}
 function OCLessonBlock(props) {
   const { lessonData, closeBlock, resetLesson } = props;
   const [isLoading, setIsLoading] = useState(false);

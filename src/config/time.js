@@ -24,3 +24,7 @@ export const PERIOD_TIME = (startTime, endTime) => {
 
   return `${dayjs(startTime).format('YYYY/MM/DD')} ${dayjs(startTime).format('HH:mm')}~${dayjs(endTime).format('HH:mm')}`;
 };
+
+export const RELATIVE_TIME = (time) => {
+  return dayjs(time).fromNow();
+};

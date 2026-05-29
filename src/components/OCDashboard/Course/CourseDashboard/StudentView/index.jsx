@@ -8,6 +8,8 @@ import { apiUtil } from '@utils/WebApi';
 import { useAuth } from '@utils/AuthContext';
 import { WEEKDAY } from '@config/time';
 import './index.css';
+import OCCourseCardGroup from '../../CourseCard';
+import OCCourseSearch from '../../CourseSearch';
 
 export default function OCCourseDashboardStudentView(props) {
   const { user } = useAuth();
@@ -16,7 +18,11 @@ export default function OCCourseDashboardStudentView(props) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getCourseList();
+    const controller = new AbortController();
+    getCourseList(null, controller.signal);
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   const columns = [
@@ -85,12 +91,11 @@ export default function OCCourseDashboardStudentView(props) {
       },
     },
   ];
-  const getCourseList = async () => {
+  const getCourseList = async (filter = null, signal = null) => {
     setIsLoading(true);
-    const res = await apiUtil(`/student/${user.id}/course`, 'get');
+    const res = await apiUtil(`/student/${user.id}/course`, 'get', signal);
 
-    if (res.code === 200) {
-      console.log(res.data);
+    if (res?.code === 200) {
       const courseData = res.data.map((item) => {
         return {
           ...item,
@@ -103,12 +108,14 @@ export default function OCCourseDashboardStudentView(props) {
   };
   const handleEditCourse = (course_id) => {
     return () => {
-      console.log(course_id);
       navigate(`/dashboard/course/${course_id}`);
     };
   };
   const handleAddCourse = () => {
     navigate(`/dashboard/course/new`);
+  };
+  const changeUserFilter = (filter) => {
+    getCourseList(filter, null);
   };
 
   return (
@@ -116,39 +123,12 @@ export default function OCCourseDashboardStudentView(props) {
       {isLoading ? (
         <OCLoading />
       ) : (
-        <div className="oc-course-student-main-page">
-          <div className="oc-course-seacrh">
-            <label>課程名:</label>
-            <Input
-              type="text"
-              placeholder="輸入課程名"
-              style={{ width: 120 }}
-            />
-            <label>開課學校:</label>
-            <Input
-              type="text"
-              placeholder="輸入開課學校"
-              style={{ width: 120 }}
-            />
-            <label>開課單位:</label>
-            <Input
-              type="text"
-              placeholder="輸入開課單位"
-              style={{ width: 120 }}
-            />
-
-            <Button type="primary" icon={<SearchOutlined />}>
-              查詢
-            </Button>
-          </div>
-          <Table
-            className="oc-course-student-table"
-            dataSource={courseData}
-            columns={columns}
-            scroll={{ x: '80%' }}
-            pagination={{ pageSize: 5 }}
-            rowKey={(record) => record.id}
-          ></Table>
+        <div className="oc-course-dashboard">
+          <h2>課程管理</h2>
+          <section>
+            <OCCourseSearch changeCourseFilter={changeUserFilter} />
+            <OCCourseCardGroup courseData={courseData} />
+          </section>
         </div>
       )}
     </>

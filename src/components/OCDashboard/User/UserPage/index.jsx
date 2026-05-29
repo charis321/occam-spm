@@ -6,25 +6,24 @@ import OCUserInfoCard from '../UserInfoCard';
 import OCLoading from '../../../OCCommon/OCLoading';
 import { apiUtil } from '@utils/WebApi';
 import './index.css';
+import { useAuth } from '../../../../Util/AuthContext';
 
 export default function OCUserPage(props) {
   const { userId } = useParams();
+  const { user } = useAuth();
   const [userInfo, setUserInfo] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    getUserInfo();
-  }, []);
+    const controller = new AbortController();
+    getUserInfoData(controller.signal);
+  }, [user]);
 
-  useEffect(() => {
-    console.log(userInfo);
-  }, [userInfo]);
-
-  const getUserInfo = async () => {
+  const getUserInfoData = async (signal = null) => {
     setIsLoading(true);
     const path = `/user/${userId}`;
-    const res = await apiUtil(path, 'GET');
-    if (res.code === 200) {
+    const res = await apiUtil(path, 'GET', signal);
+    if (res?.code === 200) {
       setUserInfo(res.data);
     }
     setIsLoading(false);
@@ -37,7 +36,15 @@ export default function OCUserPage(props) {
       ) : (
         <div className="oc-user-page">
           <h2>用戶資訊</h2>
-          <OCUserInfoCard userInfo={userInfo} />
+          <section>
+            <OCUserInfoCard
+              userInfo={userInfo}
+              readOnly={user.role !== 2}
+              resetUserInfo={() => {
+                getUserInfoData();
+              }}
+            />
+          </section>
         </div>
       )}
     </>

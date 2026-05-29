@@ -1,7 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { data, useNavigate } from 'react-router-dom';
 
-import { Table, Tag, Button, Tooltip, Input, Select } from 'antd';
+import {
+  Table,
+  Tag,
+  Button,
+  Tooltip,
+  Input,
+  Select,
+  Form,
+  Row,
+  Col,
+  Spin,
+} from 'antd';
 import {
   PlusCircleOutlined,
   SearchOutlined,
@@ -9,6 +20,7 @@ import {
   DeleteOutlined,
   StopOutlined,
   CheckCircleOutlined,
+  DownloadOutlined,
 } from '@ant-design/icons';
 
 import { apiUtil } from '../../../Util/WebApi';
@@ -21,6 +33,8 @@ import { ROLE_INDEX } from '../../../config/role';
 import * as XLSX from 'xlsx';
 import './index.css';
 import OCUserSearch from './UserSearch';
+import OCOverlay from '../../OCCommon/OCOverlay';
+import { Space } from 'antd';
 
 export default function OCUserDashboard(props) {
   const { user } = useAuth();
@@ -30,13 +44,18 @@ export default function OCUserDashboard(props) {
   const [isUserAdding, setIsUserAdding] = useState(false);
   const [isUserBatchAdding, setIsUserBatchAdding] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(false);
 
   useEffect(() => {
     if (user.role !== 2) {
       alert('您沒有權限訪問此頁面，即將返回首頁');
       navigator('/dashboard');
     }
-    getUserData();
+    const controller = new AbortController();
+    getUserData(null, controller.signal);
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   const columns_user_action = [
@@ -159,14 +178,13 @@ export default function OCUserDashboard(props) {
     },
   ];
 
-  const getUserData = async (filter) => {
+  const getUserData = async (filter, signal = null) => {
     setIsLoading(true);
     const path = '/user';
-    const res = await apiUtil(path, 'GET', filter);
-
-    if (res.code === 200) {
+    const res = await apiUtil(path, 'GET', signal, filter);
+    if (res?.isSystemError) return;
+    if (res?.code === 200) {
       const userList = res.data;
-      console.log(res.data, 'getUserData');
       const curr_user_idx = userList.findIndex((u) => u.id == user.id);
       if (curr_user_idx != -1) {
         const curr_user = userList.splice(curr_user_idx, 1)[0];
@@ -178,23 +196,24 @@ export default function OCUserDashboard(props) {
   };
   const changeUserData = async (userId, patch) => {
     const path = `/user/${userId}`;
-    const res = await apiUtil(path, 'PATCH', patch);
-    if (res.code === 200) {
-      console.log(res.data, 'changeUser');
+    const res = await apiUtil(path, 'PATCH', null, patch);
+    if (res?.code === 200) {
       alert('用戶更新成功');
       getUserData();
     }
   };
+
   const deleteUserData = async (userId) => {
     const path = `/user/${userId}`;
     const res = await apiUtil(path, 'DELETE');
-    if (res.code === 200) {
-      console.log(res.data, 'User');
+
+    if (res?.code === 200) {
       alert('用戶刪除成功');
       getUserData();
+    } else {
+      alert('用戶刪除失敗');
     }
   };
-
   const handleAddUser = () => {
     setIsUserAdding(true);
   };
@@ -221,9 +240,11 @@ export default function OCUserDashboard(props) {
           } else {
             const content = (
               <>
-                <span style={{ color: 'red' }}>
-                  警告! 停用用戶後，該用戶將無法登入系統。
-                </span>
+                <span style={{ color: 'red' }}>警告!!即將刪除這門課程!</span>
+                <p>
+                  提示您:
+                  如果刪除課程，此課程的全部資料，包含學生選課，學生出席紀錄也會一併銷毀
+                </p>
                 請問確定要停用用戶嗎?
               </>
             );
@@ -234,7 +255,6 @@ export default function OCUserDashboard(props) {
                 const user_patch = {
                   status: 1,
                 };
-                console.log('停用用戶', user_patch);
                 changeUserData(user.id, user_patch);
               },
               () => {},
@@ -255,7 +275,10 @@ export default function OCUserDashboard(props) {
           );
           showConfirm(
             content,
-            () => {},
+            () => {
+              const userId = user.id;
+              deleteUserData(userId);
+            },
             () => {},
           );
           break;
@@ -267,122 +290,271 @@ export default function OCUserDashboard(props) {
     getUserData(filter);
   };
   return (
-    <div className="oc-user-dashboard">
-      <div className="oc-page-title">
-        <h3>用戶管理</h3>
-        <hr />
-      </div>
-      <div className="oc-user-controller">
-        <Button type="primary" onClick={handleAddUser}>
-          <PlusCircleOutlined />
-          新增用戶
-        </Button>
-        <Button
-          type="primary"
-          variant="solid"
-          color="purple"
-          onClick={handleAddUserBatch}
-        >
-          <PlusCircleOutlined />
-          批量新增用戶
-        </Button>
-      </div>
-      <OCUserSearch changeUserFilter={changeUserFilter} />
+    <>
       {isLoading ? (
         <OCLoading />
       ) : (
-        <Table
-          className="oc-user-table"
-          dataSource={userData}
-          columns={columns_user_action}
-          scroll={{ x: '80%' }}
-          expandable={{
-            expandedRowRender: (record) => (
-              <>
-                <p style={{ margin: 0 }}>用戶id: {record.id}</p>
-                <p style={{ margin: 0 }}>E mail: {record.email}</p>
-              </>
-            ),
-          }}
-          rowKey={(record) => record.id}
-          rowHoverable={false}
-          rowClassName={(record, index) =>
-            record.id === user.id ? 'curr-user-row' : null
-          }
-        ></Table>
-      )}
+        <div className="oc-user-dashboard">
+          <div className="oc-page-title">
+            <h2>用戶管理</h2>
+            <hr />
+          </div>
+          <div className="oc-user-controller">
+            <Button type="primary" onClick={handleAddUser}>
+              <PlusCircleOutlined />
+              新增用戶
+            </Button>
+            <Button
+              type="primary"
+              variant="solid"
+              color="purple"
+              onClick={handleAddUserBatch}
+            >
+              <PlusCircleOutlined />
+              批量新增用戶
+            </Button>
+          </div>
+          <OCUserSearch changeUserFilter={changeUserFilter} />
+          <Table
+            className="oc-user-table"
+            dataSource={userData}
+            columns={columns_user_action}
+            scroll={{ x: '80%' }}
+            expandable={{
+              expandedRowRender: (record) => (
+                <>
+                  <p style={{ margin: 0 }}>用戶id: {record.id}</p>
+                  <p style={{ margin: 0 }}>E mail: {record.email}</p>
+                </>
+              ),
+            }}
+            rowKey={(record) => record.id}
+            rowHoverable={false}
+            rowClassName={(record, index) =>
+              record.id === user.id ? 'curr-user-row' : null
+            }
+          />
 
-      {isUserAdding ? (
-        <OCUserNewBlock closeBlock={() => setIsUserAdding(false)} />
-      ) : null}
-      {isUserBatchAdding ? (
-        <OCUserNewBatchBlock
-          closeBlock={() => setIsUserBatchAdding(false)}
-          resetUserData={getUserData}
-        />
-      ) : null}
-      {confirmElement}
-    </div>
+          {isUserAdding && (
+            <OCOverlay
+              toggle={() => {
+                setIsUserAdding(!isUserAdding);
+              }}
+            >
+              <OCUserNewBlock
+                closeBlock={() => setIsUserAdding(false)}
+                resetUserData={() => {
+                  setIsUserAdding(false);
+                  getUserData();
+                }}
+              />
+            </OCOverlay>
+          )}
+          {isUserBatchAdding && (
+            <OCOverlay
+              toggle={() => {
+                setIsUserBatchAdding(!isUserBatchAdding);
+              }}
+            >
+              <OCUserNewBatchBlock
+                closeBlock={() => setIsUserBatchAdding(false)}
+                resetUserData={() => {
+                  setIsUserBatchAdding(false);
+                  getUserData();
+                }}
+              />
+            </OCOverlay>
+          )}
+          {confirmElement}
+        </div>
+      )}
+    </>
   );
 }
 
 export function OCUserNewBlock(props) {
-  const { closeBlock, resetUserData } = props;
+  const { resetUserData } = props;
+  const [newUserForm] = Form.useForm();
+  const [isWaiting, setIsWaiting] = useState(false);
+
+  const defaultPassword = Form.useWatch('default-password', newUserForm);
+
+  const addNewUserData = async (data) => {
+    setIsWaiting(true);
+    const path = `/auth/register`;
+    const res = await apiUtil(path, 'POST', null, data);
+    if (res?.code === 200) {
+      alert('新增用戶成功');
+      resetUserData();
+    } else {
+      alert('新增用戶失敗');
+    }
+    setIsWaiting(false);
+  };
+
+  const handleSubmit = (data) => {
+    addNewUserData(data);
+  };
   return (
     <div className="oc-user-new-block">
-      <form className="oc-user-new-form">
+      <Form
+        className="oc-user-new-form"
+        form={newUserForm}
+        onFinish={handleSubmit}
+        style={{ transition: 'all 0.5s ease-in-out' }}
+      >
         <h2>新增用戶</h2>
-        <div className="oc-user-new-form-item">
-          <label htmlFor="name">用戶名</label>
-          <input type="text" id="name" name="name" placeholder="請輸入用戶名" />
-        </div>
-        <div className="oc-user-new-form-item">
-          <label htmlFor="default-password">默認密碼形式</label>
-          <Select
-            id="default-password"
-            name="default-password"
-            style={{ width: 120 }}
-            options={[
-              { value: '0', label: '自動' },
-              { value: '1', label: '手動' },
-            ]}
-          />
-        </div>
-        <div className="oc-user-new-form-item">
-          <label htmlFor="email">電子郵件</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="請輸入電子郵件"
-          />
-        </div>
-        <div className="oc-user-new-form-item">
-          <label htmlFor="role">身分</label>
-          <Select
-            id="role"
-            name="role"
-            style={{ width: 120 }}
-            options={[
-              { value: '0', label: '學生' },
-              { value: '1', label: '教師' },
-              { value: '2', label: '管理員' },
-            ]}
-          />
-        </div>
-        <Button type="primary">確認新增</Button>
-        <button className="close-btn" onClick={closeBlock}>
-          X
-        </button>
-      </form>
+        <Row>
+          <Col span={24}>
+            <Form.Item
+              className="oc-user-new-form-item"
+              name="name"
+              label="用戶姓名"
+              rules={[{ required: true }]}
+            >
+              <Input type="text" placeholder="請輸入用戶姓名" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item
+              className="oc-user-new-form-item"
+              name="email"
+              label="電子郵件"
+              rules={[{ required: true }]}
+            >
+              <Input type="email" placeholder="請輸入電子郵件" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={1}>
+          <Col span={12}>
+            <Form.Item
+              className="oc-user-new-form-item"
+              name="sex"
+              label="性別"
+              initialValue={0}
+            >
+              <Select
+                style={{ width: '120px' }}
+                options={[
+                  { value: 0, label: '未知/其他' },
+                  { value: 1, label: '男性' },
+                  { value: 2, label: '女性' },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              className="oc-user-new-form-item"
+              name="role"
+              label="身分"
+              initialValue={0}
+            >
+              <Select
+                style={{ width: '120px' }}
+                options={[
+                  { value: 0, label: '學生' },
+                  { value: 1, label: '教師' },
+                  { value: 2, label: '管理員' },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={12}>
+            <Form.Item
+              className="oc-user-new-form-item"
+              name="default-password"
+              label="默認密碼形式"
+              initialValue={true}
+            >
+              <Select
+                style={{ width: '120px' }}
+                options={[
+                  { value: true, label: '自動' },
+                  { value: false, label: '手動' },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              className="oc-user-new-form-item"
+              name="password"
+              label="密碼"
+              rules={[{ required: !defaultPassword }]}
+            >
+              <Input
+                type="password"
+                placeholder="請輸入密碼"
+                disabled={defaultPassword}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={4}>
+          <Col span={12}>
+            <Form.Item
+              className="oc-user-new-form-item"
+              name="school"
+              label="所屬學校"
+            >
+              <Input type="text" placeholder="請輸入所屬學校" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              className="oc-user-new-form-item"
+              name="department"
+              label="所屬學系"
+            >
+              <Input type="text" placeholder="請輸入所屬學系" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={4}>
+          <Col span={12}>
+            <Form.Item
+              className="oc-user-new-form-item"
+              name="no"
+              label="學號/辨識碼"
+            >
+              <Input type="text" placeholder="請輸入學號/辨識碼" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              className="oc-user-new-form-item"
+              name="placement"
+              label="職位"
+            >
+              <Input type="text" placeholder="請輸入職位" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Button
+          type="primary"
+          htmlType="submit"
+          disabled={isWaiting}
+          loading={isWaiting}
+        >
+          確認新增
+        </Button>
+      </Form>
     </div>
   );
 }
 
 export function OCUserNewBatchBlock(props) {
-  const { closeBlock, resetUserData } = props;
+  const { resetUserData } = props;
   const [newUserData, setNewUserData] = useState([]);
   const [newUserFile, setNewUserFile] = useState(null);
+  const [isWaiting, setIsWaiting] = useState(false);
 
   const columns_user = [
     {
@@ -434,6 +606,35 @@ export function OCUserNewBatchBlock(props) {
       },
     },
   ];
+
+  const downloadNewUserTemplate = () => {
+    const workbook = XLSX.utils.book_new();
+    const headers = [
+      [
+        '姓名',
+        '電子郵件',
+        '身分',
+        '性別',
+        '學號/辨識碼',
+        '所屬學校',
+        '所屬學系',
+      ],
+      [
+        '必填 例: 王曉明',
+        '必填 例: youname@gmail.com',
+        '| 學生: 0 | 教師: 1 | 管理員: 2 |，預設為0(學生)',
+        '| 未知/其他: 0 | 男: 1 | 女: 2 |，預設為0(未知/其他)',
+        '例: 1160123456',
+        '例: 台灣大學',
+        '例: 應用外語學系',
+      ],
+    ];
+    const worksheet = XLSX.utils.aoa_to_sheet(headers);
+    const fileName = '用戶批量註冊範本.xlsx';
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, '批次註冊填寫清單');
+    XLSX.writeFile(workbook, fileName);
+  };
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -444,22 +645,51 @@ export function OCUserNewBatchBlock(props) {
 
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-      jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-      console.log('Excel 內容：', jsonData);
-      jsonData = jsonData.map((item) => {
-        return {
-          key: item['__EMPTY'],
-          school: item['school'].trim(),
-          department: item['department'].trim(),
-          no: String(item['no']).trim(),
-          sex: item['sex'],
-          name: item['name'].trim(),
-          email: item['email'].trim(),
-          role: item['role'],
-        };
+      const rawData = XLSX.utils.sheet_to_json(worksheet, {
+        header: ['name', 'email', 'role', 'sex', 'no', 'school', 'department'],
+        range: 2,
       });
-      setNewUserData(jsonData);
+      console.log('Excel 內容：', rawData);
+
+      // jsonData = XLSX.utils.sheet_to_json(worksheet);
+      // jsonData = jsonData.map((item) => {
+      //   return {
+      //     key: item['__EMPTY'],
+      //     name: String(item['姓名']).trim(),
+      //     email: String(item['電子郵件']).trim(),
+      //     role: item['身分'] ? Number(item['身分']) : 0,
+      //     sex: item['性別'] ? String(item['性別']).trim() : 0,
+      //     no: item['學號/辨識碼'] ? String(item['學號/辨識碼']).trim() : null,
+      //     school: item['所屬學校'] ? String(item['所屬學校']).trim() : null,
+      //     department: item['所屬學系'] ? String(item['所屬學系']).trim() : null,
+      //   };
+      // });
+      // setNewUserData(jsonData);
+      // };
+
+      const cleanedData = rawData
+        .filter((item) => item.name && item.email) // 關鍵防呆：過濾掉完全空白的橫列
+        .map((item) => {
+          // 處理身分：如果使用者沒填，或是填了非數字，給予預設值 0
+          let parsedRole = parseInt(item.role, 10);
+          if (isNaN(parsedRole)) parsedRole = 0;
+
+          // 處理性別：如果使用者沒填，或是填了非數字，給予預設值 0
+          let parsedSex = parseInt(item.sex, 10);
+          if (isNaN(parsedSex)) parsedSex = 0;
+
+          return {
+            name: String(item.name).trim(),
+            email: String(item.email).trim(),
+            role: parsedRole,
+            sex: parsedSex,
+            no: item.no ? String(item.no).trim() : null,
+            school: item.school ? String(item.school).trim() : null,
+            department: item.department ? String(item.department).trim() : null,
+          };
+        });
+      setNewUserData(cleanedData);
     };
     if (file) {
       reader.readAsArrayBuffer(file);
@@ -468,58 +698,71 @@ export function OCUserNewBatchBlock(props) {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('提交批量新增用戶', newUserData);
     if (newUserData.length === 0) {
       return alert('請先上傳檔案');
     }
-    const path = `/auth/registerBatch`;
-    const res = await apiUtil(path, 'POST', newUserData);
-    if (res.code === 200) {
+    setIsWaiting(true);
+    const path = `/auth/register/batch`;
+    const res = await apiUtil(path, 'POST', null, newUserData);
+    if (res?.isSystemError) return;
+    if (res?.code === 200) {
       alert('批量新增用戶成功');
       closeBlock();
       resetUserData();
+    } else {
+      // message;
     }
+    setIsWaiting(false);
   };
   return (
     <div className="oc-user-new-batch-block">
-      <div className="oc-user-new-batch-form">
-        <form>
-          <input
-            type="file"
-            name="excelFile"
-            accept=".xlsx,.xls"
-            onChange={handleFileChange}
-          ></input>
-          <Button onClick={handleSubmit}>上傳</Button>
-        </form>
-        <Table
-          className="oc-user-new-table"
-          dataSource={newUserData}
-          columns={columns_user}
-          scroll={{ x: '100%' }}
-          pagination={{ pageSize: 5 }}
-          rowKey={(record) => record.id}
-        ></Table>
-      </div>
-      <button className="close-btn" onClick={closeBlock}>
-        X
-      </button>
+      <Button icon={<DownloadOutlined />} onClick={downloadNewUserTemplate}>
+        下載範本
+      </Button>
+      <Spin
+        spinning={isWaiting}
+        delay={500}
+        description="批量註冊需花費較長時間，請耐心等待..."
+      >
+        <div className="oc-user-new-batch-form">
+          <form>
+            <input
+              type="file"
+              name="excelFile"
+              accept=".xlsx,.xls"
+              onChange={handleFileChange}
+            ></input>
+            <Button
+              onClick={handleSubmit}
+              disabled={isWaiting}
+              loading={isWaiting}
+            >
+              上傳
+            </Button>
+          </form>
+          <Table
+            className="oc-user-new-table"
+            dataSource={newUserData}
+            columns={columns_user}
+            scroll={{ x: '100%' }}
+            rowSelection={{
+              type: 'checkbox',
+              onChange: (selectedRowKeys, selectedRows) => {
+                console.log(
+                  `selectedRowKeys: ${selectedRowKeys}`,
+                  'selectedRows: ',
+                  selectedRows,
+                );
+              },
+              getCheckboxProps: (record) => ({
+                name: record.name,
+              }),
+            }}
+            pagination={{ pageSize: 5 }}
+            rowKey={(record) => record.email}
+          ></Table>
+        </div>
+      </Spin>
     </div>
   );
-}
-
-{
-  /* <div className="oc-user-new-batch-block" style={{"display": isUserBatchAdding?"flex":"none"}}>            
-        <form>
-          <input type="file" name="excelFile" accept=".xlsx,.xls" onChange={handleFileChange}></input>
-          <Button onClick={handleAddUserBatchSubmit}>上傳</Button>
-        </form>   
-        <Table  className='oc-user-new-table'
-                dataSource={userNewData} 
-                columns={columns_user} 
-                scroll={{ x: "80%"}}
-                pagination={{pageSize: 5}}
-                rowKey={record => record.id}></Table>    
-        <button className="close-btn" onClick={closeBlock}>X</button>
-      </div> */
 }

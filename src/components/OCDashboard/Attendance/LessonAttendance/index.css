@@ -16,7 +16,8 @@
 .oc-lesson-attendance .oc-lesson-info {
   border-radius: 5px;
   background-color: azure;
-  padding: 0rem;
+  padding: 1rem 0;
+
   width: 100%;
 }
 .oc-lesson-attendance-table {

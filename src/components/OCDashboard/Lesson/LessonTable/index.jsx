@@ -45,7 +45,7 @@ export default function OCLessonTable(props) {
     {
       key: 'attendanceStatus',
       title: '已點名?',
-      dataIndex: 'attendanceStatus',
+      dataIndex: 'rollcallStatus',
       render: (item) => {
         return (
           <Tag color={ATTENDANCE_MAP[item].color}>
@@ -83,7 +83,8 @@ export default function OCLessonTable(props) {
   const deleteLessonData = async (lesson) => {
     const path = `/lesson/${lesson.id}`;
     const res = await apiUtil(path, 'DELETE');
-    if (res.code === 200) {
+    if (res?.isSystemError) return;
+    if (res?.code === 200) {
       alert('刪除成功');
       resetLesson();
     } else {

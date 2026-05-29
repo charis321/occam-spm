@@ -2,12 +2,15 @@
   display: flex;
   align-items: center;
   width: 100%;
+  min-height: 50px;
   /* justify-content: space-between; */
 }
+
 .oc-user-menu {
   display: flex;
   position: relative;
-  margin-right: 1rem;
+  justify-content: center;
+  align-items: center;
   margin-left: auto;
 }
 .oc-user-menu-dropdown {
@@ -15,6 +18,13 @@
   cursor: pointer;
   border: none;
   background: transparent;
+}
+.oc-user-menu-dropdown .oc-avatar {
+  transition: transform 0.1s ease-in-out;
+}
+.oc-user-menu-dropdown .oc-avatar:hover,
+.oc-user-menu-dropdown .oc-avatar:active {
+  transform: scale(1.1);
 }
 
 .oc-breadcrumb {
@@ -27,5 +37,8 @@
 @media screen and (min-width: 768px) {
   .oc-breadcrumb {
     display: flex;
+  }
+  .oc-user-menu {
+    margin-right: 1rem;
   }
 }

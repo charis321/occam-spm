@@ -1,10 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Button, Input, Alert } from 'antd';
+import { Button, Input, Alert, Row, Col, Card, Empty, Space, Tag } from 'antd';
+import {
+  CheckCircleOutlined,
+  SyncOutlined,
+  BookOutlined,
+  ControlOutlined,
+  QrcodeOutlined,
+  FileDoneOutlined,
+} from '@ant-design/icons';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '@utils/AuthContext';
 import { apiUtil } from '@utils/WebApi';
 import { ATTENDANCE_STATUS_MAP } from '@config/attendance';
+import { PERIOD_TIME } from '@config/time';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';
 import './index.css';
@@ -17,29 +26,59 @@ export default function OCLessonStudentPage(props) {
   const codeFromUrl = searchParams.get('code');
 
   const [lessonData, setLessonData] = useState();
+  const [rollcallData, setRollcallData] = useState();
   const [attendanceData, setAttendanceData] = useState();
-  const [attendanceCode, setAttendanceCode] = useState(codeFromUrl || '');
-  const [isAttending, setIsAttending] = useState(attendingFromUrl || false);
+  const [attendanceResultDisplay, setAttendanceResultDisplay] = useState();
+
+  const [rollcallCode, setRollcallCode] = useState(codeFromUrl || '');
+
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
+  const [isAttending, setIsAttending] = useState(attendingFromUrl || false);
+
   const navigator = useNavigate();
 
   useEffect(() => {
-    getLessonWithAttendance();
-    console.log('從URL進入點名頁面，帶入點名碼', codeFromUrl);
+    const controller = new AbortController();
+
+    init(controller.signal);
     // if (isAttending && codeFromUrl) {
     //   handleRollcall();
     // }
+    return () => {
+      controller.abort();
+    };
   }, []);
-
-  const getLessonWithAttendance = async () => {
+  const init = async (signal) => {
+    try {
+      setIsLoading(true);
+      await Promise.all([
+        getLessonWithAttendance(signal),
+        getRollcallData(signal),
+      ]);
+    } catch (error) {
+      alert('加載課堂頁面失敗', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const getRollcallData = async (signal) => {
+    const path = `/rollcall/${lessonId}`;
+    const res = await apiUtil(path, 'GET', signal);
+    if (res?.isSystemError) return;
+    if (res?.code === 200) {
+      setRollcallData(res.data);
+    } else {
+      alert('獲取課堂點名狀態失敗');
+    }
+  };
+  const getLessonWithAttendance = async (signal) => {
     setIsLoading(true);
     const path = `/lesson/${lessonId}/attendance/${user.id}`;
-    const res = await apiUtil(path, 'GET');
-    console.log('getLessonWithAttendance');
-    if (res.code === 200) {
-      console.log('getLessonWithAttendance', res.data);
+    const res = await apiUtil(path, 'GET', signal);
+    if (res?.isSystemError) return;
+    if (res?.code === 200) {
       setLessonData(res.data.lesson);
       setAttendanceData(res.data.attendance);
     } else {
@@ -56,128 +95,201 @@ export default function OCLessonStudentPage(props) {
   };
   const handleRollcall = () => {
     setMessage('');
-    if (!attendanceCode) {
+    if (!rollcallCode) {
       setMessage('請輸入點名碼');
       return;
     }
-    if (attendanceCode !== lessonData.attendanceCode) {
-      setMessage('點名碼錯誤');
-      return;
-    }
-    addNewAttendance();
+    verifyAttendanceData();
   };
-  const addNewAttendance = async () => {
+  const verifyAttendanceData = async () => {
     setIsWaiting(true);
-    const path = `/attendance`;
+    const path = `/attendance/verify`;
     const attendanceRequest = {
       studentId: user.id,
       lessonId: lessonId,
       status: 1,
+      code: rollcallCode,
     };
-    const res = await apiUtil(path, 'POST', attendanceRequest);
-    if (res.code === 200) {
-      alert('點名成功');
+    const res = await apiUtil(path, 'POST', null, attendanceRequest);
+    if (res?.isSystemError) return;
+    if (res?.code === 200) {
       getLessonWithAttendance();
     } else {
       alert('新增點名紀錄失敗');
     }
     setIsWaiting(false);
   };
-  // const vaildRollcall = async()=>{
-  //     const path = `/lesson/${lessonId}/rollcall`
-  //     const attendanceRequest = {
-  //         "attendance_status": 1,
-  //         "attendance_code": Math.random().toString(36).substring(2, 8).toUpperCase(),
-  //     }
-  //     const res = await apiUtil(path, "patch", attendanceRequest)
-  //     if(res.code===200){
-  //         console.log("openRollcall", res.data)
-  //         setLessonData(res.data)
-  //     } else {
-  //         alert("開啟點名失敗")
-  //     }
-  // }
   return (
-    <div className="oc-lesson-dashboard">
-      <section>
-        <div className="oc-lesson-info">
-          <h3>{lessonData?.courseName || '未知課程'}</h3>
-          <p>第{lessonData?.lessonIndex || '未知'}堂</p>
-          <p>上課日期: {dayjs(lessonData?.startTime).format('YYYY-MM-DD')}</p>
-          <p>
-            課堂時間:
-            {dayjs(lessonData?.startTime).format('A HH:mm')}~
-            {dayjs(lessonData?.endTime).format('A HH:mm')}
-          </p>
-        </div>
-        <div className="oc-lesson-attandance">
-          {/* <h3>點名狀況</h3> */}
-          {/* <div className='oc-lesson-check-attendance-time'>
-                        <p>目前時間: {new Date().toLocaleString()} {checkAttendanceTime() ? "在點名時間內" : "不在點名時間內"}</p>
-                    </div> */}
-          <div id="rollcall-status">
-            <h2>
-              {ATTENDANCE_STATUS_MAP[lessonData?.attendanceStatus]?.title ||
-                '未知狀態'}
-            </h2>
-          </div>
-          {attendanceData ? (
-            <div>
-              <h3>已完成點名</h3>
-              <p>
-                點名時間: {new Date(attendanceData?.timestamp).toLocaleString()}
+    <article className="oc-lesson-page">
+      <Row gutter={[24, 24]} style={{ width: '100%', margin: '1rem' }}>
+        <Col xs={24} md={10}>
+          <Space direction="vertical" size="large" style={{ width: '100%' }}>
+            <Card
+              title={
+                <span>
+                  <BookOutlined /> 課堂資訊
+                </span>
+              }
+              styles={{
+                body: { paddingTop: '0' },
+              }}
+            >
+              <h1 style={{ fontSize: '1.8rem', marginBottom: '12px' }}>
+                {lessonData?.courseName}
+              </h1>
+
+              <p style={{ color: '#666' }}>
+                <strong>課堂進度：</strong>第 {lessonData?.lessonIndex} 堂
               </p>
-            </div>
-          ) : (
-            <div>
+              <p style={{ color: '#666' }}>
+                <strong>課堂代碼：</strong>
+                {lessonData?.id}
+              </p>
+              <p style={{ color: '#666' }}>
+                <strong>上課時間：</strong>
+                {PERIOD_TIME(lessonData?.startTime, lessonData?.endTime)}
+              </p>
+              <Button
+                style={{ background: '#b7fafa' }}
+                onClick={() => {
+                  navigator('../../');
+                }}
+              >
+                回到課程
+              </Button>
+            </Card>
+            <Card
+              title={
+                <span>
+                  <ControlOutlined /> 點名操作面板
+                </span>
+              }
+            >
+              <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+                <p style={{ color: '#999', marginBottom: '4px' }}>
+                  目前系統時間: {new Date().toLocaleString()}
+                </p>
+                <Tag color={checkAttendanceTime() ? 'success' : 'warning'}>
+                  {checkAttendanceTime() ? '在上課時間內' : '不在上課時間內'}
+                </Tag>
+
+                <h2
+                  style={{
+                    marginTop: '16px',
+                    color: rollcallData?.status === 1 ? '#52c41a' : '#ff4d4f',
+                  }}
+                >
+                  {ATTENDANCE_STATUS_MAP[
+                    rollcallData?.status ? rollcallData?.status : 0
+                  ]?.title || '未知狀態'}
+                </h2>
+              </div>
+
               <Button
                 type="primary"
+                block
+                size="large"
                 className="oc-start-attendance-btn"
                 onClick={() => setIsAttending(true)}
-                disabled={lessonData?.attendanceStatus !== 1}
+                danger={rollcallData?.status === 1}
+                disabled={attendanceData?.status !== 0}
               >
                 開始點名
               </Button>
-            </div>
-          )}
-        </div>
-        {isAttending && (
-          <div className="oc-lesson-attendance-block">
-            {attendanceData ? (
-              <div className="oc-lesson-attendance-block-body">
-                <h2>您已完成點名</h2>
-              </div>
-            ) : (
-              <div className="oc-lesson-attendance-block-body">
-                <h2>請輸入點名碼</h2>
-                {message && <Alert type="error" message={message} showIcon />}
-                <div className="code-input">
-                  <Input
-                    placeholder="請輸入點名碼"
-                    value={attendanceCode}
-                    onChange={(e) => setAttendanceCode(e.target.value)}
-                  />
-                </div>
+            </Card>
+          </Space>
+        </Col>
 
-                <Button
-                  type="primary"
-                  onClick={handleRollcall}
-                  disabled={isWaiting}
-                  loading={isWaiting}
-                >
-                  送出點名碼
-                </Button>
-              </div>
-            )}
-            <Button className="close-btn" onClick={() => setIsAttending(false)}>
-              X
-            </Button>
-          </div>
-        )}
-      </section>
-    </div>
+        <Col xs={24} md={14}>
+          <Card
+            style={{
+              // height: '90%',
+              display: 'flex',
+              flexDirection: 'column',
+              // justifyContent: 'center',
+              minWidth: 300,
+            }}
+            title={
+              <span>
+                <QrcodeOutlined /> 學生端簽到入口
+              </span>
+            }
+            extra={
+              <Button
+                type="primary"
+                ghost
+                onClick={() => navigator(`attendance`)}
+                icon={<FileDoneOutlined />}
+                aria-label="查看詳細點名紀錄"
+              >
+                檢視點名紀錄
+              </Button>
+            }
+          >
+            <div style={{ textAlign: 'center', padding: '40px 0' }}>
+              {isAttending ? (
+                <Space direction="vertical" size="large" align="center">
+                  {attendanceData?.status === 1 ? (
+                    <div className="oc-lesson-attendance-block-body success">
+                      <CheckCircleOutlined
+                        style={{ fontSize: '3rem', color: '#82be6c' }}
+                      />
+                      <h2>您已完成點名</h2>
+                    </div>
+                  ) : (
+                    <div className="oc-lesson-attendance-block-body">
+                      <Space direction="vertical" size="large" align="center">
+                        {/* <OCRollcallDisplay /> */}
+                        <h2>請輸入點名碼</h2>
+                        {message && (
+                          <Alert type="error" message={message} showIcon />
+                        )}
+                        <div className="code-input">
+                          <Input.OTP
+                            length={6}
+                            placeholder="請輸入點名碼"
+                            value={rollcallCode}
+                            onChange={(value) => setRollcallCode(value)}
+                          />
+                        </div>
+                        <Button
+                          type="primary"
+                          onClick={handleRollcall}
+                          disabled={isWaiting}
+                          loading={isWaiting}
+                        >
+                          送出點名碼
+                        </Button>
+                      </Space>
+                    </div>
+                  )}
+                </Space>
+              ) : attendanceData?.status === 0 ? (
+                <div>還沒有點名!!</div>
+              ) : (
+                <div>還沒有點名!!</div>
+              )}
+            </div>
+          </Card>
+        </Col>
+      </Row>
+    </article>
   );
 }
+// export const OCRollcallDisplay = (props) => {
+//   const { status } = props;
+
+//   const display_start = <></>;
+
+//   const displayWaitng = (
+//     <span>
+//       <SyncOutlined />
+//     </span>
+//   );
+//   return(
+//     displayMap[status]
+//   )
+// };
 // export default function OCAttendanceBlock(props){
 //   const [isAttending, setIsAttending] = useState(false);
 //   const [attendanceCode, setAttendanceCode] = useState('');
@@ -211,6 +323,17 @@ export default function OCLessonStudentPage(props) {
 
 //     return(
 //       <div>
+//         {attendanceData?.status === 1 ? (
+//               <div className="oc-lesson-attendance-block-body success">
+//                 <CheckCircleOutlined
+//                   style={{ fontSize: '3rem', color: '#97dc7e' }}
+//                 />
+//                 <h2>您已完成點名</h2>
+//               </div>
+//             ):
+
+//             }
+
 //       </div>
 //     )
 // }

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from 'antd';
-import { login } from '../../Util/WebApi';
+import { apiUtil, login } from '../../Util/WebApi';
 import { useAuth } from '../../Util/AuthContext';
 import './index.css';
+import { Avatar } from 'antd';
 
 export default function OCLogin() {
   const [email, setEmail] = useState('');
@@ -11,10 +12,16 @@ export default function OCLogin() {
   const [password, setPassword] = useState('');
   const [msg, setMsg] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
-  const { loginAuth } = useAuth();
+  const { user, loginAuth } = useAuth();
   const navigator = useNavigate();
 
-  useEffect(() => {}, [username, password]);
+  useEffect(() => {
+    // if (user?.id !== -1) {
+    //   alert('您已登入過，即將回到首頁!');
+    //   navigator('/');
+    //   return () => {};
+    // }
+  }, [username, password]);
 
   const handleChange = (e) => {
     switch (e.target.name) {
@@ -43,21 +50,23 @@ export default function OCLogin() {
     });
     setIsWaiting(false);
 
-    if (res.code === 200) {
+    if (res?.code === 200) {
       console.log('登入成功', res);
       loginAuth({
         user: {
           id: res.data.id,
           name: res.data.name,
           role: res.data.role,
+          sex: res.data.sex,
+          avatar: res.data.avatar,
         },
         token: res.data.token,
       });
-      alert('登入成功，將導向至上一頁');
-      navigator('/dashboard');
+      alert('登入成功，將導向至首頁');
+      navigator('/');
     } else {
       console.log('登入失敗', res);
-      if (res.code === 'ERR_NETWORK') {
+      if (res?.code === 'ERR_NETWORK') {
         setMsg('伺服器無回應，請稍後再試');
       } else {
         setMsg(res.msg || '登入失敗，請檢查帳號或密碼是否正確');
@@ -69,6 +78,7 @@ export default function OCLogin() {
     <div className="oc-login-page">
       <form className="oc-login">
         <div className="oc-login-title">
+          {/* <div className="oc-logo"></div> */}
           <h2>登入</h2>
         </div>
         <div className="oc-login-form">
@@ -109,10 +119,16 @@ export default function OCLogin() {
             {msg}
           </span>
         </div>
+        <div className="oc-login-info">
+          <h2>默認密碼為: 學號</h2>
+          <span style={{ color: 'red' }}>
+            注意: 在第一次登入後，盡快更改密碼
+          </span>
+        </div>
+        <span>
+          <Link to="/reset-password">忘記密碼?</Link>
+        </span>
       </form>
-      <p style={{ color: '#fff', textAlign: 'center', marginTop: '1rem' }}>
-        還沒註冊? <Link to="/register">點此前去註冊頁!</Link>
-      </p>
     </div>
   );
 }

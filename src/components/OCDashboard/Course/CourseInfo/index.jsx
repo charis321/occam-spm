@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FileSearchOutlined } from '@ant-design/icons';
+import { FileSearchOutlined, MessageOutlined } from '@ant-design/icons';
 import { useAuth } from '../../../../Util/AuthContext';
 import { apiUtil, handleErrer } from '../../../../Util/WebApi';
 import { Button, Form, Input, Select, Space, Row, Col } from 'antd';
@@ -10,19 +10,19 @@ import './index.css';
 
 import OCOverlay from '../../../OCCommon/OCOverlay';
 
-export default function OCCourseCard(props) {
+export default function OCCourseInfo(props) {
   const { courseData, readOnly, resetData } = props;
   const { user } = useAuth();
   const [updateCourseForm, setUpdateCourseForm] = useState();
   const [isEditing, setIsEditing] = useState(false);
-  const navigate = useNavigate();
+  const navigator = useNavigate();
 
   const deleteCourse = async () => {
     const path = `/course/${courseData.id}`;
     const res = await apiUtil(path, 'DELETE');
     if (res.code === 200) {
       alert('刪除成功，即將重回課程管理頁面');
-      navigate('/dashboard/course');
+      navigator('/dashboard/course');
     } else {
       alert('刪除失敗');
       console.log(res);
@@ -43,7 +43,7 @@ export default function OCCourseCard(props) {
     resetData();
   };
   return (
-    <div className="oc-course-card">
+    <div className="oc-course-info">
       {!!courseData && <OCCourseCardView courseData={courseData} />}
       {!readOnly && (
         <>
@@ -92,16 +92,30 @@ export default function OCCourseCard(props) {
 
 export function OCCourseCardView(props) {
   const { courseData } = props;
+  const navigator = useNavigate();
+
   return (
     <div className="oc-course-card-content">
       <h2>課程名: {courseData.name}</h2>
+      <hr />
       <ul>
         <li>課程編號:&emsp;{courseData.id}</li>
         <li>
           負責教師:&emsp;{courseData.teacherName}{' '}
-          <Link to={`/dashboard/user/${courseData.teacherId}`}>
-            <FileSearchOutlined />
-          </Link>
+          <Button
+            icon={<FileSearchOutlined />}
+            style={{ backgroundColor: '#74b9ff', color: '#f8f8f8' }}
+            shape="circle"
+            onClick={() => navigator(`/dashboard/user/${courseData.teacherId}`)}
+          />
+          <Button
+            icon={<MessageOutlined />}
+            shape="circle"
+            style={{ backgroundColor: '#55efc4', color: '#f8f8f8' }}
+            onClick={() =>
+              navigator(`/dashboard/message/new?to=${courseData.teacherId}`)
+            }
+          />
         </li>
         <li>開課學校:&emsp;{courseData.school}</li>
         <li>開課系所:&emsp;{courseData.department}</li>
@@ -113,8 +127,9 @@ export function OCCourseCardView(props) {
             courseData.scheduleEndTime,
           )}
         </li>
-        <li>授課教室:&emsp;{courseData.classroom}</li>
-        <li>應到人數:&emsp;{courseData.studentCount}人</li>
+        <li>上課教室:&emsp;{courseData.classroom}</li>
+        <li>修課人數:&emsp;{courseData.studentCount}</li>
+        <li>總課堂數:&emsp;{courseData.lessonCount}</li>
         <li>課程簡介:&emsp;{courseData.info}</li>
       </ul>
     </div>

@@ -10,12 +10,5 @@ import './index.css';
 export default function OCCourseDashboard(props) {
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  return (
-    <div className="oc-course-dashboard">
-      <h2>課程管理</h2>
-      <hr />
-      {user.role == 1 ? <TeacherView /> : <StudentView />}
-    </div>
-  );
+  return <>{user.role == 1 ? <TeacherView /> : <StudentView />}</>;
 }

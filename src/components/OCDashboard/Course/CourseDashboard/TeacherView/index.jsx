@@ -10,6 +10,7 @@ import { useAuth } from '@utils/AuthContext';
 import { WEEKDAY } from '@config/time';
 import './index.css';
 import OCCourseCardGroup from '../../CourseCard';
+import OCCourseSearch from '../../CourseSearch';
 
 export default function OCCourseDashboardTeacherView(props) {
   const { user } = useAuth();
@@ -18,7 +19,11 @@ export default function OCCourseDashboardTeacherView(props) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getCourseList();
+    const controller = new AbortController();
+    getCourseList(null, controller.signal);
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   const columns = [
@@ -87,11 +92,16 @@ export default function OCCourseDashboardTeacherView(props) {
       },
     },
   ];
-  const getCourseList = async () => {
+  const getCourseList = async (filter = null, signal = null) => {
     setIsLoading(true);
-    const res = await apiUtil(`/teacher/${user.id}/course`, 'get');
-
-    if (res.code === 200) {
+    const res = await apiUtil(
+      `/teacher/${user.id}/course`,
+      'get',
+      signal,
+      filter,
+    );
+    if (res?.isSystemError) return;
+    if (res?.code === 200) {
       const courseData = res.data.map((item) => {
         return {
           ...item,
@@ -111,62 +121,30 @@ export default function OCCourseDashboardTeacherView(props) {
   const handleAddCourse = () => {
     navigate(`/dashboard/course/new`);
   };
+  const changeUserFilter = (filter) => {
+    getCourseList(filter, null);
+  };
 
   return (
     <>
       {isLoading ? (
         <OCLoading />
       ) : (
-        <>
-          <div className="oc-course-controller">
-            <Button type="primary" onClick={handleAddCourse}>
-              <PlusCircleOutlined />
-              新增課程
-            </Button>
-          </div>
-          {/* <div className="oc-course-search">
-            <label>課程名:</label>
-            <Input
-              type="text"
-              placeholder="輸入課程名"
-              style={{ width: 120 }}
-            />
-            <label>開課學校:</label>
-            <Input
-              type="text"
-              placeholder="輸入開課學校"
-              style={{ width: 120 }}
-            />
-            <label>開課單位:</label>
-            <Input
-              type="text"
-              placeholder="輸入開課單位"
-              style={{ width: 120 }}
-            />
-            <Select
-              defaultValue="已停用?"
-              style={{ width: 120 }}
-              options={[
-                { value: 0, label: '是' },
-                { value: 1, label: '否' },
-                { value: 2, label: '全部' },
-              ]}
-            />
-
-            <Button type="primary" icon={<SearchOutlined />}>
-              查詢
-            </Button>
-          </div> */}
-          {/* <Table
-            className="oc-course-teacher-table"
-            dataSource={courseData}
-            columns={columns}
-            scroll={{ x: '80%' }}
-            pagination={{ pageSize: 5 }}
-            rowKey={(record) => record.id}
-          ></Table> */}
-          <OCCourseCardGroup courseData={courseData} />
-        </>
+        <div className="oc-course-dashboard">
+          <h2>我的課程</h2>
+          <section>
+            <div className="oc-course-controller">
+              <Button type="primary" onClick={handleAddCourse}>
+                <PlusCircleOutlined />
+                新增課程
+              </Button>
+            </div>
+          </section>
+          <section>
+            <OCCourseSearch changeCourseFilter={changeUserFilter} />
+            <OCCourseCardGroup courseData={courseData} />
+          </section>
+        </div>
       )}
     </>
   );

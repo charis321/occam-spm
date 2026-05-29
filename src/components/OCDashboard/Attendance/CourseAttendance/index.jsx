@@ -5,59 +5,71 @@ import { apiUtil } from '@utils/WebApi';
 import { PERIOD_TIME } from '@config/time.js';
 import { ATTENDANCE_MAP } from '@config/attendance.js';
 import { Button, Flex, Table } from 'antd';
+import OCLoading from '@components/OCCommon/OCLoading';
 
 import './index.css';
 export default function OCCourseAttendance(props) {
   const { courseId } = useParams();
   const [attendanceData, setAttendanceData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [displayMode, setDisplayMode] = useState('lesson');
 
   useEffect(() => {
-    getAttendanceData();
+    const controller = new AbortController();
+    getAttendanceData(controller.signal);
+    return () => {
+      controller.abort;
+    };
   }, [displayMode]);
-  const getAttendanceData = async () => {
-    setLoading(true);
+
+  const getAttendanceData = async (signal) => {
+    setIsLoading(true);
     const path = `/course/${courseId}/attendance/stats/${displayMode}`;
-    const res = await apiUtil(path, 'GET');
-    if (res.code === 200) {
+    const res = await apiUtil(path, 'GET', signal);
+    if (res?.code === 200) {
       setAttendanceData(res.data);
     } else {
       alert('無法取得課程點名資料');
     }
-    setLoading(false);
+    setIsLoading(false);
   };
 
   return (
-    <div className="oc-course-attendance">
-      <h2>出席表</h2>
-      <section>
-        <div className="flex-row">
-          <Button
-            onClick={() => {
-              setDisplayMode('lesson');
-            }}
-          >
-            依課堂查看
-          </Button>
-          <Button
-            onClick={() => {
-              setDisplayMode('student');
-            }}
-          >
-            依學生查看
-          </Button>
+    <>
+      {isLoading ? (
+        <OCLoading />
+      ) : (
+        <div className="oc-course-attendance">
+          <h2>出席表</h2>
+          <section>
+            <div className="flex-row">
+              <Button
+                onClick={() => {
+                  setDisplayMode('lesson');
+                }}
+              >
+                依課堂查看
+              </Button>
+              <Button
+                onClick={() => {
+                  setDisplayMode('student');
+                }}
+              >
+                依學生查看
+              </Button>
+            </div>
+          </section>
+          {/* <OCCourseAttendanceTable attendanceData={attendanceData} /> */}
+          <section>
+            {displayMode === 'lesson' ? (
+              <LessonAttendanceStatsTable attendanceData={attendanceData} />
+            ) : (
+              <StudentAttendanceStatsTable attendanceData={attendanceData} />
+            )}
+          </section>
         </div>
-      </section>
-      {/* <OCCourseAttendanceTable attendanceData={attendanceData} /> */}
-      <section>
-        {displayMode === 'lesson' ? (
-          <LessonAttendanceStatsTable attendanceData={attendanceData} />
-        ) : (
-          <StudentAttendanceStatsTable attendanceData={attendanceData} />
-        )}
-      </section>
-    </div>
+      )}
+    </>
   );
 }
 export function LessonAttendanceStatsList(props) {
@@ -146,7 +158,7 @@ export function LessonAttendanceStatsTable(props) {
     },
     {
       title: '已點名?',
-      dataIndex: 'lessonAttendanceStatus',
+      dataIndex: 'rollcallStatus',
       render: (value) => {
         return <p>{ATTENDANCE_MAP[value]?.title}</p>;
       },
@@ -208,7 +220,7 @@ export function LessonAttendanceStatsTable(props) {
       columns={coloumns}
       rowKey={(record) => record.key}
       rowClassName={(record, index) => {
-        return ATTENDANCE_MAP?.[record.lessonAttendanceStatus]?.class;
+        return ATTENDANCE_MAP?.[record.rollcallStatus]?.class;
       }}
       // showHeader={false}
     ></Table>
@@ -350,6 +362,13 @@ export function StudentAttendanceStatsTable(props) {
     <Table
       className="attendance-stats-table"
       dataSource={attendanceData}
+      pagination={{
+        pageSize: 10,
+        position: ['bottomCenter'],
+        pageSizeOptions: ['10', '20', '50'],
+        size: 'large',
+        showTotal: (total) => `共 ${total} 筆資料`,
+      }}
       columns={coloumns}
       rowKey={(record) => record.key}
       showHeader={false}

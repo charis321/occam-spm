@@ -1,27 +1,30 @@
-.oc-lesson-dashboard {
+.oc-lesson-page {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   width: 100%;
 }
-.oc-lesson-dashboard section {
+/* .oc-lesson-page section {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   margin: 1rem;
+  border-radius: 0.5rem;
   background-color: #eee;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   width: 90%;
 }
-/* .oc-lesson-info{
-    height: auto;
-    margin: 1rem;
-    padding: 1rem;
-    background-color: #fec252;
-    border-radius: 5px;
-    flex: 1;
-    text-align: start;
-} */
+.oc-lesson-info {
+  flex: 1;
+  margin: 1rem;
+  border-radius: 5px;
+  background-color: #fec252;
+  padding: 1rem;
+  height: auto;
+  text-align: start;
+}
 .oc-lesson-attendance-code {
   display: flex;
   flex-direction: row;
@@ -31,3 +34,9 @@
 .oc-lesson-attendance-code-text {
   font-size: 2rem;
 }
+
+@media screen and (min-width: 768px) {
+  .oc-lesson-page section {
+    flex-direction: row;
+  }
+} */

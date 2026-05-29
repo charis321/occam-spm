@@ -20,7 +20,7 @@
   border-radius: 1rem;
   background: linear-gradient(180deg, #f4f4f4 0%, #ffffff 100%);
   padding: 1rem;
-  width: 80%;
+  width: 90%;
 }
 .oc-user-pwd-change-form {
   display: flex;
@@ -35,8 +35,9 @@
   width: 90%;
   min-width: 250px;
 }
+
 @media screen and (min-width: 768px) {
-  .oc-user-pwd-change {
+  .oc-user-center-dashboard .oc-user-pwd-change {
     width: 60%;
   }
   .oc-user-pwd-change-form .form-item {

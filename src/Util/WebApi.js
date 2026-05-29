@@ -1,10 +1,11 @@
 import axios from 'axios';
-
-import { getAuthLocalToken } from './AuthUtils';
+import { message } from 'antd';
+import { getAuthLocalToken, clearAuthLocal } from './AuthUtils';
 
 const BASE_URL = import.meta.env.VITE_SERVER_HOST + '/api';
 
 export const login = async (userObj) => {
+  console.log('login: ', userObj);
   return axios
     .post(BASE_URL + '/auth/login', userObj)
     .then((response) => {
@@ -25,6 +26,17 @@ export const register = async (userObj) => {
       return error;
     });
 };
+export const resetPassword = async (email) => {
+  const body = { email: email };
+  return axios
+    .post(BASE_URL + '/auth/password/reset', body)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
 
 export const getUser = async () => {
   return axios
@@ -37,7 +49,13 @@ export const getUser = async () => {
     });
 };
 
-export const apiUtil = async (path, method, signal = null, data = null) => {
+export const apiUtil = async (
+  path,
+  method,
+  signal = null,
+  data = null,
+  upload = false,
+) => {
   if (method.toLowerCase() === 'get' && data) {
     const filteredData = Object.fromEntries(
       Object.entries(data).filter(
@@ -47,26 +65,71 @@ export const apiUtil = async (path, method, signal = null, data = null) => {
     const queryString = new URLSearchParams(filteredData).toString();
     path += queryString == '' ? '' : `?${queryString}`;
   }
+  console.log('request:', method.toUpperCase(), path, 'data:', data);
+
+  const sendMessage = (messageText) => {
+    message.destroy();
+    message.error(messageText);
+  };
 
   return axios({
     method,
     url: BASE_URL + path,
     headers: {
       Authorization: `Bearer ${getAuthLocalToken()}`,
-      'Content-Type': 'application/json',
+      'Content-Type': upload ? 'multipart/form-data' : 'application/json',
     },
     // timeout: 10000,
     signal: signal,
     data: method.toLowerCase() === 'get' ? null : data,
   })
     .then((response) => {
-      console.log('response', response.data);
+      console.log('response:', method.toUpperCase(), path, response.data);
       return response.data;
     })
     .catch((error) => {
-      if (axios.isCancel(error)) return new Promise(() => {});
-      const errorData = error.response?.data;
-      console.error('讀取失敗:', errorData?.msg || '連線伺服器失敗');
+      if (axios.isCancel(error)) {
+        return { isSystemError: true, reason: 'canceled' };
+      }
+      if (error.response) {
+        const status = error.response.status;
+        const backendMessage = error.response.data?.message || '伺服器發生錯誤';
+        const errorData = error.response?.data;
+        switch (status) {
+          case 401:
+            sendMessage(error.response.msg || '請先登入');
+            window.location.href = `#/login`;
+            break;
+          case 40101:
+            sendMessage(error.response.msg || '登入逾時，請重新登入');
+            clearAuthLocal();
+            window.location.href = `#/login`;
+            break;
+          case 40102:
+            sendMessage(error.response.msg || '無效的登入憑證，請重新登入');
+            clearAuthLocal();
+            window.location.href = `#/login`;
+            break;
+          case 403:
+            sendMessage('您沒有權限執行此操作');
+            break;
+          case 404:
+            sendMessage('找不到請求的資源');
+            break;
+          default:
+            sendMessage(`錯誤 (${status}): ${backendMessage}`);
+        }
+      } else if (error.request) {
+        if (error.code === 'ECONNABORTED') {
+          sendMessage('網路請求超時，請稍後再試');
+        } else {
+          sendMessage(
+            '無法連線至伺服器，請檢查網路連線或稍後再試',
+            '/error/500',
+          );
+        }
+      }
+      return { isSystemError: true, reason: 'system_failure' };
     });
 };
 

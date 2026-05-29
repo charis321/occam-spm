@@ -1,0 +1,24 @@
+.oc-message-new {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.oc-message-new section {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem;
+  width: 100%;
+}
+.oc-message-new-main {
+  border-radius: 0.5rem;
+  background: #f8f8f8;
+  padding: 1rem;
+  width: 90%;
+}
+@media screen and (min-width: 768px) {
+  .oc-message-new-main {
+    width: 60%;
+  }
+}

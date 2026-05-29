@@ -90,7 +90,7 @@ export const PATH_MAP = {
     title: '用戶管理',
   },
   'user-center': {
-    title: '用戶中心',
+    title: '個人中心',
   },
   roles: {
     title: '角色管理',
@@ -109,5 +109,8 @@ export const PATH_MAP = {
   },
   calendar: {
     title: '行事曆',
+  },
+  message: {
+    title: '訊息中心',
   },
 };

@@ -4,6 +4,8 @@
   --oc-z-index-menu: 100;
 
   --oc-height-nav: 64px;
+
+  --oc-color-gray: #333;
 }
 
 #root {
@@ -50,4 +52,9 @@ ul,
 li {
   padding: 0;
   list-style: none;
+}
+
+p {
+  margin: 0;
+  padding: 0;
 }

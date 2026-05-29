@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Form, Alert } from 'antd';
 import { apiUtil } from '@utils/WebApi';
+import { useAuth } from '@utils/AuthContext';
+
 export default function OCUserPwdChange(props) {
-  const { user } = props;
+  const { user, logoutAuth } = useAuth;
   const navigator = useNavigate();
   const [newPasswordform, setNewPasswordform] = useState({
     oldPwd: '',
@@ -30,8 +32,9 @@ export default function OCUserPwdChange(props) {
       oldPwd: newPasswordform.oldPwd,
       newPwd: newPasswordform.newPwd,
     };
-    const res = await apiUtil(path, 'put', body);
-    if (res.code === 200) {
+    const res = await apiUtil(path, 'put', null, body);
+    if (res?.code === 200) {
+      logoutAuth();
       alert('密碼修改成功，請重新登入');
       navigator('/login');
     } else {
@@ -51,6 +54,10 @@ export default function OCUserPwdChange(props) {
     }
     if (pwdform.newPwd !== pwdform.confirmNewPwd) {
       setMessage('新密碼與確認新密碼不一致');
+      return false;
+    }
+    if (pwdform.newPwd == pwdform.oldPwd) {
+      setMessage('新密碼與舊密碼欄位不可填相同');
       return false;
     }
     return true;

@@ -1,16 +1,18 @@
-.oc-course-student{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.oc-course-student {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
-.oc-course-student-section{
-    display: flex;
+.oc-course-student-section {
+  display: flex;
 }
-.oc-new-student-block{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: 1rem;
+.oc-student-new-block {
+  display: flex;
+  flex-direction: column;
+  background-color: #eee;
+  padding: 1rem;
+  width: 80%;
+  height: 60%;
 }

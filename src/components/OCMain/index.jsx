@@ -8,10 +8,7 @@ export default function OCMain() {
   return (
     <div className="oc-main">
       <Outlet className="oc-outlet"></Outlet>
-      <FloatButton
-        icon={<UpCircleOutlined />}
-        onClick={() => console.log('onClick')}
-      />
+      <FloatButton.BackTop icon={<UpCircleOutlined />} />
       <OCFooter />
     </div>
   );

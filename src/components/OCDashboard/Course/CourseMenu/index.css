@@ -1,0 +1,53 @@
+.oc-course-menu {
+  display: flex;
+  flex: 1;
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
+  /* margin: 1rem; */
+  border-radius: 1rem;
+  background: linear-gradient(to left, #f8dbb8 0%, #eee 100%);
+  width: 100%;
+  /* height: calc(100% - 2rem); */
+  height: 100%;
+}
+.oc-course-menu-body {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+.oc-course-menu-item .ant-btn-primary:not(.ant-btn-dangerous) {
+  border-color: #5c7a67;
+  background-color: #5c7a67; /* 抹茶綠，適合和風 */
+  padding: 0.5rem;
+}
+
+.oc-course-menu-item {
+  transition: transform 0.2s ease;
+}
+.oc-course-menu.student .oc-course-menu-item {
+  width: calc((100% - 1.5rem) / 2);
+  height: calc((100% - 1.5rem) / 2);
+}
+.oc-course-menu.teacher .oc-course-menu-item {
+  width: calc((100% - 1.5rem) / 2);
+  height: calc((100% - 2rem) / 3);
+}
+
+.oc-course-menu-item:hover {
+  transform: translateY(-3px); /* 滑鼠滑過稍微浮起，增加互動感 */
+}
+/* 針對刪除課程的 danger 按鈕，可以使用更沈穩的朱紅色 */
+.oc-course-menu-item .ant-btn-dangerous {
+  border-color: #a64d4d;
+  background-color: #a64d4d;
+}
+.oc-course-menu ul li {
+  cursor: pointer;
+  border-radius: 0.5rem;
+  background-color: #f8f8f8;
+  width: calc((100% - 1.5rem) / 2);
+  height: calc((100% - 2rem) / 3);
+}

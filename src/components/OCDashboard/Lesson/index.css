@@ -1,0 +1,18 @@
+.oc-lesson-dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.oc-lesson-dashboard section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem;
+  background-color: #eee;
+  padding: 0.5rem;
+  width: 90%;
+}
+.oc-lesson-table {
+  width: 100%;
+}

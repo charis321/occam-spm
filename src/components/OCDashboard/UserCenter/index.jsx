@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button, Form } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 
 import { useAuth } from '@utils/AuthContext';
 import { apiUtil } from '@utils/WebApi';
@@ -14,16 +15,24 @@ export default function OCUserCenterDashboard(props) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
     if (user) {
-      setIsLoading(true);
-      getUserInfo();
+      getUserInfoData(controller.signal);
     }
+    return () => {
+      controller.abort();
+    };
   }, []);
 
-  const getUserInfo = async () => {
+  const getUserInfoData = async (signal = null) => {
+    setIsLoading(true);
     const path = `/user/${user.id}`;
-    const res = await apiUtil(path, 'GET');
-    if (res.code === 200) {
+    const res = await apiUtil(path, 'GET', signal);
+    if (res?.isSystemError) {
+      // setIsLoading(false);
+      return;
+    }
+    if (res?.code === 200) {
       setUserInfo(res.data);
     }
     setIsLoading(false);
@@ -36,10 +45,16 @@ export default function OCUserCenterDashboard(props) {
         <div className="oc-user-center-dashboard">
           <h2>個人中心</h2>
           <section>
-            <OCUserInfoCard userInfo={userInfo} />
+            <OCUserInfoCard
+              userInfo={userInfo}
+              readOnly={false}
+              resetUserInfo={() => {
+                getUserInfoData();
+              }}
+            />
           </section>
           <section>
-            <OCUserPwdChange user={user} />
+            <OCUserPwdChange />
           </section>
         </div>
       )}

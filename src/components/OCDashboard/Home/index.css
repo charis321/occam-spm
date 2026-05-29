@@ -1,0 +1,125 @@
+.oc-home-dashboard {
+  width: 100%;
+}
+/* .oc-home-dashboard section {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+.oc-remind {
+  border: 2px solid #f8f8f8;
+  border-radius: 0.5rem;
+  background: #eee;
+  width: 90%;
+  overflow-y: auto;
+}
+@media screen and (min-width: 768px) {
+  .oc-home-dashboard section {
+    flex-direction: row;
+  }
+  .oc-remind {
+    width: 40%;
+    height: 30vh;
+  }
+} */
+
+.oc-dashboard-container {
+  background-color: #abf5e2;
+  padding: 2rem;
+  /* min-height: 100vh; */
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 標題區塊 */
+.oc-dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.oc-dashboard-header h1 {
+  margin: 0;
+  color: #2d3436;
+  font-size: 1.75rem;
+}
+
+.oc-dashboard-header h1 span {
+  color: #0984e3; /* 品牌藍色 */
+}
+
+.oc-dashboard-header p {
+  margin-top: 0.5rem;
+  color: #636e72;
+}
+
+/* 網格佈局：自動填滿，最小 300px */
+.oc-remind-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+/* 卡片外層容器 */
+.oc-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  animation: popup 1s backwards;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-left: 6px solid #dfe6e9; /* 預設邊框 */
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 1rem;
+}
+.oc-card-wrapper:nth-of-type(1) {
+  animation-delay: 0;
+}
+.oc-card-wrapper:nth-of-type(2) {
+  animation-delay: 0.2s;
+}
+.oc-card-wrapper:nth-of-type(3) {
+  animation-delay: 0.4s;
+}
+
+/* 懸停效果 */
+.oc-card-wrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 根據重要程度區分顏色 */
+.oc-card-wrapper.urgent {
+  border-left-color: #ff7675; /* 紅色 - 點名 */
+}
+
+.oc-card-wrapper.info {
+  border-left-color: #74b9ff; /* 藍色 - 課程 */
+}
+
+.oc-card-wrapper.success {
+  border-left-color: #55efc4; /* 綠色 - 訊息 */
+}
+
+/* 如果內容高度不一，強制子組件撐滿 */
+.oc-card-wrapper > * {
+  flex: 1;
+}
+
+@keyframes popup {
+  0% {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-10px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}

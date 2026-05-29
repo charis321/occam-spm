@@ -1,53 +1,40 @@
-
-.oc-user-new-block{
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0; 
-    left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0,0, 0, 0.6);
-    z-index: var(--oc-z-index-screen-mark);
+.oc-user-new-block {
+  /* display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  justify-content: center;
+  align-items: center;
+  z-index: var(--oc-z-index-screen-mark);
+  background: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%; */
 }
-.oc-user-new-batch-block{
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0; 
-    left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0,0, 0, 0.6);
-    z-index: var(--oc-z-index-screen-mark);
+.oc-user-new-batch-block {
 }
-.oc-user-new-form{
-    width: 50vw;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #fff;
-    position: relative;
+.oc-user-new-form {
+  background: #f8f8f8;
+  padding: 1rem;
+  /* display: flex;
+  flex-direction: column;
+  align-items: center; */
 }
-.oc-user-new-batch-form{
-    width: 70vw;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #fff;
-    position: relative;
+.oc-user-new-batch-form {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  padding: 1rem;
+  width: 70vw;
 }
-.oc-user-new-form-item{
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    background: #fff;
-    position: relative;
-}
-.curr-user-row{
-    background-color: rgb(154, 254, 252);
+/* .oc-user-new-form-item {
+  display: flex;
+  position: relative;
+  justify-content: space-between;
+  background: #fff;
+  width: 100%;
+} */
+.curr-user-row {
+  background-color: rgb(154, 254, 252);
 }

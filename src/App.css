@@ -1,33 +1,88 @@
 #root {
   text-align: center;
 }
-.App{
+.App {
+  display: flex;
   width: 100vw;
   height: 100vh;
-  display: flex;
   overflow: hidden;
 }
-.oc-flex{
+.oc-flex {
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
 
-
-.oc-home-page{
+.oc-home-page {
+  display: flex;
   width: 100%;
   height: 100%;
-  display: flex;
 }
-.oc-home-page .row{
+.oc-home-page .row {
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
 }
 
-.oc-header{
+.oc-header {
   background-color: lightcyan;
 }
-.oc-main{
+.oc-main {
   background-color: #ddd;
+}
+
+.oc-border-spin {
+  position: relative;
+}
+.oc-border-spin::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+  background-image: conic-gradient(from 0deg, blue, red);
+  padding: 16px;
+  width: 100%;
+  height: 100%;
+  content: '';
+}
+.oc-highlight {
+  position: relative;
+  z-index: 1;
+}
+
+.oc-highlight::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  /* 💡 確保水波動畫是在元件背後發散，不遮擋核心文字 */
+  z-index: -1;
+
+  /* 💡 宣告動畫：套用下方定義的 ripple 物理波紋，2秒循環一次，無限播放 */
+  animation: ripple 2s infinite cubic-bezier(0.24, 0, 0, 1);
+  box-sizing: border-box;
+
+  /* 💡 水波的邊框顏色（這裡用 AntD 主題藍色，你可以自由更換成 #52c41a 綠色等） */
+  border: 2px solid #1890ff;
+
+  /* 💡 形狀防線：繼承父元素的圓角（例如按鈕如果是圓的，水波就是圓的） */
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+  content: ''; /* 💡 核心防線：偽元素必須有 content 才會在網頁中實體化 */
+}
+
+/* 🌊 水波物理擴散動態矩陣 */
+@keyframes ripple {
+  0% {
+    /* 出生點：尺寸與父元素完全重疊，透明度 100%（完全看得到） */
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    /* 終點站：尺寸物理放大至 1.6 倍，並且能量耗盡完全變透明 */
+    transform: scale(1.6);
+    opacity: 0;
+  }
 }

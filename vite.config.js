@@ -9,6 +9,9 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
   return {
     plugins: [react()],
     base: env.VITE_BASE,
+    define: {
+      global: 'window',
+    },
 
     resolve: {
       alias: {

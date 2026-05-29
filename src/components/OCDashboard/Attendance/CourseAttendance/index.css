@@ -38,6 +38,6 @@
   color: #8c8c8c;
 }
 .attendance-stats-table .unrollcall p,
-.attendance-stats-table .unrollcall span {
+.attendance-stats-table .unrollcall span:not(button span) {
   color: #8c8c8c !important;
 }

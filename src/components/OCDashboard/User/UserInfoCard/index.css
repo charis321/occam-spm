@@ -4,13 +4,29 @@
   gap: 1rem;
   box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;
-  background: linear-gradient(180deg, #f4f4f4 0%, #ffffff 100%);
+  /* background: linear-gradient(180deg, #f4f4f4 0%, #ffffff 100%); */
+  background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
   padding: 1rem;
+  width: 90%;
 }
 .oc-user-info-header {
   display: flex;
   align-items: center;
 }
+.oc-user-info-avatar {
+  position: relative;
+}
+.oc-avatar-edit-btn {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  border-radius: 50%;
+}
+.oc-avatar-upload {
+  background-color: #f8f8f8;
+  padding: 1rem;
+}
+
 .oc-user-info-list {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   border: 1px solid #f0f0f0;
@@ -45,15 +61,18 @@
   width: 100px;
   height: 100px;
 }
+.oc-avatar-upload {
+  background-color: #f8f8f8;
+}
 @media screen and (min-width: 768px) {
   .oc-user-info-card {
-    /* width: 60%; */
+    width: 60%;
   }
   .oc-user-info-list ul li {
     display: flex;
     justify-content: space-between;
     border-bottom: 1px dashed #f0f0f0;
-    width: 80%;
+    width: 60%;
     min-width: 100px;
   }
 }

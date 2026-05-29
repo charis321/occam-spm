@@ -1,0 +1,40 @@
+.oc-reset-password-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f8f8; /* 呼應你信件背景的舒適灰 */
+  width: 100%;
+  min-height: 100vh;
+}
+
+.oc-reset-password-content {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 淡淡的現代感陰影 */
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.oc-reset-password-content h2 {
+  margin-bottom: 24px;
+  color: #333333;
+}
+
+.oc-desc {
+  margin-bottom: 20px;
+  color: #666666;
+  font-size: 14px;
+  text-align: left;
+}
+
+.oc-hint-text {
+  margin-top: 16px;
+  border: 1px solid #ffe58f;
+  border-radius: 4px;
+  background: #fffbe6; /* 淡淡的警告黃底色 */
+  padding: 10px;
+  color: #999999;
+  font-size: 13px;
+}
