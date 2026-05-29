@@ -11,10 +11,23 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.url.includes('/api/')) return;
+  const url = event.request.url;
+  if (
+    url.includes('/@vite/') ||
+    url.includes('@react-refresh') ||
+    url.includes('/node_modules/') ||
+    url.includes('/api/')
+  ) {
+    return;
+  }
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+      return (
+        response ||
+        fetch(event.request).catch(() => {
+          return new Response('Offline');
+        })
+      );
     }),
   );
 });
