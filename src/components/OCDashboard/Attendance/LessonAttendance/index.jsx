@@ -26,24 +26,22 @@ export default function OCLessonAttendance(props) {
       controller.abort();
     };
   }, []);
-  const init = async (signal) => {
+  const init = async (signal = null) => {
     try {
       setIsLoading(true);
-      await Promise.all([
+      await Promise.allSettled([
         getLessonData(signal),
         getLessonAttendanceData(signal),
       ]);
     } catch (error) {
       console.error('Init error:', error);
     } finally {
-      if (!signal.aborted) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
-  const getLessonAttendanceData = async () => {
+  const getLessonAttendanceData = async (signal) => {
     const path = `/lesson/${lessonId}/attendance`;
-    const res = await apiUtil(path, 'GET');
+    const res = await apiUtil(path, 'GET', signal);
     if (res?.isSystemError) return;
     if (res?.code === 200) {
       setAttendanceData(res.data);
@@ -51,9 +49,9 @@ export default function OCLessonAttendance(props) {
       alert('資料取得失敗');
     }
   };
-  const getLessonData = async () => {
+  const getLessonData = async (signal) => {
     const path = `/lesson/${lessonId}`;
-    const res = await apiUtil(path, 'GET');
+    const res = await apiUtil(path, 'GET', signal);
     if (res?.isSystemError) return;
     if (res?.code === 200) {
       setLessonData(res.data);

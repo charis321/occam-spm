@@ -1,7 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
-import { Button, Select, Form, Space, Row, Col, Card, Empty, Tag } from 'antd';
+import {
+  Button,
+  Select,
+  Form,
+  Space,
+  Row,
+  Col,
+  Card,
+  Empty,
+  Tag,
+  Switch,
+  DatePicker,
+  Alert,
+  Typography,
+} from 'antd';
 import {
   FileDoneOutlined,
   BookOutlined,
@@ -9,6 +23,8 @@ import {
   DeleteOutlined,
   ControlOutlined,
   QrcodeOutlined,
+  SyncOutlined,
+  ClockCircleOutlined,
 } from '@ant-design/icons';
 
 import { apiUtil } from '@utils/WebApi';
@@ -29,14 +45,25 @@ export default function OCLessonPageTeacherView(props) {
   const [lessonData, setLessonData] = useState();
   const [rollcallData, setRollcallData] = useState();
   const [rollcallForm] = Form.useForm();
-  const [activateCodeSocket, deactivateCodeSocket] = useSocket(
-    `/topic/rollcall/${lessonId}/code`,
-    ({ code, nextRotationTime }) => {
-      setRollcallData((prev) => ({
-        ...prev,
-        code: code,
-        nextRotationTime: nextRotationTime,
-      }));
+  const isAutoCloseEnabled = Form.useWatch('isAutoCloseEnabled', rollcallForm);
+  const [activateRollcallSocket, deactivateRollcallSocket] = useSocket(
+    `/topic/rollcall/${lessonId}`,
+    (event) => {
+      console.log('ws-event', event);
+      if (event.type === 'ROTATION') {
+        setRollcallData((prev) => ({
+          ...prev,
+          code: event.code,
+          nextRotationTime: event.nextRotationTime,
+        }));
+      } else if (event.type === 'SHUTDOWN') {
+        setRollcallData((prev) => ({
+          ...prev,
+          status: event.status,
+          code: event.code,
+          nextRotationTime: event.nextRotationTime,
+        }));
+      }
     },
   );
   const navigator = useNavigate();
@@ -44,24 +71,36 @@ export default function OCLessonPageTeacherView(props) {
   const abortControllerRef = useRef();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(false);
 
   useEffect(() => {
     init();
     return () => {
       abortControllerRef.current.abort();
-      deactivateCodeSocket();
+      deactivateRollcallSocket();
     };
   }, []);
-
   useEffect(() => {
     if (!rollcallData) return;
-    if (rollcallData.status === 1 && rollcallData.rotationTime > 0) {
-      activateCodeSocket();
+    if (
+      rollcallData.status === 1 &&
+      (rollcallData.rotationTime > 0 || rollcallData.autoClose === 1)
+    ) {
+      activateRollcallSocket();
     } else {
-      deactivateCodeSocket();
+      deactivateRollcallSocket();
     }
   }, [rollcallData]);
-
+  useEffect(() => {
+    if (lessonData?.endTime) {
+      rollcallForm.setFieldsValue({
+        autoCloseTime: rollcallData?.endTime
+          ? dayjs(rollcallData.endTime)
+          : dayjs(lessonData.endTime),
+        isAutoCloseEnabled: rollcallData ? rollcallData.autoClose !== 0 : true,
+      });
+    }
+  }, [lessonData, rollcallData, rollcallForm]);
   const init = async () => {
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -77,6 +116,7 @@ export default function OCLessonPageTeacherView(props) {
     }
   };
   const updateRollcallData = async (params) => {
+    setIsWaiting(true);
     const path = `/rollcall/${lessonId}`;
     const res = await apiUtil(path, 'patch', null, params);
     if (res?.isSystemError) return;
@@ -85,6 +125,7 @@ export default function OCLessonPageTeacherView(props) {
     } else {
       alert('更新點名失敗');
     }
+    setIsWaiting(false);
   };
   const getRollcallData = async (signal) => {
     const path = `/rollcall/${lessonId}`;
@@ -93,6 +134,8 @@ export default function OCLessonPageTeacherView(props) {
     if (res?.code === 200) {
       if (res.data) {
         setRollcallData(res.data);
+        rollcallForm.setFieldValue('rotationTime', res.data?.rotationTime);
+        rollcallForm.setFieldValue('endTime', res.data?.endTime);
       } else {
         setRollcallData({
           status: 0,
@@ -150,14 +193,24 @@ export default function OCLessonPageTeacherView(props) {
     }
     return false;
   };
-  const getCountDownTime = () => {
+  // const getCountDownTime = () => {
+  //   console.log('getCountDown', rollcallData);
+  //   if (!rollcallData || !rollcallData.nextRotationTime) return 0;
+  //   const countTime = dayjs(rollcallData.nextRotationTime).diff(
+  //     dayjs(),
+  //     'second',
+  //   );
+  //   return countTime > 0 ? countTime : 0;
+  // };
+  const getCountDownTime = (time) => {
     console.log('getCountDown', rollcallData);
-    if (!rollcallData || !rollcallData.nextRotationTime) return 0;
-    const countTime = dayjs(rollcallData.nextRotationTime).diff(
-      dayjs(),
-      'second',
-    );
+    if (!time) return 0;
+    const countTime = dayjs(time).diff(dayjs(), 'second');
     return countTime > 0 ? countTime : 0;
+  };
+
+  const disabledAutoCloseDate = (current) => {
+    return current && current < dayjs().startOf('day');
   };
 
   const handleRollcall = (values) => {
@@ -169,13 +222,16 @@ export default function OCLessonPageTeacherView(props) {
     } else if (rollcallData.status === 2) {
       status = 1;
     }
-
+    console.log('values', values);
     const params = {
-      lessonId: lessonId,
+      lessonId,
       mode: 0,
       status: status,
       rotationTime: values.rotationTime,
-      // endTime: values.endTime,
+      autoClose: values.isAutoCloseEnabled ? 1 : 0,
+      endTime: values.isAutoCloseEnabled
+        ? values.autoCloseTime.toISOString()
+        : null,
     };
     updateRollcallData(params);
   };
@@ -226,13 +282,13 @@ export default function OCLessonPageTeacherView(props) {
                   }
                   extra={
                     <Space>
-                      <Button
+                      {/* <Button
                         type="text"
                         icon={<EditOutlined />}
                         aria-label="編輯課堂資訊"
                       >
                         編輯
-                      </Button>
+                      </Button> */}
                       <Button
                         type="text"
                         danger
@@ -330,28 +386,80 @@ export default function OCLessonPageTeacherView(props) {
                         ]}
                       />
                     </Form.Item>
-
                     <Form.Item
-                      label="自動關閉點名"
-                      name="endTime"
-                      initialValue={0}
+                      label={
+                        <span style={{ fontWeight: 500 }}>自動關閉點名</span>
+                      }
+                      style={{ marginBottom: '24px' }}
                     >
-                      <Select
-                        disabled={rollcallData?.status === 1}
-                        options={[
-                          { value: 0, label: '不啟用' },
-                          { value: 1, label: '上課時間結束' },
-                          { value: 2, label: '定時' },
-                        ]}
-                      />
+                      <Row gutter={16} align="middle">
+                        <Col span={6}>
+                          <Form.Item
+                            name="isAutoCloseEnabled"
+                            valuePropName="checked"
+                            noStyle
+                          >
+                            <Switch
+                              disabled={rollcallData?.status === 1}
+                              checkedChildren="開啟"
+                              unCheckedChildren="關閉"
+                              style={{ width: '100%' }}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col span={18}>
+                          <Form.Item
+                            name="autoCloseTime"
+                            style={{ marginBottom: 0 }}
+                            rules={[
+                              {
+                                required: isAutoCloseEnabled,
+                                message: '請設定關閉時間！',
+                              },
+                              {
+                                validator: (_, value) => {
+                                  if (isAutoCloseEnabled && value) {
+                                    if (value.isBefore(dayjs())) {
+                                      return Promise.reject(
+                                        new Error(
+                                          '自動關閉時間不能早於當前時間！',
+                                        ),
+                                      );
+                                    }
+                                  }
+                                  return Promise.resolve();
+                                },
+                              },
+                            ]}
+                            initialValue={
+                              lessonData?.endTime
+                                ? dayjs(lessonData.endTime)
+                                : dayjs()
+                            }
+                          >
+                            <DatePicker
+                              showTime
+                              format="YYYY-MM-DD HH:mm"
+                              style={{ width: '100%' }}
+                              placeholder="請選擇關閉時間"
+                              disabledDate={disabledAutoCloseDate}
+                              disabled={
+                                !isAutoCloseEnabled ||
+                                rollcallData?.status === 1
+                              }
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
                     </Form.Item>
-
                     <Button
                       type="primary"
-                      block // 💡 改為滿版大按鈕，方便老師在講台上遠程一鍵點擊
+                      block
                       size="large"
-                      danger={rollcallData?.status === 1} // 正在點名時按鈕變紅（暗示按下會中止）
+                      danger={rollcallData?.status === 1}
                       htmlType="submit"
+                      disabled={isWaiting}
+                      loading={isWaiting}
                     >
                       {!rollcallData ||
                       rollcallData?.status === 0 ||
@@ -364,7 +472,6 @@ export default function OCLessonPageTeacherView(props) {
               </Space>
             </Col>
 
-            {/* ================= 右側：大畫布點名碼展示欄 ================= */}
             <Col xs={24} md={14}>
               <Card
                 style={{
@@ -391,75 +498,197 @@ export default function OCLessonPageTeacherView(props) {
                   </Button>
                 }
               >
-                <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                <div style={{ textAlign: 'center' }}>
                   {rollcallData?.status === 1 ? (
-                    <Space direction="vertical" size="large" align="center">
-                      {rollcallData?.rotationTime !== 0 && (
-                        <div
-                          style={{
-                            backgroundColor: '#fff2e8',
-                            padding: '8px 16px',
-                            borderRadius: '4px',
-                          }}
-                        >
-                          <span
-                            style={{ color: '#fa541c', fontWeight: 'bold' }}
-                          >
-                            ⚠️ 點名碼安全輪換中：
-                            <OCCountDown
-                              key={rollcallData?.code}
-                              time={getCountDownTime()}
-                            />
-                          </span>
-                        </div>
-                      )}
+                    // <Space direction="vertical" size="large" align="center">
+                    //   {rollcallData?.rotationTime !== 0 && (
+                    //     <div
+                    //       style={{
+                    //         backgroundColor: '#fff2e8',
+                    //         padding: '8px 16px',
+                    //         borderRadius: '4px',
+                    //       }}
+                    //     >
+                    //       <span
+                    //         style={{ color: '#fa541c', fontWeight: 'bold' }}
+                    //       >
+                    //         ⚠️ 點名碼安全輪換中：
+                    //         <OCCountDown
+                    //           key={rollcallData?.code}
+                    //           time={getCountDownTime(
+                    //             rollcallData?.nextRotationTime,
+                    //           )}
+                    //         />
+                    //       </span>
+                    //     </div>
+                    //   )}
+                    //   {rollcallData?.autoClose === 1 && (
+                    //     <div
+                    //       style={{
+                    //         backgroundColor: '#fff2e8',
+                    //         padding: '8px 16px',
+                    //         borderRadius: '4px',
+                    //       }}
+                    //     >
+                    //       <span
+                    //         style={{ color: '#fa1c1c', fontWeight: 'bold' }}
+                    //       >
+                    //         ⚠️ 點名關閉倒數：
+                    //         <OCCountDown
+                    //           key={rollcallData?.code}
+                    //           time={getCountDownTime(rollcallData?.endTime)}
+                    //         />
+                    //       </span>
+                    //     </div>
+                    //   )}
+                    //   <div
+                    //     style={{
+                    //       background: '#f5f5f5',
+                    //       padding: '5px 10px',
+                    //       borderRadius: '8px',
+                    //       border: '1px dashed #ccc',
+                    //     }}
+                    //   >
+                    //     <span
+                    //       style={{
+                    //         fontSize: '3rem',
+                    //         fontWeight: 'bold',
+                    //         letterSpacing: '4px',
+                    //         fontFamily: 'monospace',
+                    //       }}
+                    //     >
+                    //       {rollcallData.code}
+                    //     </span>
+                    //   </div>
+                    //   <div
+                    //     style={{
+                    //       padding: '12px',
+                    //       background: '#fff',
+                    //       borderRadius: '12px',
+                    //       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                    //     }}
+                    //   >
+                    //     <QRCodeSVG
+                    //       value={getAttendanceQRCode(rollcallData.code)}
+                    //       size={220}
+                    //       bgColor="#fff"
+                    //       fgColor="#333"
+                    //       imageSettings={{
+                    //         src: LOGO_ICON,
+                    //         height: 30,
+                    //         width: 30,
+                    //         excavate: true,
+                    //       }}
+                    //     />
+                    //   </div>
+                    // </Space>
 
-                      {/* 點名碼字體放大，並加上顯眼的背景框 */}
+                    <Space
+                      direction="vertical"
+                      size="middle"
+                      align="center"
+                      style={{ width: '100%', padding: '16px 0' }}
+                    >
+                      {rollcallData?.rotationTime !== 0 && (
+                        <Alert
+                          message={
+                            <span style={{ fontWeight: 600 }}>
+                              安全點名碼定期輪換中（防截圖代簽）：
+                              <OCCountDown
+                                key={rollcallData?.nextRotationTime}
+                                time={getCountDownTime(
+                                  rollcallData?.nextRotationTime,
+                                )}
+                              />
+                            </span>
+                          }
+                          type="info"
+                          showIcon
+                          icon={<SyncOutlined spin />}
+                          style={{
+                            width: '100%',
+                            borderRadius: '6px',
+                            textAlign: 'left',
+                          }}
+                        />
+                      )}
+                      {rollcallData?.autoClose === 1 &&
+                        rollcallData?.endTime && (
+                          <Alert
+                            message={
+                              <span style={{ fontWeight: 'bold' }}>
+                                簽到通道截止倒數：
+                                <OCCountDown
+                                  key={rollcallData?.endTime}
+                                  time={getCountDownTime(rollcallData?.endTime)}
+                                />
+                              </span>
+                            }
+                            type="error"
+                            showIcon
+                            icon={<ClockCircleOutlined />}
+                            style={{
+                              width: '100%',
+                              borderRadius: '6px',
+                              textAlign: 'left',
+                              border: '1px solid #ffccc7',
+                            }}
+                          />
+                        )}
+
                       <div
                         style={{
-                          background: '#f5f5f5',
-                          padding: '12px 12px',
-                          borderRadius: '8px',
-                          border: '1px dashed #ccc',
+                          background:
+                            'linear-gradient(135deg, #141414 0%, #262626 100%)',
+                          padding: '6px 24px',
+                          borderRadius: '12px',
+                          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                          textAlign: 'center',
+                          marginTop: '8px',
                         }}
                       >
-                        <span
+                        <Typography.Text
                           style={{
                             fontSize: '4rem',
-                            fontWeight: 'bold',
-                            letterSpacing: '4px',
-                            fontFamily: 'monospace',
+                            fontWeight: 800,
+                            letterSpacing: '6px',
+                            fontFamily:
+                              'SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace',
+                            color: '#1890ff',
+                            textShadow: '0 2px 10px rgba(24,144,255,0.3)',
                           }}
                         >
-                          {rollcallData.code}
-                        </span>
+                          {rollcallData?.code || '------'}
+                        </Typography.Text>
                       </div>
 
-                      {/* QR Code 加上淡淡的外陰影提升高級感 */}
                       <div
                         style={{
-                          padding: '12px',
+                          padding: '16px',
                           background: '#fff',
-                          borderRadius: '12px',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                          borderRadius: '16px',
+                          boxShadow: '0 10px 32px rgba(0,0,0,0.06)',
+                          border: '1px solid #f0f0f0',
+                          transition: 'all 0.3s ease',
+                          marginTop: '12px',
                         }}
                       >
                         <QRCodeSVG
-                          value={getAttendanceQRCode(rollcallData.code)}
-                          size={220}
-                          bgColor="#fff"
-                          fgColor="#333"
+                          value={getAttendanceQRCode(rollcallData?.code)}
+                          size={240}
+                          bgColor="#ffffff"
+                          fgColor="#1f1f1f"
+                          level="H"
                           imageSettings={{
                             src: LOGO_ICON,
-                            height: 30,
-                            width: 30,
+                            height: 36,
+                            width: 36,
                             excavate: true,
                           }}
                         />
                       </div>
                     </Space>
                   ) : (
-                    // 💡 體驗細節：當沒點名時，右側大畫布給予一個漂亮的空白導引提示
                     <Empty
                       image={Empty.PRESENTED_IMAGE_SIMPLE}
                       description="目前未開啟點名功能，設定左側面板後點擊「開始點名」"
@@ -471,136 +700,6 @@ export default function OCLessonPageTeacherView(props) {
           </Row>
           {confirmElement}
         </article>
-        //   <div className="oc-lesson-page">
-        //     <section className="oc-lesson-attendance">
-        //       <h3>課堂資訊</h3>
-        //       <h2>{lessonData?.courseName}</h2>
-        //       <h3>第{lessonData?.lessonIndex}堂</h3>
-        //       <p>課堂ID: {lessonData?.id}</p>
-
-        //       <p>
-        //         課堂時間:
-        //         {PERIOD_TIME(lessonData?.startTime, lessonData?.endTime)}
-        //       </p>
-        //     </section>
-        //     <section className="oc-lesson-controller">
-        //       <h3>操作</h3>
-        //       <Button className="delete-lesson-btn">編輯</Button>
-        //       <Button danger className="delete-lesson-btn">
-        //         刪除
-        //       </Button>
-        //     </section>
-        //     <section className="oc-lesson-attendance">
-        //       <h3>點名狀況</h3>
-        //       <Button
-        //         onClick={() => {
-        //           navigator(`attendance`);
-        //         }}
-        //         icon={<FileDoneOutlined />}
-        //       >
-        //         點名紀錄
-        //       </Button>
-        //       <div className="oc-lesson-check-attendance-time">
-        //         <p>目前時間: {new Date().toLocaleString()}</p>
-        //         <span>
-        //           {checkAttendanceTime() ? '在上課時間內' : '不在上課時間內'}
-        //         </span>
-        //       </div>
-        //       <h1>
-        //         {ATTENDANCE_STATUS_MAP[
-        //           rollcallData?.status ? rollcallData?.status : 0
-        //         ]?.title || '未知狀態'}
-        //       </h1>
-        //     </section>
-        //     <section className="oc-lesson-attendance-action">
-        //       <h3>點名操作</h3>
-        //       <Form form={rollcallForm} layout="inline" onFinish={handleRollcall}>
-        //         <Space size="large" align="start">
-        //           <Form.Item
-        //             label="點名碼輪換時間"
-        //             name="rotationTime"
-        //             initialValue={rollcallData ? rollcallData.rotationTime : 0}
-        //           >
-        //             <Select
-        //               disabled={rollcallData?.status == 1}
-        //               style={{ width: 120 }}
-        //               options={[
-        //                 { value: 0, label: '不輪換' },
-        //                 { value: 3, label: '3秒' },
-        //                 { value: 30, label: '30秒' },
-        //                 { value: 300, label: '5分鐘' },
-        //                 { value: 600, label: '10分鐘' },
-        //                 { value: 1200, label: '20分鐘' },
-        //                 { value: 1800, label: '30分鐘' },
-        //                 { value: 3600, label: '1小時' },
-        //               ]}
-        //             />
-        //           </Form.Item>
-        //           <Form.Item label="自動關閉點名" name="endTime" initialValue={0}>
-        //             <Select
-        //               disabled={rollcallData?.status == 1}
-        //               style={{ width: 120 }}
-        //               options={[
-        //                 { value: 0, label: '不啟用' },
-        //                 { value: 1, label: '上課時間結束' },
-        //                 { value: 2, label: '定時' },
-        //               ]}
-        //             />
-        //           </Form.Item>
-        //           <Button
-        //             type="primary"
-        //             className="oc-start-attendance-btn"
-        //             htmlType="submit"
-        //           >
-        //             {!rollcallData ||
-        //             rollcallData?.status === 0 ||
-        //             rollcallData?.status === 2
-        //               ? '開始點名'
-        //               : '結束點名'}
-        //           </Button>
-        //         </Space>
-        //       </Form>
-        //     </section>
-        //     <section className="oc-lesson-rollcall">
-        //       <h3>點名碼</h3>
-
-        //       {rollcallData?.status === 1 && (
-        //         <>
-        //           <div className="oc-lesson-rollcall-code">
-        //             {rollcallData?.rotationTime !== 0 && (
-        //               <div>
-        //                 <h4>
-        //                   點名碼輪換:
-        //                   <OCCountDown
-        //                     key={rollcallData?.code}
-        //                     time={getCountDownTime()}
-        //                   />
-        //                 </h4>
-        //               </div>
-        //             )}
-        //             <div className="oc-lesson-rollcall-code-text">
-        //               <span style={{ fontSize: '3rem' }}>
-        //                 {rollcallData.code}
-        //               </span>
-        //             </div>
-        //           </div>
-        //           <QRCodeSVG
-        //             value={getAttendanceQRCode(rollcallData.code)}
-        //             size={256}
-        //             bgColor="#fff"
-        //             fgColor="#333"
-        //             imageSettings={{
-        //               src: LOGO_ICON, // 你的 Logo 網址
-        //               height: 48,
-        //               width: 48,
-
-        //               excavate: true,
-        //             }}
-        //           />
-        //         </>
-        //       )}
-        //     </section>
-        //   </div>
       )}
     </>
   );

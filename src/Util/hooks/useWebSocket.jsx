@@ -3,12 +3,12 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { getAuthLocalToken } from '@utils/AuthUtils';
 
-const WS_ENDPOINT = 'http://localhost:8080/ws';
+const WS_ENDPOINT = import.meta.env.VITE_SERVER_HOST + '/ws';
 
 const useRollcallSocket = (lessonId) => {
   useEffect(() => {
     const client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws-rollcall'),
+      webSocketFactory: () => new SockJS('WS_ENDPOINT'),
       onConnect: () => {
         client.subscribe(`/topic/rollcall/${lessonId}`, (msg) => {
           console.log('收到新碼:', msg.body);
@@ -35,7 +35,6 @@ const useSocket = (targetPath, fn) => {
       onConnect: () => {
         client.subscribe(targetPath, (msg) => {
           try {
-            console.log('收到新碼:', msg.body);
             const data = JSON.parse(msg.body);
             fnRef.current(data);
           } catch (error) {

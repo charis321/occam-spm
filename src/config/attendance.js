@@ -30,19 +30,19 @@ export const ATTENDANCE_STATUS_MAP = {
 export const ROLLCALL_MAP = {
   0: {
     title: '點名尚未開始',
-    color: 'gray',
+    color: 'blue',
     bg: 'gray',
     class: 'unrollcall',
   },
   1: {
     title: '點名進行中...',
-    color: 'red',
+    color: 'green',
     bg: '#fff',
     class: 'rollcalling',
   },
   2: {
     title: '點名已結束',
-    color: 'blue',
+    color: 'red',
     bg: '#fff',
     class: 'rollcalled',
   },

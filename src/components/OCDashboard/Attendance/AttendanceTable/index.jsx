@@ -201,7 +201,7 @@ export function OCLessonAttendanceTable(props) {
       className="oc-lesson-attendance-table"
       dataSource={attendanceData}
       columns={readOnly ? coloumns_readOnly : coloumns}
-      rowKey={(record) => record.key}
+      rowKey={(record) => record.studentId}
       pagination={{
         pageSize: 10,
         position: ['bottomCenter'],

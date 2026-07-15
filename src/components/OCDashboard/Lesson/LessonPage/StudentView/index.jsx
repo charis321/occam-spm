@@ -8,9 +8,13 @@ import {
   ControlOutlined,
   QrcodeOutlined,
   FileDoneOutlined,
+  ClockCircleOutlined,
 } from '@ant-design/icons';
 import { QRCodeSVG } from 'qrcode.react';
+import OCCountDown from '@components/OCCommon/OCCountDown';
+
 import { useAuth } from '@utils/AuthContext';
+import { useSocket } from '@utils/hooks/useWebSocket';
 import { apiUtil } from '@utils/WebApi';
 import { ATTENDANCE_STATUS_MAP } from '@config/attendance';
 import { PERIOD_TIME } from '@config/time';
@@ -31,6 +35,26 @@ export default function OCLessonStudentPage(props) {
   const [attendanceResultDisplay, setAttendanceResultDisplay] = useState();
 
   const [rollcallCode, setRollcallCode] = useState(codeFromUrl || '');
+  const [activateRollcallSocket, deactivateRollcallSocket] = useSocket(
+    `/topic/rollcall/${lessonId}`,
+    (event) => {
+      console.log('ws-event', event);
+      if (event.type === 'ROTATION') {
+        setRollcallData((prev) => ({
+          ...prev,
+          code: event.code,
+          nextRotationTime: event.nextRotationTime,
+        }));
+      } else if (event.type === 'SHUTDOWN') {
+        setRollcallData((prev) => ({
+          ...prev,
+          status: event.status,
+          code: event.code,
+          nextRotationTime: event.nextRotationTime,
+        }));
+      }
+    },
+  );
 
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -41,15 +65,20 @@ export default function OCLessonStudentPage(props) {
 
   useEffect(() => {
     const controller = new AbortController();
-
     init(controller.signal);
-    // if (isAttending && codeFromUrl) {
-    //   handleRollcall();
-    // }
     return () => {
       controller.abort();
     };
   }, []);
+  useEffect(() => {
+    if (!rollcallData) return;
+    if (rollcallData.status === 1) {
+      activateRollcallSocket();
+    } else {
+      deactivateRollcallSocket();
+    }
+  }, [rollcallData]);
+
   const init = async (signal) => {
     try {
       setIsLoading(true);
@@ -93,6 +122,14 @@ export default function OCLessonStudentPage(props) {
     }
     return false;
   };
+
+  const getCountDownTime = (time) => {
+    console.log('getCountDown', rollcallData);
+    if (!time) return 0;
+    const countTime = dayjs(time).diff(dayjs(), 'second');
+    return countTime > 0 ? countTime : 0;
+  };
+
   const handleRollcall = () => {
     setMessage('');
     if (!rollcallCode) {
@@ -150,7 +187,9 @@ export default function OCLessonStudentPage(props) {
                 {PERIOD_TIME(lessonData?.startTime, lessonData?.endTime)}
               </p>
               <Button
-                style={{ background: '#b7fafa' }}
+                color="primary"
+                variant="outlined"
+                icon={<BookOutlined />}
                 onClick={() => {
                   navigator('../../');
                 }}
@@ -192,7 +231,7 @@ export default function OCLessonStudentPage(props) {
                 className="oc-start-attendance-btn"
                 onClick={() => setIsAttending(true)}
                 danger={rollcallData?.status === 1}
-                disabled={attendanceData?.status !== 0}
+                disabled={attendanceData && attendanceData?.status !== 0}
               >
                 開始點名
               </Button>
@@ -227,7 +266,7 @@ export default function OCLessonStudentPage(props) {
             }
           >
             <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              {isAttending ? (
+              {rollcallData?.status === 1 ? (
                 <Space direction="vertical" size="large" align="center">
                   {attendanceData?.status === 1 ? (
                     <div className="oc-lesson-attendance-block-body success">
@@ -239,7 +278,54 @@ export default function OCLessonStudentPage(props) {
                   ) : (
                     <div className="oc-lesson-attendance-block-body">
                       <Space direction="vertical" size="large" align="center">
-                        {/* <OCRollcallDisplay /> */}
+                        {rollcallData?.rotationTime !== 0 && (
+                          <Alert
+                            message={
+                              <span style={{ fontWeight: 600 }}>
+                                安全點名碼定期輪換中（防截圖代簽）：
+                                <OCCountDown
+                                  key={rollcallData?.nextRotationTime}
+                                  time={getCountDownTime(
+                                    rollcallData?.nextRotationTime,
+                                  )}
+                                />
+                              </span>
+                            }
+                            type="info"
+                            showIcon
+                            icon={<SyncOutlined spin />}
+                            style={{
+                              width: '100%',
+                              borderRadius: '6px',
+                              textAlign: 'left',
+                            }}
+                          />
+                        )}
+                        {rollcallData?.autoClose === 1 &&
+                          rollcallData?.endTime && (
+                            <Alert
+                              message={
+                                <span style={{ fontWeight: 'bold' }}>
+                                  簽到通道截止倒數：
+                                  <OCCountDown
+                                    key={rollcallData?.endTime}
+                                    time={getCountDownTime(
+                                      rollcallData?.endTime,
+                                    )}
+                                  />
+                                </span>
+                              }
+                              type="error"
+                              showIcon
+                              icon={<ClockCircleOutlined />}
+                              style={{
+                                width: '100%',
+                                borderRadius: '6px',
+                                textAlign: 'left',
+                                border: '1px solid #ffccc7',
+                              }}
+                            />
+                          )}
                         <h2>請輸入點名碼</h2>
                         {message && (
                           <Alert type="error" message={message} showIcon />
@@ -265,7 +351,7 @@ export default function OCLessonStudentPage(props) {
                   )}
                 </Space>
               ) : attendanceData?.status === 0 ? (
-                <div>還沒有點名!!</div>
+                <div>點名</div>
               ) : (
                 <div>還沒有點名!!</div>
               )}
