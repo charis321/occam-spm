@@ -1,3 +1,5 @@
+import { Descriptions } from "antd";
+
 // attendance
 export const ATTENDANCE_MAP = {
   0: {
@@ -113,4 +115,7 @@ export const PATH_MAP = {
   message: {
     title: '訊息中心',
   },
+  description: {
+    title: '簡介',
+  }
 };

@@ -63,7 +63,7 @@ export default function OCLogin() {
         },
         token: res.data.token,
       });
-      alert('登入成功，將導向至首頁');
+      // alert('登入成功，將導向至首頁');
       navigator('/');
     } else {
       console.log('登入失敗', res);
@@ -87,8 +87,8 @@ export default function OCLogin() {
           <div className="oc-welcome-logo">
             <img src={logoIcon} alt="Occam Logo" />
           </div>
-          <h1>奧坎教學課程管理系統</h1>
-          <p>智慧專案與課程管理平台，為您提供無縫流暢的學術與專案協作體驗。</p>
+          <h1>奧坎課程點名管理系統</h1>
+          <p>智慧教學與課程管理平台，為您提供無縫流暢的教學與出勤管理體驗。</p>
         </div>
       </div>
       <div className="oc-login-panel">
@@ -143,7 +143,6 @@ export default function OCLogin() {
             </Button>
           </form>
 
-          {/* Warning Note Box */}
           <div className="oc-login-info-box">
             <div className="oc-login-info-title">
               <span className="emoji">💡</span>
@@ -154,12 +153,11 @@ export default function OCLogin() {
             </p>
           </div>
 
-          {/* Links */}
           <div className="oc-login-footer">
             <Link to="/reset-password">忘記密碼？</Link>
-            <span className="oc-register-prompt">
+            {/* <span className="oc-register-prompt">
               尚未註冊？ <Link to="/register">建立帳號</Link>
-            </span>
+            </span> */}
           </div>
         </div>
       </div>

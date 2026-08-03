@@ -130,7 +130,6 @@ export function OCCourseCardView(props) {
         <li>上課教室:&emsp;{courseData.classroom}</li>
         <li>修課人數:&emsp;{courseData.studentCount}</li>
         <li>總課堂數:&emsp;{courseData.lessonCount}</li>
-        <li>課程簡介:&emsp;{courseData.info}</li>
       </ul>
     </div>
   );

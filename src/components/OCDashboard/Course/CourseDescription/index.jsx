@@ -18,6 +18,7 @@ import {
 } from '@ant-design/icons';
 const { Title, Paragraph, Text } = Typography;
 import { apiUtil } from '@utils/WebApi';
+import './index.css';
 
 export default function OCCourseDescription() {
   const { courseId } = useParams();
@@ -54,15 +55,7 @@ export default function OCCourseDescription() {
 
   return (
     <div className="oc-course-description">
-      <Card
-        bordered={false}
-        style={{
-          width: '100%',
-          borderRadius: '16px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-          marginBottom: '24px',
-        }}
-      >
+      <Card className="oc-course-description-card">
         <div
           style={{
             display: 'flex',
@@ -78,7 +71,7 @@ export default function OCCourseDescription() {
               {courseData?.name}
             </Title>
           </Space>
-          <Tag
+          {/* <Tag
             color="blue"
             style={{
               borderRadius: '6px',
@@ -87,7 +80,7 @@ export default function OCCourseDescription() {
             }}
           >
             {data.level}
-          </Tag>
+          </Tag> */}
         </div>
 
         <Divider style={{ margin: '20px 0' }} />
