@@ -10,7 +10,7 @@ export default function OCBreadcrumb(props) {
 
   useEffect(() => {
     setPaths(location.pathname.split('/').filter((path) => path));
-    console.log(paths);
+    // console.log(paths);
   }, [location.pathname]);
 
   return (

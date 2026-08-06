@@ -27,6 +27,7 @@ export default function OCCourseAttendance() {
     setIsLoading(true);
     const path = `/course/${courseId}/attendance/stats/${displayMode}`;
     const res = await apiUtil(path, 'GET', signal);
+    if (res?.isSystemError) return;
     if (res?.code === 200) {
       setAttendanceData(res.data);
     } else {

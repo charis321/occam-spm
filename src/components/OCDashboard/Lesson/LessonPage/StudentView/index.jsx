@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Button, Input, Alert, Row, Col, Card, Empty, Space, Tag, message } from 'antd';
+import { Button, Input, Alert, Row, Col, Card, Space, Tag, message } from 'antd';
 import {
   CheckCircleOutlined,
   SyncOutlined,
@@ -10,8 +10,10 @@ import {
   FileDoneOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
-import { QRCodeSVG } from 'qrcode.react';
+import jsQR from 'jsqr';
 import OCCountDown from '@components/OCCommon/OCCountDown';
+import OCOverlay from '@components/OCCommon/OCOverlay';
+import OCTitle from '@components/OCCommon/OCTitle';
 
 import { useAuth } from '@utils/AuthContext';
 import { useSocket } from '@utils/hooks/useWebSocket';
@@ -22,7 +24,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';
 import './index.css';
 
-export default function OCLessonStudentPage(props) {
+export default function OCLessonStudentPage() {
   const { user } = useAuth();
   const { lessonId, courseId } = useParams();
   const [searchParams] = useSearchParams();
@@ -32,7 +34,6 @@ export default function OCLessonStudentPage(props) {
   const [lessonData, setLessonData] = useState();
   const [rollcallData, setRollcallData] = useState();
   const [attendanceData, setAttendanceData] = useState();
-  const [attendanceResultDisplay, setAttendanceResultDisplay] = useState();
 
   const [rollcallCode, setRollcallCode] = useState(codeFromUrl || '');
   const [activateRollcallSocket, deactivateRollcallSocket] = useSocket(
@@ -56,10 +57,17 @@ export default function OCLessonStudentPage(props) {
     },
   );
 
-  const [message, setMessage] = useState('');
+  const [localMsg, setLocalMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
   const [isAttending, setIsAttending] = useState(attendingFromUrl || false);
+
+  // QR Code Scanner State & Refs
+  const [isScanning, setIsScanning] = useState(false);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const streamRef = useRef(null);
+  const animationFrameRef = useRef(null);
 
   const navigator = useNavigate();
 
@@ -68,8 +76,16 @@ export default function OCLessonStudentPage(props) {
     init(controller.signal);
     return () => {
       controller.abort();
+      // Cleanup camera stream
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
   }, []);
+
   useEffect(() => {
     if (!rollcallData) return;
     if (rollcallData.status === 1) {
@@ -92,6 +108,7 @@ export default function OCLessonStudentPage(props) {
       setIsLoading(false);
     }
   };
+
   const getRollcallData = async (signal) => {
     const path = `/rollcall/${lessonId}`;
     const res = await apiUtil(path, 'GET', signal);
@@ -102,6 +119,7 @@ export default function OCLessonStudentPage(props) {
       message.error('獲取課堂點名狀態失敗');
     }
   };
+
   const getLessonWithAttendance = async (signal) => {
     setIsLoading(true);
     const path = `/lesson/${lessonId}/attendance/${user.id}`;
@@ -115,6 +133,7 @@ export default function OCLessonStudentPage(props) {
     }
     setIsLoading(false);
   };
+
   const checkAttendanceTime = () => {
     if (lessonData) {
       const now = new Date();
@@ -124,38 +143,121 @@ export default function OCLessonStudentPage(props) {
   };
 
   const getCountDownTime = (time) => {
-    console.log('getCountDown', rollcallData);
     if (!time) return 0;
     const countTime = dayjs(time).diff(dayjs(), 'second');
     return countTime > 0 ? countTime : 0;
   };
 
   const handleRollcall = () => {
-    setMessage('');
+    setLocalMsg('');
     if (!rollcallCode) {
-      setMessage('請輸入點名碼');
+      setLocalMsg('請輸入點名碼');
       return;
     }
-    verifyAttendanceData();
+    verifyAttendanceData(rollcallCode);
   };
-  const verifyAttendanceData = async () => {
+
+  const verifyAttendanceData = async (codeToVerify) => {
+    const code = codeToVerify || rollcallCode;
+    if (!code) return;
     setIsWaiting(true);
     const path = `/attendance/verify`;
     const attendanceRequest = {
       studentId: user.id,
       lessonId: lessonId,
       status: 1,
-      code: rollcallCode,
+      code: code,
     };
     const res = await apiUtil(path, 'POST', null, attendanceRequest);
     if (res?.isSystemError) return;
     if (res?.code === 200) {
+      message.success('點名簽到成功！');
       getLessonWithAttendance();
     } else {
-      message.error('新增點名紀錄失敗');
+      message.error('點名碼驗證失敗或已過期');
     }
     setIsWaiting(false);
   };
+
+  // QR Code scanning logic
+  const handleOpenScanner = async () => {
+    setIsScanning(true);
+    setLocalMsg('');
+    try {
+      const constraints = {
+        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } },
+      };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.setAttribute('playsinline', 'true');
+        videoRef.current.play();
+        animationFrameRef.current = requestAnimationFrame(scanTick);
+      }
+    } catch (err) {
+      console.error('Camera access error:', err);
+      message.error('無法開啟相機，請確認已授予網頁相機使用權限');
+      setIsScanning(false);
+    }
+  };
+
+  const handleCloseScanner = () => {
+    setIsScanning(false);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+  };
+
+  const scanTick = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    if (videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: 'dontInvert',
+      });
+
+      if (code) {
+        const decodedText = code.data;
+        let parsedCode = decodedText;
+
+        // If decoded text is URL, extract the "code" query param
+        if (decodedText.startsWith('http://') || decodedText.startsWith('https://')) {
+          try {
+            const urlObj = new URL(decodedText);
+            const codeParam = urlObj.searchParams.get('code');
+            if (codeParam) {
+              parsedCode = codeParam;
+            }
+          } catch (e) {
+            console.error('Failed to parse URL from QR Code', e);
+          }
+        }
+
+        if (parsedCode && parsedCode.length === 6) {
+          setRollcallCode(parsedCode);
+          message.success('掃描成功，自動為您驗證點名碼！');
+          handleCloseScanner();
+          verifyAttendanceData(parsedCode);
+          return;
+        }
+      }
+    }
+    animationFrameRef.current = requestAnimationFrame(scanTick);
+  };
+
   return (
     <article className="oc-lesson-page">
       <Row gutter={[24, 24]} style={{ width: '100%', margin: '1rem' }}>
@@ -242,10 +344,8 @@ export default function OCLessonStudentPage(props) {
         <Col xs={24} md={14}>
           <Card
             style={{
-              // height: '90%',
               display: 'flex',
               flexDirection: 'column',
-              // justifyContent: 'center',
               minWidth: 300,
             }}
             title={
@@ -267,7 +367,7 @@ export default function OCLessonStudentPage(props) {
           >
             <div style={{ textAlign: 'center', padding: '40px 0' }}>
               {rollcallData?.status === 1 ? (
-                <Space direction="vertical" size="large" align="center">
+                <Space direction="vertical" size="large" align="center" style={{ width: '100%' }}>
                   {attendanceData?.status === 1 ? (
                     <div className="oc-lesson-attendance-block-body success">
                       <CheckCircleOutlined
@@ -276,8 +376,8 @@ export default function OCLessonStudentPage(props) {
                       <h2>您已完成點名</h2>
                     </div>
                   ) : (
-                    <div className="oc-lesson-attendance-block-body">
-                      <Space direction="vertical" size="large" align="center">
+                    <div className="oc-lesson-attendance-block-body" style={{ width: '100%' }}>
+                      <Space direction="vertical" size="large" align="center" style={{ width: '100%' }}>
                         {rollcallData?.rotationTime !== 0 && (
                           <Alert
                             message={
@@ -327,10 +427,10 @@ export default function OCLessonStudentPage(props) {
                             />
                           )}
                         <h2>請輸入點名碼</h2>
-                        {message && (
-                          <Alert type="error" message={message} showIcon />
+                        {localMsg && (
+                          <Alert type="error" message={localMsg} showIcon style={{ marginBottom: '1rem' }} />
                         )}
-                        <div className="code-input">
+                        <div className="code-input" style={{ marginBottom: '1rem' }}>
                           <Input.OTP
                             length={6}
                             placeholder="請輸入點名碼"
@@ -338,14 +438,26 @@ export default function OCLessonStudentPage(props) {
                             onChange={(value) => setRollcallCode(value)}
                           />
                         </div>
-                        <Button
-                          type="primary"
-                          onClick={handleRollcall}
-                          disabled={isWaiting}
-                          loading={isWaiting}
-                        >
-                          送出點名碼
-                        </Button>
+                        <Space direction="vertical" size="middle" align="center" style={{ width: '100%' }}>
+                          <Button
+                            type="primary"
+                            onClick={handleRollcall}
+                            disabled={isWaiting}
+                            loading={isWaiting}
+                            className="oc-btn-amber-solid"
+                            style={{ height: '40px', width: '220px' }}
+                          >
+                            送出點名碼
+                          </Button>
+                          <Button
+                            icon={<QrcodeOutlined />}
+                            onClick={handleOpenScanner}
+                            className="oc-btn-amber-outline"
+                            style={{ height: '40px', width: '220px' }}
+                          >
+                            掃描 QR Code
+                          </Button>
+                        </Space>
                       </Space>
                     </div>
                   )}
@@ -363,67 +475,37 @@ export default function OCLessonStudentPage(props) {
           </Card>
         </Col>
       </Row>
+
+      {/* QR Code Scanner Overlay */}
+      {isScanning && (
+        <OCOverlay toggle={handleCloseScanner}>
+          <div className="oc-qr-scanner-modal">
+            <OCTitle
+              title="相機掃描簽到"
+              description="請將手機鏡頭對焦在教師端發布的二維碼上"
+            />
+            <div className="oc-scanner-viewport-container">
+              <video
+                ref={videoRef}
+                className="oc-scanner-video"
+              />
+              <div className="oc-scanner-overlay">
+                <div className="oc-scanner-laser" />
+                <div className="oc-scanner-corner top-left" />
+                <div className="oc-scanner-corner top-right" />
+                <div className="oc-scanner-corner bottom-left" />
+                <div className="oc-scanner-corner bottom-right" />
+              </div>
+            </div>
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
+            <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+              <Button onClick={handleCloseScanner} size="large" className="oc-btn-amber-outline" style={{ borderRadius: '8px' }}>
+                取消掃描
+              </Button>
+            </div>
+          </div>
+        </OCOverlay>
+      )}
     </article>
   );
 }
-// export const OCRollcallDisplay = (props) => {
-//   const { status } = props;
-
-//   const display_start = <></>;
-
-//   const displayWaitng = (
-//     <span>
-//       <SyncOutlined />
-//     </span>
-//   );
-//   return(
-//     displayMap[status]
-//   )
-// };
-// export default function OCAttendanceBlock(props){
-//   const [isAttending, setIsAttending] = useState(false);
-//   const [attendanceCode, setAttendanceCode] = useState('');
-//   const [message, setMessage] = useState('');
-//   const [isWaiting, setIsWaiting] = useState(false);
-
-//   const NotattendanceView =
-//     <>
-//       <h2>請輸入點名碼</h2>
-//         {message && <Alert type="error" message={message} showIcon />}
-//         <div className="code-input">
-//           <Input
-//             placeholder="請輸入點名碼"
-//             value={attendanceCode}
-//             onChange={(e) => setAttendanceCode(e.target.value)}
-//           />
-//         </div>
-
-//         <Button
-//           type="primary"
-//           onClick={handleRollcall}
-//           disabled={isWaiting}
-//           loading={isWaiting}
-//         >
-//           送出點名碼
-//         </Button>
-//         <Button className="close-btn" onClick={() => setIsAttending(false)}>
-//         X
-//       </Button>
-//     </>
-
-//     return(
-//       <div>
-//         {attendanceData?.status === 1 ? (
-//               <div className="oc-lesson-attendance-block-body success">
-//                 <CheckCircleOutlined
-//                   style={{ fontSize: '3rem', color: '#97dc7e' }}
-//                 />
-//                 <h2>您已完成點名</h2>
-//               </div>
-//             ):
-
-//             }
-
-//       </div>
-//     )
-// }

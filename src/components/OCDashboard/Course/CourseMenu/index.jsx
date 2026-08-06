@@ -101,7 +101,6 @@ export default function OCCourseMenu(props) {
       icon: <FileExcelOutlined />,
       danger: true,
       onClick: () => {
-        console.log('click');
         showConfirm(
           <>
             <span style={{ color: 'red' }}>
@@ -115,7 +114,7 @@ export default function OCCourseMenu(props) {
           () => {
             deleteCourseData();
           },
-          () => {},
+          () => { },
         );
       },
     },

@@ -27,6 +27,10 @@
   --oc-primary-accent: #f59e0b;
   --oc-primary-bg-light: rgba(217, 119, 6, 0.04);
   --oc-card-bg-gradient: linear-gradient(to bottom, #faf9f6, #f3f1e9);
+
+  /* Secondary Complementary Brand System Variables (Cozy Purple) */
+  --oc-secondary: #7c3aed;
+  --oc-secondary-hover: #6d28d9;
 }
 
 #root {
@@ -121,6 +125,10 @@ p {
   --oc-primary-accent: #fbbf24;
   --oc-primary-bg-light: rgba(245, 158, 11, 0.05);
   --oc-card-bg-gradient: linear-gradient(to bottom, #1e1e24, #141418);
+
+  /* Cozy Purple Brand System Variables - Dark Mode Overrides */
+  --oc-secondary: #8b5cf6;
+  --oc-secondary-hover: #a78bfa;
 
   background-color: #111115 !important;
   color: #e5e7eb !important;
@@ -267,5 +275,50 @@ p {
   border-color: var(--oc-primary) !important;
   color: var(--oc-primary) !important;
   background-color: var(--oc-primary-bg-light) !important;
+  transform: translateY(-1px);
+}
+
+/* ==========================================
+   Responsive Helper Utilities
+   ========================================== */
+@media screen and (max-width: 575px) {
+  .oc-desktop-only {
+    display: none !important;
+  }
+}
+@media screen and (min-width: 576px) {
+  .oc-mobile-only {
+    display: none !important;
+  }
+}
+
+/* ==========================================
+   Cozy Cream Radio Button Toggle Group Style
+   ========================================== */
+.oc-theme-radio-toggle .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+  background-color: var(--oc-primary-accent) !important;
+  border-color: var(--oc-primary) !important;
+  color: #ffffff !important;
+}
+
+.oc-theme-radio-toggle .ant-radio-button-wrapper:hover {
+  color: var(--oc-primary) !important;
+}
+
+.oc-theme-radio-toggle .ant-radio-button-wrapper {
+  color: var(--oc-text-title) !important;
+  border-color: var(--oc-input-border) !important;
+}
+
+.oc-btn-purple-solid {
+  background-color: var(--oc-secondary) !important;
+  border-color: var(--oc-secondary) !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+.oc-btn-purple-solid:hover {
+  background-color: var(--oc-secondary-hover) !important;
+  border-color: var(--oc-secondary-hover) !important;
   transform: translateY(-1px);
 }

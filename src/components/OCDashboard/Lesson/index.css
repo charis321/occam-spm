@@ -24,13 +24,6 @@
   }
 }
 
-.oc-lesson-dashboard-header h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1f2937;
-}
-
 .oc-lesson-control-btns {
   display: flex;
   gap: 0.75rem;
@@ -42,8 +35,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
-  background-color: #fcfbfa;
-  border: 1px solid rgba(217, 119, 6, 0.08);
+  background-color: var(--oc-subcard-bg);
+  border: 1px solid var(--oc-card-border);
   border-radius: 12px;
   padding: 0.75rem 1.25rem;
   width: 90%;
@@ -60,7 +53,7 @@
 .oc-lesson-mode-switch p {
   margin: 0;
   font-weight: 600;
-  color: #4b5563;
+  color: var(--oc-text-secondary);
 }
 
 .oc-lesson-table-container {
@@ -88,8 +81,8 @@
   margin-bottom: 1.5rem;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #78350f;
-  border-left: 3px solid #f59e0b;
+  color: var(--oc-text-title);
+  border-left: 3px solid var(--oc-primary);
   padding-left: 10px;
   width: 100%;
   text-align: left;
@@ -106,7 +99,7 @@
 
 .oc-new-lesson-block-form-item label {
   font-weight: 600;
-  color: #4b5563;
+  color: var(--oc-text-secondary);
   font-size: 0.9rem;
 }
 
@@ -114,8 +107,9 @@
   width: 100%;
   padding: 0.65rem;
   border-radius: 8px;
-  border: 1px solid rgba(217, 119, 6, 0.18);
-  background: #fdfdfb;
+  border: 1px solid var(--oc-input-border);
+  background: var(--oc-input-bg);
+  color: var(--oc-text-primary);
   outline: none;
   font-size: 0.9rem;
   box-sizing: border-box;
@@ -123,21 +117,13 @@
 }
 
 .oc-new-lesson-block-form-item input:focus {
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+  border-color: var(--oc-primary);
+  box-shadow: 0 0 0 3px var(--oc-primary-bg-light);
 }
 
 .oc-new-lesson-block-form-item span {
   align-self: center;
   font-weight: 500;
-  color: #9ca3af;
+  color: var(--oc-text-secondary);
   margin: 0.25rem 0;
-}
-
-.oc-new-lesson-block-form button[type="submit"],
-.oc-new-lesson-block-form button.ant-btn-primary {
-  width: 100%;
-  height: 40px;
-  font-weight: 600;
-  margin-top: 0.5rem;
 }

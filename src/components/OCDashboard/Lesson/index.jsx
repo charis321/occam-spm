@@ -14,6 +14,7 @@ import OCLessonCalendar from './LessonCalendar';
 import OCLessonTable from './LessonTable';
 import OCLoading from '../../OCCommon/OCLoading';
 import OCOverlay from '../../OCCommon/OCOverlay';
+import OCTitle from '../../OCCommon/OCTitle';
 
 import './index.css';
 
@@ -83,28 +84,34 @@ export default function OCLessonDashboard(props) {
       ) : (
         <div className="oc-lesson-dashboard">
           <div className="oc-lesson-dashboard-header">
-            <h2>課堂管理</h2>
+            <OCTitle
+              title="課堂管理"
+              description="檢視課程的排課時程，支援日曆與表單兩種檢視視角"
+            />
             {user.role !== 0 && courseData && (
               <div className="oc-lesson-control-btns">
                 <Button
                   type="primary"
                   onClick={() => setLessonAddDisplay('single')}
                   icon={<PlusCircleOutlined />}
+                  className="oc-btn-amber-solid"
+                  style={{ height: '36px', borderRadius: '8px' }}
                 >
                   新增課堂
                 </Button>
                 <Button
-                  ghost
+                  type="primary"
                   onClick={() => setLessonAddDisplay('auto')}
                   icon={<AppstoreAddOutlined />}
-                  style={{ borderColor: '#8b5cf6', color: '#8b5cf6' }}
+                  className="oc-btn-purple-solid"
+                  style={{ height: '36px', borderRadius: '8px' }}
                 >
                   自動新增課堂
                   <Popover
                     content={<p>自動將課程期間內所有符合的時間段加上課堂</p>}
                     title="提示"
                   >
-                    <QuestionCircleOutlined style={{ marginLeft: 6 }} />
+                    <QuestionCircleOutlined style={{ marginLeft: 6, color: '#ffffff' }} />
                   </Popover>
                 </Button>
               </div>
@@ -124,6 +131,7 @@ export default function OCLessonDashboard(props) {
                 onChange={handleDisplayToggle}
                 optionType="button"
                 buttonStyle="solid"
+                className="oc-theme-radio-toggle"
               />
             </div>
           </section>
@@ -283,7 +291,12 @@ function OCNewLessonBlock(props) {
           onChange={handleNewLessonChange}
         ></input>
       </div>
-      <Button type="primary" onClick={handleSubmitNewLesson('single')}>
+      <Button
+        type="primary"
+        className="oc-btn-amber-solid"
+        onClick={handleSubmitNewLesson('single')}
+        style={{ height: '40px', width: '100%', marginTop: '0.5rem' }}
+      >
         確定
       </Button>
     </form>
@@ -306,7 +319,12 @@ function OCNewLessonBlock(props) {
           onChange={handleNewLessonChange}
         ></input>
       </div>
-      <Button type="primary" onClick={handleSubmitNewLesson('auto')}>
+      <Button
+        type="primary"
+        className="oc-btn-amber-solid"
+        onClick={handleSubmitNewLesson('auto')}
+        style={{ height: '40px', width: '100%', marginTop: '0.5rem' }}
+      >
         確定
       </Button>
     </form>
