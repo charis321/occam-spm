@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Button, Input, Alert, Row, Col, Card, Empty, Space, Tag } from 'antd';
+import { Button, Input, Alert, Row, Col, Card, Empty, Space, Tag, message } from 'antd';
 import {
   CheckCircleOutlined,
   SyncOutlined,
@@ -87,7 +87,7 @@ export default function OCLessonStudentPage(props) {
         getRollcallData(signal),
       ]);
     } catch (error) {
-      alert('加載課堂頁面失敗', error);
+      message.error('加載課堂頁面失敗：' + (error?.message || error));
     } finally {
       setIsLoading(false);
     }
@@ -99,7 +99,7 @@ export default function OCLessonStudentPage(props) {
     if (res?.code === 200) {
       setRollcallData(res.data);
     } else {
-      alert('獲取課堂點名狀態失敗');
+      message.error('獲取課堂點名狀態失敗');
     }
   };
   const getLessonWithAttendance = async (signal) => {
@@ -111,7 +111,7 @@ export default function OCLessonStudentPage(props) {
       setLessonData(res.data.lesson);
       setAttendanceData(res.data.attendance);
     } else {
-      alert('獲取課堂點名失敗');
+      message.error('獲取課堂點名失敗');
     }
     setIsLoading(false);
   };
@@ -152,7 +152,7 @@ export default function OCLessonStudentPage(props) {
     if (res?.code === 200) {
       getLessonWithAttendance();
     } else {
-      alert('新增點名紀錄失敗');
+      message.error('新增點名紀錄失敗');
     }
     setIsWaiting(false);
   };
@@ -350,10 +350,14 @@ export default function OCLessonStudentPage(props) {
                     </div>
                   )}
                 </Space>
-              ) : attendanceData?.status === 0 ? (
-                <div>點名</div>
               ) : (
-                <div>還沒有點名!!</div>
+                <div className="oc-student-waiting-panel">
+                  <div className="oc-panel-icon-wrapper">
+                    <ClockCircleOutlined className="oc-pulsing-icon" />
+                  </div>
+                  <h3>點名尚未開始</h3>
+                  <p>教師目前尚未發布本堂課的點名碼。請稍候，通道開啟時頁面將自動更新。</p>
+                </div>
               )}
             </div>
           </Card>

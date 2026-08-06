@@ -13,19 +13,13 @@
 .oc-user-new-batch-block {
 }
 .oc-user-new-form {
-  background: #f8f8f8;
-  padding: 1rem;
-  /* display: flex;
-  flex-direction: column;
-  align-items: center; */
+  /* Inherits card background and padding from OCOverlay */
 }
 .oc-user-new-batch-form {
   display: flex;
   position: relative;
   flex-direction: column;
   align-items: center;
-  background: #fff;
-  padding: 1rem;
   width: 70vw;
 }
 /* .oc-user-new-form-item {

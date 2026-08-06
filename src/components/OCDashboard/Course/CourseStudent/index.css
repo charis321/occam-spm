@@ -1,18 +1,76 @@
 .oc-course-student {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.oc-course-student-actions {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
   width: 100%;
 }
-.oc-course-student-section {
-  display: flex;
-}
+
 .oc-student-new-block {
   display: flex;
   flex-direction: column;
-  background-color: #eee;
-  padding: 1rem;
-  width: 80%;
-  height: 60%;
+  width: 800px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Excel Upload Custom Drop Zone styling */
+.oc-excel-upload-zone {
+  width: 100%;
+}
+
+.oc-excel-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--oc-input-border);
+  border-radius: 12px;
+  padding: 2.5rem;
+  background-color: var(--oc-primary-bg-light);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.oc-excel-upload-label:hover {
+  border-color: var(--oc-primary);
+  background-color: rgba(245, 158, 11, 0.08);
+}
+
+.oc-excel-icon {
+  font-size: 3rem;
+  color: var(--oc-primary);
+  margin-bottom: 0.75rem;
+}
+
+.oc-excel-upload-label span {
+  color: var(--oc-text-title);
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.oc-upload-preview-section {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--oc-card-border);
+  padding-top: 1rem;
+}
+
+.oc-upload-preview-section h3 {
+  color: var(--oc-text-title);
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Action column button custom layout */
+.oc-student-action-btns {
+  display: flex;
+  gap: 0.5rem;
 }

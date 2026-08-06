@@ -78,7 +78,7 @@ export default function OCLessonCalendar(props) {
   });
 
   return (
-    <div className="oc-calendar-wrapper-layout">
+    <div className="oc-lesson-calendar-body">
       <Calendar
         fullscreen={device === 'PC'}
         cellRender={cellRender}

@@ -1,11 +1,25 @@
 .oc-course-description {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .oc-course-description-card {
-    width: 90%;
-    margin-top: 1rem;
+  width: 90%;
+  max-width: 900px;
+  margin-top: 1rem;
+}
+
+.oc-course-description-card .ant-descriptions-item-label {
+  color: var(--oc-primary-hover) !important;
+  font-weight: 600 !important;
+}
+
+.oc-course-description-card .ant-descriptions-item-content {
+  color: var(--oc-text-primary) !important;
+}
+
+.oc-course-description-card .ant-divider {
+  border-top-color: var(--oc-card-border) !important;
 }

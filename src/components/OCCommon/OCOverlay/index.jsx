@@ -5,7 +5,7 @@ import { Button } from 'antd';
 export default function OCOverlay({ children, toggle }) {
   return (
     <div className="oc-overlay">
-      {children}
+      <div className='oc-overlay-content'>{children}</div>
       <Button className="close-btn" onClick={toggle}>
         X
       </Button>

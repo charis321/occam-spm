@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { OCCourseAttendanceTable } from '../AttendanceTable';
+import { Button, Table, Radio, Tag, message } from 'antd';
+import { EyeOutlined } from '@ant-design/icons';
+import OCLoading from '@components/OCCommon/OCLoading';
+import OCTitle from '@components/OCCommon/OCTitle';
 import { apiUtil } from '@utils/WebApi';
 import { PERIOD_TIME } from '@config/time.js';
 import { ATTENDANCE_MAP } from '@config/attendance.js';
-import { Button, Flex, Table } from 'antd';
-import OCLoading from '@components/OCCommon/OCLoading';
-
 import './index.css';
-export default function OCCourseAttendance(props) {
+
+export default function OCCourseAttendance() {
   const { courseId } = useParams();
   const [attendanceData, setAttendanceData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -18,7 +19,7 @@ export default function OCCourseAttendance(props) {
     const controller = new AbortController();
     getAttendanceData(controller.signal);
     return () => {
-      controller.abort;
+      controller.abort();
     };
   }, [displayMode]);
 
@@ -29,7 +30,7 @@ export default function OCCourseAttendance(props) {
     if (res?.code === 200) {
       setAttendanceData(res.data);
     } else {
-      alert('無法取得課程點名資料');
+      message.error('無法取得課程點名資料');
     }
     setIsLoading(false);
   };
@@ -40,27 +41,24 @@ export default function OCCourseAttendance(props) {
         <OCLoading />
       ) : (
         <div className="oc-course-attendance">
-          <h2>出席表</h2>
-          <section>
-            <div className="flex-row">
-              <Button
-                onClick={() => {
-                  setDisplayMode('lesson');
-                }}
-              >
-                依課堂查看
-              </Button>
-              <Button
-                onClick={() => {
-                  setDisplayMode('student');
-                }}
-              >
-                依學生查看
-              </Button>
-            </div>
+          <OCTitle
+            title="點名統計紀錄"
+            description="查看本課程各個課堂的點名狀態，或檢視個別學生的出席率匯總"
+          />
+          <section className="oc-attendance-toolbar">
+            <Radio.Group
+              value={displayMode}
+              onChange={(e) => setDisplayMode(e.target.value)}
+              optionType="button"
+              buttonStyle="solid"
+              className="oc-attendance-toggle"
+            >
+              <Radio.Button value="lesson">依課堂查看</Radio.Button>
+              <Radio.Button value="student">依學生查看</Radio.Button>
+            </Radio.Group>
           </section>
-          {/* <OCCourseAttendanceTable attendanceData={attendanceData} /> */}
-          <section>
+
+          <section className="oc-attendance-table-container">
             {displayMode === 'lesson' ? (
               <LessonAttendanceStatsTable attendanceData={attendanceData} />
             ) : (
@@ -72,135 +70,74 @@ export default function OCCourseAttendance(props) {
     </>
   );
 }
-export function LessonAttendanceStatsList(props) {
-  const { attendanceData } = props;
-  const navigator = useNavigate();
 
-  return (
-    <ul className="attendance-stats-list">
-      {attendanceData.map((data) => {
-        return (
-          <li>
-            <div>
-              <p>上課時間: {PERIOD_TIME(data.startTime, data.endTime)}</p>
-            </div>
-            <div>
-              <Button
-                onClick={() => {
-                  navigator(`../lesson/${data.lessonId}`);
-                }}
-              >
-                查看
-              </Button>
-            </div>
-            <div>
-              <Flex gap="medium" horizontal>
-                <span style={{ fontSize: '1.5rem', color: 'green' }}>
-                  {data.presentCount}
-                </span>
-                <p>出席</p>
-                <span style={{ fontSize: '1.5rem', color: 'orange' }}>
-                  {data.excusedCount}
-                </span>
-                <p>請假</p>
-                <span style={{ fontSize: '1.5rem', color: 'red' }}>
-                  {data.absentCount}
-                </span>
-                <p>缺席</p>
-              </Flex>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
 export function LessonAttendanceStatsTable(props) {
   const { attendanceData } = props;
   const navigator = useNavigate();
 
-  const coloumns = [
+  const columns = [
     {
-      title: '操作',
-      dataIndex: 'lessonId',
-      responsive: ['xs'],
-      render: (id) => {
-        return (
-          <Button
-            onClick={() => {
-              navigator(`../lesson/${id}/attendance`);
-            }}
-          ></Button>
-        );
-      },
-    },
-    {
-      title: '操作',
-      dataIndex: 'lessonId',
-      responsive: ['md'],
-      render: (id) => {
-        return (
-          <Button
-            onClick={() => {
-              navigator(`../lesson/${id}/attendance`);
-            }}
-          >
-            查看
-          </Button>
-        );
-      },
-    },
-    {
-      title: '資訊',
+      title: '上課時間',
+      key: 'time',
       render: (record) => {
-        return <p>{PERIOD_TIME(record.startTime, record.endTime)}</p>;
+        return <span style={{ fontWeight: 500, color: '#374151' }}>{PERIOD_TIME(record.startTime, record.endTime)}</span>;
       },
     },
     {
-      title: '已點名?',
+      title: '點名狀態',
       dataIndex: 'rollcallStatus',
+      key: 'rollcallStatus',
       render: (value) => {
-        return <p>{ATTENDANCE_MAP[value]?.title}</p>;
+        return (
+          <Tag color={ATTENDANCE_MAP[value]?.color || 'default'}>
+            {ATTENDANCE_MAP[value]?.title || '未知'}
+          </Tag>
+        );
       },
     },
     {
       title: '出席數',
       dataIndex: 'presentCount',
-      render: (value) => {
-        return (
-          <>
-            <span style={{ fontSize: '1.5rem', color: '#73e677' }}>
-              {value}
-            </span>
-            <br></br>
-            <p>出席</p>
-          </>
-        );
-      },
+      key: 'presentCount',
+      align: 'center',
+      render: (value) => (
+        <span style={{ fontWeight: 600, color: '#16a34a', fontSize: '1.05rem' }}>{value}</span>
+      ),
     },
     {
       title: '請假數',
       dataIndex: 'excusedCount',
-      render: (value) => {
-        return (
-          <>
-            <span style={{ fontSize: '1.5rem', color: 'orange' }}>{value}</span>
-            <br></br>
-            <p>請假</p>
-          </>
-        );
-      },
+      key: 'excusedCount',
+      align: 'center',
+      render: (value) => (
+        <span style={{ fontWeight: 600, color: '#d97706', fontSize: '1.05rem' }}>{value}</span>
+      ),
     },
     {
       title: '缺席數',
       dataIndex: 'absentCount',
-      render: (value) => {
+      key: 'absentCount',
+      align: 'center',
+      render: (value) => (
+        <span style={{ fontWeight: 600, color: '#dc2626', fontSize: '1.05rem' }}>{value}</span>
+      ),
+    },
+    {
+      title: '操作',
+      dataIndex: 'lessonId',
+      key: 'action',
+      align: 'center',
+      render: (id) => {
         return (
-          <>
-            <span style={{ fontSize: '1.5rem', color: 'red' }}>{value}</span>
-            <br></br>
-            <p>缺席</p>
-          </>
+          <Button
+            className="oc-btn-amber-outline"
+            icon={<EyeOutlined />}
+            onClick={() => {
+              navigator(`../lesson/${id}/attendance`);
+            }}
+          >
+            查看點名
+          </Button>
         );
       },
     },
@@ -217,142 +154,81 @@ export function LessonAttendanceStatsTable(props) {
         size: 'large',
         showTotal: (total) => `共 ${total} 筆資料`,
       }}
-      columns={coloumns}
-      rowKey={(record) => record.key}
-      rowClassName={(record, index) => {
-        return ATTENDANCE_MAP?.[record.rollcallStatus]?.class;
-      }}
-      // showHeader={false}
-    ></Table>
+      columns={columns}
+      rowKey={(record) => record.key || record.lessonId}
+    />
   );
 }
 
-export function StudentAttendanceStatsList(props) {
-  const { attendanceData } = props;
-
-  return (
-    <ul className="attendance-stats-list">
-      {attendanceData.map((data) => {
-        return (
-          <li>
-            <div>
-              <p>{data.studentNo}</p>
-              <p>{data.studentName}</p>
-            </div>
-            <div>
-              <Flex gap="medium" horizontal>
-                <span>{data.presentCount}</span>
-                <p>出席</p>
-                <span>{data.excusedCount}</span>
-                <p>請假</p>
-
-                <span>{data.absentCount}</span>
-                <p>缺席</p>
-              </Flex>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
 export function StudentAttendanceStatsTable(props) {
   const { attendanceData } = props;
   const navigator = useNavigate();
 
-  const coloumns = [
+  const columns = [
     {
-      title: '操作',
-      dataIndex: 'studentId',
-      responsive: ['xs'],
-      render: (id) => {
-        return (
-          <Button
-            onClick={() => {
-              navigator(`/dashboard/user/${id}`);
-            }}
-          ></Button>
-        );
-      },
+      title: '學號',
+      dataIndex: 'studentNo',
+      key: 'studentNo',
+      render: (text) => <span style={{ color: '#4b5563' }}>{text}</span>,
     },
     {
-      title: '操作',
-      dataIndex: 'studentId',
-      responsive: ['md'],
-      render: (id) => {
-        return (
-          <Button
-            onClick={() => {
-              navigator(`/dashboard/user/${id}`);
-            }}
-          >
-            查看
-          </Button>
-        );
-      },
-    },
-    {
-      title: '學生',
-      render: (record) => {
-        return (
-          <>
-            <h3>{record.studentName}</h3>
-            <p>{record.studentNo}</p>
-          </>
-        );
-      },
+      title: '學生姓名',
+      dataIndex: 'studentName',
+      key: 'studentName',
+      render: (text) => <span style={{ fontWeight: 500, color: '#1f2937' }}>{text}</span>,
     },
     {
       title: '出席數',
       dataIndex: 'presentCount',
-      render: (value) => {
-        return (
-          <>
-            <span style={{ fontSize: '1.5rem', color: '#73e677' }}>
-              {value}
-            </span>
-            <br></br>
-            <p>出席</p>
-          </>
-        );
-      },
+      key: 'presentCount',
+      align: 'center',
+      render: (value) => (
+        <span style={{ fontWeight: 600, color: '#16a34a', fontSize: '1.05rem' }}>{value}</span>
+      ),
     },
     {
       title: '請假數',
       dataIndex: 'excusedCount',
-      render: (value) => {
-        return (
-          <>
-            <span style={{ fontSize: '1.5rem', color: 'orange' }}>{value}</span>
-            <br></br>
-            <p>請假</p>
-          </>
-        );
-      },
+      key: 'excusedCount',
+      align: 'center',
+      render: (value) => (
+        <span style={{ fontWeight: 600, color: '#d97706', fontSize: '1.05rem' }}>{value}</span>
+      ),
     },
     {
       title: '缺席數',
       dataIndex: 'absentCount',
-      render: (value) => {
-        return (
-          <>
-            <span style={{ fontSize: '1.5rem', color: 'red' }}>{value}</span>
-            <br></br>
-            <p>缺席</p>
-          </>
-        );
-      },
+      key: 'absentCount',
+      align: 'center',
+      render: (value) => (
+        <span style={{ fontWeight: 600, color: '#dc2626', fontSize: '1.05rem' }}>{value}</span>
+      ),
     },
     {
-      title: '總數',
+      title: '總課堂數',
       dataIndex: 'totalCount',
-      render: (value) => {
+      key: 'totalCount',
+      align: 'center',
+      render: (value) => (
+        <span style={{ fontWeight: 600, color: '#4b5563', fontSize: '1.05rem' }}>{value}</span>
+      ),
+    },
+    {
+      title: '操作',
+      dataIndex: 'studentId',
+      key: 'action',
+      align: 'center',
+      render: (id) => {
         return (
-          <>
-            <span style={{ fontSize: '1.5rem' }}>{value}</span>
-            <br></br>
-            <p>總數</p>
-          </>
+          <Button
+            className="oc-btn-amber-outline"
+            icon={<EyeOutlined />}
+            onClick={() => {
+              navigator(`/dashboard/user/${id}`);
+            }}
+          >
+            學生資料
+          </Button>
         );
       },
     },
@@ -369,10 +245,8 @@ export function StudentAttendanceStatsTable(props) {
         size: 'large',
         showTotal: (total) => `共 ${total} 筆資料`,
       }}
-      columns={coloumns}
-      rowKey={(record) => record.key}
-      showHeader={false}
-      size="small"
-    ></Table>
+      columns={columns}
+      rowKey={(record) => record.key || record.studentId}
+    />
   );
 }

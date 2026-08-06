@@ -5,38 +5,144 @@
   align-items: center;
   width: 100%;
 }
-/* .oc-lesson-page section {
+
+.oc-lesson-page-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  margin: 1rem;
-  border-radius: 0.5rem;
-  background-color: #eee;
-  padding: 0.5rem 1rem;
-  width: 90%;
-}
-.oc-lesson-info {
-  flex: 1;
-  margin: 1rem;
-  border-radius: 5px;
-  background-color: #fec252;
-  padding: 1rem;
-  height: auto;
-  text-align: start;
-}
-.oc-lesson-attendance-code {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-.oc-lesson-attendance-code-text {
-  font-size: 2rem;
+  padding: 1.5rem 5%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-@media screen and (min-width: 768px) {
-  .oc-lesson-page section {
-    flex-direction: row;
+.oc-lesson-page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  align-self: center;
+}
+
+.oc-lesson-page-header .oc-back-btn {
+  padding: 0;
+  height: auto;
+  font-weight: 600;
+  color: #d97706;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.oc-lesson-page-header .oc-back-btn:hover {
+  color: #b45309;
+  transform: translateX(-4px);
+}
+
+.oc-lesson-page-body {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* waiting / inactive panels */
+.oc-rollcall-inactive-panel,
+.oc-student-waiting-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.oc-panel-icon-wrapper {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+  animation: pulse-glow 2.5s infinite;
+}
+
+.oc-pulsing-icon {
+  font-size: 2.25rem;
+  color: #d97706;
+}
+
+/* Student version has clock, let's use slightly blue-purple theme */
+.oc-student-waiting-panel .oc-panel-icon-wrapper {
+  background: #eff6ff;
+  box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  animation: pulse-glow-blue 2.5s infinite;
+}
+
+.oc-student-waiting-panel .oc-pulsing-icon {
+  color: #2563eb;
+  animation: clock-scale 2.5s ease-in-out infinite;
+}
+
+.oc-rollcall-inactive-panel h3,
+.oc-student-waiting-panel h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+}
+
+.oc-rollcall-inactive-panel p,
+.oc-student-waiting-panel p {
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.5;
+  max-width: 320px;
+  margin: 0;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
   }
-} */
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 12px rgba(245, 158, 11, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+  }
+}
+
+@keyframes pulse-glow-blue {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 12px rgba(59, 130, 246, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+@keyframes clock-scale {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}

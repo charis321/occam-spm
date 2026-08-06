@@ -111,7 +111,7 @@ export default function OCLessonTable(props) {
         () => {
           deleteLessonData(lesson);
         },
-        () => {},
+        () => { },
       );
     };
   };

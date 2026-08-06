@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import * as XLSX from 'xlsx';
-import { Button, Table, Form, Input, Space, message } from 'antd';
-import { PlusCircleOutlined, FileAddOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Space, message } from 'antd';
+import { FileAddOutlined, FileExcelOutlined } from '@ant-design/icons';
 import OCStudentTable from '../../Student/StudentTable';
-import OCCourseCard from '../CourseInfo';
 import OCLoading from '../../../OCCommon/OCLoading';
+import OCTitle from '../../../OCCommon/OCTitle';
 import { apiUtil } from '../../../../Util/WebApi';
 import './index.css';
 import OCOverlay from '../../../OCCommon/OCOverlay';
@@ -141,60 +141,80 @@ export default function OCCourseStudent(props) {
         <OCLoading />
       ) : (
         <div className="oc-course-student">
-          <h2>學生管理</h2>
+          <OCTitle
+            title={user.role === 1 ? '學生管理' : '同學列表'}
+            description={user.role === 1 ? '檢視選課學生名單、匯入學生 Excel 清單' : '檢視目前選修本課程的同學清單'}
+          />
           {user.role == 1 && (
-            <div className="oc-flex">
-              <Button>
-                <PlusCircleOutlined />
-                新增學生
-              </Button>
-              <Button color="cyan" variant="solid" onClick={handleAddStudent}>
-                <FileAddOutlined />
-                批量新增學生
+            <div className="oc-course-student-actions">
+              <Button
+                type="primary"
+                icon={<FileAddOutlined />}
+                onClick={handleAddStudent}
+                className="oc-btn-amber-solid"
+                style={{ height: '40px', borderRadius: '8px', fontWeight: 500 }}
+              >
+                批量導入學生 (Excel)
               </Button>
             </div>
           )}
 
           {isAdding && (
-            <OCOverlay
-              toggle={() => {
-                setIsAdding(!isAdding);
-              }}
-            >
+            <OCOverlay toggle={handleAddStudent}>
               <div className="oc-student-new-block">
-                <h2>批量註冊學生</h2>
-                <Form
-                  layout="inline"
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    borderRadius: '0.5rem',
-                  }}
-                >
-                  <Form.Item>
-                    <Input
-                      type="file"
-                      name="excelFile"
-                      accept=".xlsx,.xls"
-                      onChange={handleFileChange}
-                    />
+                <OCTitle
+                  title="批量註冊學生"
+                  description="請上傳包含學生學號、姓名、電子郵件、學校與系所的 Excel 檔案 (.xlsx, .xls)"
+                />
+                <Form layout="vertical" className="oc-student-upload-form" style={{ marginTop: '1rem' }}>
+                  <Form.Item label="選擇 Excel 檔案" required>
+                    <div className="oc-excel-upload-zone">
+                      <input
+                        type="file"
+                        name="excelFile"
+                        id="excel-file-input"
+                        accept=".xlsx,.xls"
+                        onChange={handleFileChange}
+                        style={{ display: 'none' }}
+                      />
+                      <label htmlFor="excel-file-input" className="oc-excel-upload-label">
+                        <FileExcelOutlined className="oc-excel-icon" />
+                        <span>{newStudentsFile ? newStudentsFile.name : '點擊選擇或拖入 Excel 檔案'}</span>
+                      </label>
+                    </div>
                   </Form.Item>
-                  <Form.Item>
-                    <Button onClick={handleSubmit}>上傳</Button>
+                  <Form.Item style={{ textAlign: 'right', marginTop: '1.5rem', marginBottom: 0 }}>
+                    <Space size="middle">
+                      <Button onClick={handleAddStudent}>取消</Button>
+                      <Button
+                        type="primary"
+                        onClick={handleSubmit}
+                        disabled={!newStudentsFile}
+                        className="oc-btn-amber-solid"
+                      >
+                        確認上傳
+                      </Button>
+                    </Space>
                   </Form.Item>
                 </Form>
-                <OCStudentTable
-                  className="oc-new-student-table"
-                  data={newStudentData}
-                  isNew={true}
-                />
+                {newStudentData.length > 0 && (
+                  <div className="oc-upload-preview-section">
+                    <h3>資料預覽 ({newStudentData.length} 筆資料)</h3>
+                    <OCStudentTable
+                      className="oc-new-student-table"
+                      data={newStudentData}
+                      isNew={true}
+                      pageSize={5}
+                    />
+                  </div>
+                )}
               </div>
             </OCOverlay>
           )}
           <OCStudentTable
             className="oc-student-table"
             data={studentData}
-            pageSize="10"
+            pageSize={10}
           />
         </div>
       )}

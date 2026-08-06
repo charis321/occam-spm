@@ -23,9 +23,9 @@ export default function UserPreferencesCard() {
   return (
     <div className="oc-user-preferences-card">
       <div className="oc-pref-header">
-        <h4><SettingOutlined /> &nbsp; 偏好與安全設置</h4>
+        <h4><SettingOutlined /> &nbsp; 偏好與安全設置 <span style={{ color: '#8b5cf6' }}> (功能尚未實作) </span></h4>
       </div>
-      
+
       <div className="pref-item">
         <div className="pref-item-desc">
           <span className="pref-title"><BulbOutlined /> &nbsp; 深色護眼模式</span>

@@ -6,6 +6,7 @@
   --oc-height-nav: 64px;
   --oc-dashboard-padding: 1rem;
   --oc-color-gray: #333;
+  --oc-border-radius: 1rem;
 
   /* Theme color tokens - Light Theme */
   --oc-bg-container: linear-gradient(135deg, #faf9f5 0%, #f1efe6 100%);
@@ -18,6 +19,14 @@
   --oc-text-secondary: #4b5563;
   --oc-input-bg: #ffffff;
   --oc-input-border: rgba(217, 119, 6, 0.22);
+
+  /* Cozy Cream Amber Brand System Variables */
+  --oc-primary: #d97706;
+  --oc-primary-hover: #b45309;
+  --oc-primary-light: #fef3c7;
+  --oc-primary-accent: #f59e0b;
+  --oc-primary-bg-light: rgba(217, 119, 6, 0.04);
+  --oc-card-bg-gradient: linear-gradient(to bottom, #faf9f6, #f3f1e9);
 }
 
 #root {
@@ -88,16 +97,31 @@ p {
    ========================================== */
 [data-theme='dark'] {
   --oc-bg-container: linear-gradient(135deg, #111115 0%, #17171d 100%);
-  --oc-card-bg: #1e1e24; /* 曜黑/曜金底色 */
-  --oc-card-border: rgba(245, 158, 11, 0.18); /* 霓虹金細框 */
+  --oc-card-bg: #1e1e24;
+  /* 曜黑/曜金底色 */
+  --oc-card-border: rgba(245, 158, 11, 0.18);
+  /* 霓虹金細框 */
   --oc-card-shadow: rgba(0, 0, 0, 0.5);
-  --oc-subcard-bg: #26262e; /* 稍微明亮一點的深炭灰 */
-  --oc-text-title: #f59e0b; /* 霓虹金黃色標題，暗處發光 */
-  --oc-text-primary: #e5e7eb; /* 亮灰白文字 */
-  --oc-text-secondary: #9ca3af; /* 柔和灰文字 */
-  --oc-input-bg: #141418; /* 暗色輸入框 */
+  --oc-subcard-bg: #26262e;
+  /* 稍微明亮一點的深炭灰 */
+  --oc-text-title: #f59e0b;
+  /* 霓虹金黃色標題，暗處發光 */
+  --oc-text-primary: #e5e7eb;
+  /* 亮灰白文字 */
+  --oc-text-secondary: #9ca3af;
+  /* 柔和灰文字 */
+  --oc-input-bg: #141418;
+  /* 暗色輸入框 */
   --oc-input-border: rgba(245, 158, 11, 0.25);
-  
+
+  /* Cozy Cream Amber Brand System Variables - Dark Mode Overrides */
+  --oc-primary: #f59e0b;
+  --oc-primary-hover: #fbbf24;
+  --oc-primary-light: #2d230e;
+  --oc-primary-accent: #fbbf24;
+  --oc-primary-bg-light: rgba(245, 158, 11, 0.05);
+  --oc-card-bg-gradient: linear-gradient(to bottom, #1e1e24, #141418);
+
   background-color: #111115 !important;
   color: #e5e7eb !important;
 }
@@ -105,4 +129,143 @@ p {
 [data-theme='dark'] body {
   background-color: #111115 !important;
   color: #e5e7eb !important;
+}
+
+/* ==========================================
+   Ant Design Calendar 客製化樣式 (琥珀橘/暖金系統)
+   ========================================== */
+.oc-lesson-calendar-body {
+  width: 100%;
+  background: linear-gradient(to bottom, #faf9f6, #f3f1e9);
+  padding: 1.5rem;
+  border-radius: 20px;
+  border: 1px solid rgba(217, 119, 6, 0.12);
+  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.02);
+  box-sizing: border-box;
+}
+
+@media screen and (min-width: 768px) {
+  .oc-lesson-calendar-body {
+    width: 100%;
+  }
+}
+
+.oc-calendar-root {
+  background: transparent !important;
+}
+
+/* 月份選擇與按鈕的暖金邊框與文字 */
+.oc-calendar-root .ant-select-selector,
+.oc-calendar-root .ant-radio-button-wrapper {
+  border-color: rgba(217, 119, 6, 0.22) !important;
+  color: #78350f !important;
+  border-radius: 6px !important;
+}
+
+.oc-calendar-root .ant-radio-button-wrapper-checked {
+  background-color: #f59e0b !important;
+  border-color: #d97706 !important;
+  color: #ffffff !important;
+}
+
+.oc-calendar-root .ant-select-focused .ant-select-selector {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* 星期頭部 (Sun, Mon...) */
+.oc-calendar-root thead th {
+  color: #b45309 !important;
+  font-weight: 600 !important;
+  padding-bottom: 12px !important;
+}
+
+/* 日曆單格框線 */
+.oc-calendar-root .ant-picker-cell {
+  border: 1px solid rgba(217, 119, 6, 0.06) !important;
+}
+
+/* 日期數字 */
+.oc-calendar-root .ant-picker-calendar-date-value {
+  color: #4b5563 !important;
+  font-weight: 500 !important;
+}
+
+/* 今天 (Today) 樣式 */
+.oc-calendar-root .ant-picker-cell-today .ant-picker-calendar-date-value {
+  color: #d97706 !important;
+  background-color: #fef3c7 !important;
+  border-radius: 4px;
+  padding: 0 6px;
+  display: inline-block;
+  border: 1.5px solid #fbbf24;
+}
+
+/* 選取中單格的背景 */
+.oc-calendar-root .ant-picker-cell-selected .ant-picker-calendar-date {
+  background-color: rgba(254, 243, 199, 0.45) !important;
+}
+
+.oc-calendar-root .ant-picker-cell-selected .ant-picker-calendar-date-value {
+  font-weight: bold !important;
+  color: #d97706 !important;
+}
+
+/* 滑鼠懸停單格 */
+.oc-calendar-root .ant-picker-cell:hover .ant-picker-calendar-date {
+  background-color: rgba(254, 243, 199, 0.25) !important;
+}
+
+/* 卡片中的課堂按鈕微調 */
+.oc-calendar-root .ant-btn {
+  border-radius: 6px !important;
+  margin-top: 4px !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.oc-calendar-root .ant-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ==========================================
+   Cozy Cream Theme Utility Classes
+   ========================================== */
+.oc-card-gradient {
+  width: 100%;
+  background: var(--oc-card-bg-gradient) !important;
+  border-radius: 20px !important;
+  border: 1px solid var(--oc-card-border) !important;
+  box-shadow: var(--oc-card-shadow) !important;
+  box-sizing: border-box;
+}
+
+.oc-btn-amber-solid {
+  background-color: var(--oc-primary) !important;
+  border-color: var(--oc-primary) !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+
+.oc-btn-amber-solid:hover {
+  background-color: var(--oc-primary-hover) !important;
+  border-color: var(--oc-primary-hover) !important;
+  transform: translateY(-1px);
+}
+
+.oc-btn-amber-outline {
+  border-color: var(--oc-input-border) !important;
+  color: var(--oc-primary-hover) !important;
+  border-radius: 8px !important;
+  background-color: transparent !important;
+  transition: all 0.3s ease !important;
+}
+
+.oc-btn-amber-outline:hover {
+  border-color: var(--oc-primary) !important;
+  color: var(--oc-primary) !important;
+  background-color: var(--oc-primary-bg-light) !important;
+  transform: translateY(-1px);
 }

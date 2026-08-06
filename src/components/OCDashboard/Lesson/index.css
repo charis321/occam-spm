@@ -3,16 +3,141 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  padding: 1.5rem 5%;
+  box-sizing: border-box;
 }
+
+.oc-lesson-dashboard-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 90%;
+  max-width: 1200px;
+  margin-bottom: 1.5rem;
+}
+
+@media screen and (min-width: 768px) {
+  .oc-lesson-dashboard-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.oc-lesson-dashboard-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.oc-lesson-control-btns {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .oc-lesson-dashboard section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 1rem;
-  background-color: #eee;
-  padding: 0.5rem;
+  margin-bottom: 1.5rem;
+  background-color: #fcfbfa;
+  border: 1px solid rgba(217, 119, 6, 0.08);
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
   width: 90%;
+  max-width: 1200px;
+  box-sizing: border-box;
 }
+
+.oc-lesson-mode-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.oc-lesson-mode-switch p {
+  margin: 0;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.oc-lesson-table-container {
+  width: 90%;
+  max-width: 1200px;
+}
+
 .oc-lesson-table {
   width: 100%;
+}
+
+/* Add Lesson Forms */
+.oc-new-lesson-block-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 460px;
+  box-sizing: border-box;
+}
+
+.oc-new-lesson-block-form h2,
+.oc-new-lesson-block-form h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #78350f;
+  border-left: 3px solid #f59e0b;
+  padding-left: 10px;
+  width: 100%;
+  text-align: left;
+}
+
+.oc-new-lesson-block-form-item {
+  width: 100%;
+  margin-bottom: 1.25rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.oc-new-lesson-block-form-item label {
+  font-weight: 600;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+.oc-new-lesson-block-form-item input {
+  width: 100%;
+  padding: 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(217, 119, 6, 0.18);
+  background: #fdfdfb;
+  outline: none;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.oc-new-lesson-block-form-item input:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+}
+
+.oc-new-lesson-block-form-item span {
+  align-self: center;
+  font-weight: 500;
+  color: #9ca3af;
+  margin: 0.25rem 0;
+}
+
+.oc-new-lesson-block-form button[type="submit"],
+.oc-new-lesson-block-form button.ant-btn-primary {
+  width: 100%;
+  height: 40px;
+  font-weight: 600;
+  margin-top: 0.5rem;
 }

@@ -54,72 +54,100 @@
 }
 
 /* 1. 關於課程 (藍光) */
-.oc-card-about .oc-menu-card-icon { color: #3b82f6; }
+.oc-card-about .oc-menu-card-icon {
+  color: #3b82f6;
+}
+
 .oc-card-about:hover {
   transform: translateY(-4px) scale(1.02);
   background: #ffffff;
   border-color: rgba(59, 130, 246, 0.3) !important;
   box-shadow: 0 10px 24px rgba(59, 130, 246, 0.12);
 }
+
 .oc-card-about:hover .oc-menu-card-icon {
   transform: translateY(-2px) rotate(8deg);
 }
 
 /* 2. 學生管理/列表 (翡翠綠光) */
-.oc-card-student .oc-menu-card-icon { color: #10b981; }
+.oc-card-student .oc-menu-card-icon {
+  color: #10b981;
+}
+
 .oc-card-student:hover {
   transform: translateY(-4px) scale(1.02);
   background: #ffffff;
   border-color: rgba(16, 185, 129, 0.3) !important;
   box-shadow: 0 10px 24px rgba(16, 185, 129, 0.12);
 }
+
 .oc-card-student:hover .oc-menu-card-icon {
   transform: translateY(-2px) rotate(-8deg);
 }
 
 /* 3. 課堂安排 (紫羅蘭光) */
-.oc-card-calendar .oc-menu-card-icon { color: #8b5cf6; }
+.oc-card-calendar .oc-menu-card-icon {
+  color: #8b5cf6;
+}
+
 .oc-card-calendar:hover {
   transform: translateY(-4px) scale(1.02);
   background: #ffffff;
   border-color: rgba(139, 92, 246, 0.3) !important;
   box-shadow: 0 10px 24px rgba(139, 92, 246, 0.12);
 }
+
 .oc-card-calendar:hover .oc-menu-card-icon {
   transform: translateY(-2px) rotate(8deg);
 }
 
 /* 4. 點名紀錄 (薄荷綠光) */
-.oc-card-attendance .oc-menu-card-icon { color: #14b8a6; }
+.oc-card-attendance .oc-menu-card-icon {
+  color: #14b8a6;
+}
+
 .oc-card-attendance:hover {
   transform: translateY(-4px) scale(1.02);
   background: #ffffff;
   border-color: rgba(20, 184, 166, 0.3) !important;
   box-shadow: 0 10px 24px rgba(20, 184, 166, 0.12);
 }
+
 .oc-card-attendance:hover .oc-menu-card-icon {
   transform: translateY(-2px) rotate(-8deg);
 }
 
 /* 5. 編輯課程 (琥珀金光) */
-.oc-card-edit .oc-menu-card-icon { color: #f59e0b; }
+.oc-card-edit .oc-menu-card-icon {
+  color: #f59e0b;
+}
+
 .oc-card-edit:hover {
   transform: translateY(-4px) scale(1.02);
   background: #ffffff;
   border-color: rgba(245, 158, 11, 0.35) !important;
   box-shadow: 0 10px 24px rgba(245, 158, 11, 0.15);
 }
+
 .oc-card-edit:hover .oc-menu-card-icon {
   transform: translateY(-2px) rotate(8deg);
 }
+
+
 
 /* 6. 刪除課程 (玫瑰粉紅底 -> 珊瑚紅漸層發光) */
 .oc-card-danger {
   background: rgba(254, 242, 242, 0.85);
   border-color: rgba(239, 68, 68, 0.1) !important;
 }
-.oc-card-danger .oc-menu-card-icon { color: #ef4444; }
-.oc-card-danger .oc-menu-card-title { color: #b91c1c; }
+
+.oc-card-danger .oc-menu-card-icon {
+  color: #ef4444;
+}
+
+.oc-card-danger .oc-menu-card-title {
+  color: #b91c1c;
+}
 
 .oc-card-danger:hover {
   transform: translateY(-4px) scale(1.02);
@@ -127,6 +155,7 @@
   border-color: rgba(239, 68, 68, 0.3) !important;
   box-shadow: 0 10px 24px rgba(239, 68, 68, 0.15);
 }
+
 .oc-card-danger:hover .oc-menu-card-icon {
   transform: translateY(-2px) scale(1.1) rotate(12deg);
 }

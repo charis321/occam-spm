@@ -1,5 +1,6 @@
 import { Button, Table } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { EyeOutlined, MailOutlined } from '@ant-design/icons';
 
 export default function OCStudentTable(props) {
   const { data, isNew, pageSize = 5 } = props;
@@ -32,8 +33,10 @@ export default function OCStudentTable(props) {
       title: '操作',
       render: (record) => {
         return (
-          <div>
+          <div className="oc-student-action-btns">
             <Button
+              className="oc-btn-amber-outline"
+              icon={<EyeOutlined />}
               onClick={() => {
                 navigator(`/dashboard/user/${record.id}`);
               }}
@@ -41,6 +44,9 @@ export default function OCStudentTable(props) {
               查看
             </Button>
             <Button
+              type="primary"
+              className="oc-btn-amber-solid"
+              icon={<MailOutlined />}
               onClick={() => {
                 navigator(`/dashboard/message/new?to=${record.id}`);
               }}

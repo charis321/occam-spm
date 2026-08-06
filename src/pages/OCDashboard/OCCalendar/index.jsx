@@ -42,9 +42,7 @@ export default function OCCalendar(props) {
               description="查看所有課程的排課時間與地點"
             />
           </div>
-          <div className="oc-lesson-calendar-body">
-            <OCLessonCalendar lessonData={lessonData} />
-          </div>
+          <OCLessonCalendar lessonData={lessonData} />
         </div>
       )}
     </>

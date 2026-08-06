@@ -57,7 +57,7 @@ export default function OCCourseDescription() {
 
   return (
     <div className="oc-course-description">
-      <Card className="oc-course-description-card">
+      <Card className="oc-course-description-card oc-card-gradient">
         <div
           style={{
             display: 'flex',
@@ -68,21 +68,11 @@ export default function OCCourseDescription() {
           }}
         >
           <Space direction="vertical" size={0}>
-            <Title level={3} style={{ margin: 0 }}>
-              <BookOutlined style={{ color: '#1890ff', marginRight: '12px' }} />
+            <Title level={3} style={{ margin: 0, color: 'var(--oc-text-title)' }}>
+              <BookOutlined style={{ color: 'var(--oc-primary)', marginRight: '12px' }} />
               {courseData?.name}
             </Title>
           </Space>
-          {/* <Tag
-            color="blue"
-            style={{
-              borderRadius: '6px',
-              padding: '2px 10px',
-              fontSize: '14px',
-            }}
-          >
-            {data.level}
-          </Tag> */}
         </div>
 
         <Divider style={{ margin: '20px 0' }} />
@@ -94,13 +84,13 @@ export default function OCCourseDescription() {
               key: '1',
               label: (
                 <Space>
-                  <SolutionOutlined /> 學分數
+                  <SolutionOutlined style={{ color: 'var(--oc-primary)' }} /> 學分數
                 </Space>
               ),
               children: (
-                <Text strong>
+                <Text strong style={{ color: 'var(--oc-text-primary)' }}>
                   {courseData?.credits
-                    ? `${courseData?.credits}學分`
+                    ? `${courseData?.credits} 學分`
                     : '無學分'}
                 </Text>
               ),
@@ -109,22 +99,22 @@ export default function OCCourseDescription() {
               key: '2',
               label: (
                 <Space>
-                  <UserOutlined /> 修課人數
+                  <UserOutlined style={{ color: 'var(--oc-primary)' }} /> 修課人數
                 </Space>
               ),
-              children: <Text strong>{courseData?.studentCount} 人</Text>,
+              children: <Text strong style={{ color: 'var(--oc-text-primary)' }}>{courseData?.studentCount} 人</Text>,
             },
             {
               key: '3',
               label: (
                 <Space>
-                  <CalendarOutlined /> 總課堂數
+                  <CalendarOutlined style={{ color: 'var(--oc-primary)' }} /> 總課堂數
                 </Space>
               ),
               children: (
                 <Badge
                   count={courseData?.lessonCount}
-                  color="#52c41a"
+                  color="var(--oc-primary)"
                   showZero
                 />
               ),
@@ -133,10 +123,21 @@ export default function OCCourseDescription() {
               key: '4',
               label: (
                 <Space>
-                  <ReadOutlined /> 所屬單位
+                  <ReadOutlined style={{ color: 'var(--oc-primary)' }} /> 所屬單位
                 </Space>
               ),
-              children: <Tag color="cyan">{courseData?.department}</Tag>,
+              children: (
+                <Tag
+                  style={{
+                    backgroundColor: 'var(--oc-primary-light)',
+                    color: 'var(--oc-primary-hover)',
+                    borderColor: 'var(--oc-card-border)',
+                    borderRadius: '6px',
+                  }}
+                >
+                  {courseData?.department}
+                </Tag>
+              ),
             },
           ]}
         />
@@ -145,15 +146,16 @@ export default function OCCourseDescription() {
         <Space direction="vertical" style={{ width: '100%' }}>
           <Text
             strong
-            style={{ fontSize: '16px', display: 'flex', alignItems: 'center' }}
+            style={{
+              fontSize: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              color: 'var(--oc-text-title)',
+            }}
           >
-            <SolutionOutlined style={{ marginRight: '8px' }} /> 課程簡介
+            <SolutionOutlined style={{ marginRight: '8px', color: 'var(--oc-primary)' }} /> 課程簡介
           </Text>
 
-          {/* 💡 這裡實作了 RWD 文字防禦：
-            1. 在手機版（PWA）預設只顯示 3 行，避免佔據過多垂直空間。
-            2. 使用 expandable 屬性允許老師展開閱讀。
-        */}
           <Paragraph
             ellipsis={{
               rows: 3,
@@ -162,10 +164,11 @@ export default function OCCourseDescription() {
               tooltip: '點擊展開完整內容',
             }}
             style={{
-              color: '#595959',
+              color: 'var(--oc-text-primary)',
               fontSize: '15px',
               lineHeight: '1.8',
-              backgroundColor: '#fafafa',
+              backgroundColor: 'var(--oc-primary-bg-light)',
+              border: '1px solid var(--oc-card-border)',
               padding: '16px',
               borderRadius: '12px',
             }}

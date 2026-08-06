@@ -1,43 +1,40 @@
 .oc-course-attendance {
-  width: 100%;
-  /* overflow: scroll; */
-}
-.oc-course-attendance section {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.oc-attendance-toolbar {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
   width: 100%;
 }
-.attendance-stats-list {
-  width: 50%;
-}
-.attendance-stats-list li {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #f8f8f8;
-}
-/* 已完成：使用成功的青綠色 */
-.attendance-stats-table .rollcalled {
-  border-left: 4px solid #52c41a; /* 左側邊框增加視覺提示 */
-  background-color: #f6ffed; /* AntD Success-1 */
-  color: #000;
+
+.oc-attendance-toggle .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+  background-color: var(--oc-primary-accent) !important;
+  border-color: var(--oc-primary) !important;
+  color: #ffffff !important;
 }
 
-/* 進行中：使用品牌藍色或亮橘色 */
-.attendance-stats-table .rollcalling {
-  border-left: 4px solid #1890ff;
-  background-color: #e6f7ff; /* AntD Info-1 */
-  color: #096dd9;
+.oc-attendance-toggle .ant-radio-button-wrapper:hover {
+  color: var(--oc-primary) !important;
 }
 
-/* 未開始：使用輕微的灰色 */
-.attendance-stats-table .unrollcall {
-  border-left: 4px solid #d9d9d9;
-  background-color: #fafafa; /* AntD Normal-Gray */
-  color: #8c8c8c;
+.oc-attendance-toggle .ant-radio-button-wrapper {
+  color: var(--oc-text-title) !important;
+  border-color: var(--oc-input-border) !important;
 }
-.attendance-stats-table .unrollcall p,
-.attendance-stats-table .unrollcall span:not(button span) {
-  color: #8c8c8c !important;
+
+.oc-attendance-table-container {
+  width: 100%;
+  background: var(--oc-subcard-bg);
+  border-radius: 16px;
+  border: 1px solid var(--oc-card-border);
+  box-shadow: var(--oc-card-shadow);
+  padding: 1.25rem;
+  box-sizing: border-box;
 }

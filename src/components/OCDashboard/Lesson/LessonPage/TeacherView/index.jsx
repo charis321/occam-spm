@@ -15,6 +15,7 @@ import {
   DatePicker,
   Alert,
   Typography,
+  message,
 } from 'antd';
 import {
   FileDoneOutlined,
@@ -123,7 +124,7 @@ export default function OCLessonPageTeacherView(props) {
     if (res?.code === 200) {
       getRollcallData();
     } else {
-      alert('更新點名失敗');
+      message.error('更新點名失敗');
     }
     setIsWaiting(false);
   };
@@ -144,10 +145,10 @@ export default function OCLessonPageTeacherView(props) {
         });
       }
     } else if (res?.code === 404) {
-      alert(res?.msg);
+      message.warning(res?.msg);
       navigator('../');
     } else {
-      alert('獲取課堂點名狀態失敗');
+      message.error('獲取課堂點名狀態失敗');
       navigator('../');
     }
   };
@@ -158,10 +159,10 @@ export default function OCLessonPageTeacherView(props) {
     if (res?.code === 200) {
       setLessonData(res.data);
     } else if (res?.code === 404) {
-      alert(res?.msg);
+      message.warning(res?.msg);
       navigator('../');
     } else {
-      alert('獲取課堂紀錄失敗');
+      message.error('獲取課堂紀錄失敗');
       navigator('../');
     }
   };
@@ -171,10 +172,10 @@ export default function OCLessonPageTeacherView(props) {
     const res = await apiUtil(path, 'DELETE', signal);
     if (res?.isSystemError) return;
     if (res?.code === 200) {
-      alert('刪除課堂紀錄成功');
+      message.success('刪除課堂紀錄成功');
       navigator('../');
     } else {
-      alert('刪除課堂紀錄失敗');
+      message.error('刪除課堂紀錄失敗');
       navigator('../');
     }
     setIsLoading(false);
@@ -236,7 +237,7 @@ export default function OCLessonPageTeacherView(props) {
     updateRollcallData(params);
   };
 
-  const handleReset = () => {};
+  const handleReset = () => { };
   const handleLessonAction = (action) => {
     return () => {
       if (action === 'delete') {
@@ -255,7 +256,7 @@ export default function OCLessonPageTeacherView(props) {
             abortControllerRef.current = controller;
             deleteLessonData(controller.signal);
           },
-          () => {},
+          () => { },
         );
       }
     };
@@ -267,7 +268,7 @@ export default function OCLessonPageTeacherView(props) {
         <OCLoading />
       ) : (
         <article className="oc-lesson-page">
-          <Row gutter={[24, 24]} style={{ width: '100%', margin: '1rem' }}>
+          <Row gutter={[24, 24]} style={{ width: '100%' }}>
             <Col xs={24} md={10}>
               <Space
                 direction="vertical"
@@ -462,8 +463,8 @@ export default function OCLessonPageTeacherView(props) {
                       loading={isWaiting}
                     >
                       {!rollcallData ||
-                      rollcallData?.status === 0 ||
-                      rollcallData?.status === 2
+                        rollcallData?.status === 0 ||
+                        rollcallData?.status === 2
                         ? '開始點名'
                         : '結束點名'}
                     </Button>
@@ -639,12 +640,13 @@ export default function OCLessonPageTeacherView(props) {
                       <div
                         style={{
                           background:
-                            'linear-gradient(135deg, #141414 0%, #262626 100%)',
+                            'linear-gradient(135deg, #fffbeb 0%, #fff7ed 100%)',
                           padding: '6px 24px',
                           borderRadius: '12px',
-                          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                          boxShadow: '0 8px 24px rgba(217, 119, 6, 0.1)',
                           textAlign: 'center',
                           marginTop: '8px',
+                          border: '1px solid rgba(217, 119, 6, 0.15)',
                         }}
                       >
                         <Typography.Text
@@ -654,8 +656,8 @@ export default function OCLessonPageTeacherView(props) {
                             letterSpacing: '6px',
                             fontFamily:
                               'SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace',
-                            color: '#1890ff',
-                            textShadow: '0 2px 10px rgba(24,144,255,0.3)',
+                            color: '#d97706',
+                            textShadow: '0 2px 10px rgba(217, 119, 6, 0.2)',
                           }}
                         >
                           {rollcallData?.code || '------'}
@@ -689,10 +691,13 @@ export default function OCLessonPageTeacherView(props) {
                       </div>
                     </Space>
                   ) : (
-                    <Empty
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description="目前未開啟點名功能，設定左側面板後點擊「開始點名」"
-                    />
+                    <div className="oc-rollcall-inactive-panel">
+                      <div className="oc-panel-icon-wrapper">
+                        <QrcodeOutlined className="oc-pulsing-icon" />
+                      </div>
+                      <h3>簽到通道未開啟</h3>
+                      <p>請於左側控制面板設定輪換間隔與自動關閉時間，並點擊下方「開始點名」按鈕啟動簽到通道。</p>
+                    </div>
                   )}
                 </div>
               </Card>
