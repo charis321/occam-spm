@@ -4,43 +4,151 @@
   justify-content: center;
   align-items: center;
   width: 100%;
+  min-width: 320px;
+  padding: var(--oc-dashboard-padding);
+  box-sizing: border-box;
 }
-.oc-user-center-dashboard section {
+
+.oc-user-center-header {
+  width: 100%;
+  max-width: 450px;
+  margin-bottom: 1.5rem;
+}
+
+.oc-user-center-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
+  gap: 1.5rem;
 }
+
+.oc-user-center-sidebar,
+.oc-user-center-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 1.5rem;
+}
+
 .oc-user-pwd-change {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1rem;
-  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
-  border-radius: 1rem;
-  background: linear-gradient(180deg, #f4f4f4 0%, #ffffff 100%);
-  padding: 1rem;
-  width: 90%;
+  box-shadow: 0 8px 30px rgba(217, 119, 6, 0.02);
+  border: 1px solid rgba(217, 119, 6, 0.12) !important;
+  border-radius: 16px;
+  background: #f5f4ef;
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 450px;
+  box-sizing: border-box;
 }
+
+.oc-user-pwd-change h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #78350f;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
 .oc-user-pwd-change-form {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
+  gap: 1rem;
 }
+
 .oc-user-pwd-change-form .form-item {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  margin: 0.5rem 0;
-  width: 90%;
-  min-width: 250px;
+  width: 100%;
+  max-width: 400px;
+  gap: 1rem;
+}
+
+.oc-user-pwd-change-form .form-item label {
+  font-weight: 600;
+  color: #4b5563;
+  font-size: 0.9rem;
+  min-width: 80px;
+  text-align: left;
+}
+
+.oc-user-pwd-change-form .form-item input {
+  flex: 1;
+  border-radius: 8px;
+  border: 1px solid rgba(217, 119, 6, 0.22);
+  padding: 6px 12px;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  background: #ffffff;
+  outline: none;
+}
+
+.oc-user-pwd-change-form .form-item input:hover {
+  border-color: #f59e0b;
+}
+
+.oc-user-pwd-change-form .form-item input:focus {
+  border-color: #d97706;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+}
+
+/* 修改密碼提交按鈕 */
+.oc-user-pwd-change-form .ant-btn {
+  margin-top: 1.25rem;
+  height: 38px;
+  padding: 0 2rem;
+  border-radius: 8px !important;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 @media screen and (min-width: 768px) {
   .oc-user-center-dashboard .oc-user-pwd-change {
     width: 60%;
+    max-width: 600px;
+    padding: 1.75rem;
   }
-  .oc-user-pwd-change-form .form-item {
-    width: 70%;
+
+  .oc-user-center-header {
+    width: 60%;
+    max-width: 600px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .oc-user-center-header {
+    width: 100%;
+    max-width: 1200px;
+  }
+
+  .oc-user-center-content {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1200px;
+    align-items: start;
+  }
+
+  .oc-user-center-sidebar,
+  .oc-user-center-main {
+    width: 100%;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+
+  .oc-user-center-sidebar .oc-user-info-card,
+  .oc-user-center-sidebar .oc-user-stats-card,
+  .oc-user-center-main .oc-user-preferences-card,
+  .oc-user-center-main .oc-user-pwd-change {
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }

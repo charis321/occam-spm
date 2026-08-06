@@ -7,8 +7,12 @@ import { apiUtil } from '@utils/WebApi';
 
 import OCUserInfoCard from '../User/UserInfoCard';
 import OCLoading from '../../OCCommon/OCLoading';
+import OCTitle from '@components/OCCommon/OCTitle';
+import OCUserStatsCard from './UserStatsCard';
+import OCUserPreferencesCard from './UserPreferencesCard';
 import './index.css';
 import OCUserPwdChange from './UserPwdChange';
+
 export default function OCUserCenterDashboard(props) {
   const { user } = useAuth();
   const [userInfo, setUserInfo] = useState({});
@@ -43,19 +47,28 @@ export default function OCUserCenterDashboard(props) {
         <OCLoading />
       ) : (
         <div className="oc-user-center-dashboard">
-          <h2>個人中心</h2>
-          <section>
-            <OCUserInfoCard
-              userInfo={userInfo}
-              readOnly={false}
-              resetUserInfo={() => {
-                getUserInfoData();
-              }}
+          <div className="oc-user-center-header">
+            <OCTitle
+              title="個人中心"
+              description="管理您的個人資料與帳戶安全密碼"
             />
-          </section>
-          <section>
-            <OCUserPwdChange />
-          </section>
+          </div>
+          <div className="oc-user-center-content">
+            <div className="oc-user-center-sidebar">
+              <OCUserInfoCard
+                userInfo={userInfo}
+                readOnly={false}
+                resetUserInfo={() => {
+                  getUserInfoData();
+                }}
+              />
+              <OCUserStatsCard />
+            </div>
+            <div className="oc-user-center-main">
+              <OCUserPreferencesCard />
+              <OCUserPwdChange />
+            </div>
+          </div>
         </div>
       )}
     </>

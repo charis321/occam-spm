@@ -4,8 +4,20 @@
   --oc-z-index-menu: 100;
 
   --oc-height-nav: 64px;
-
+  --oc-dashboard-padding: 1rem;
   --oc-color-gray: #333;
+
+  /* Theme color tokens - Light Theme */
+  --oc-bg-container: linear-gradient(135deg, #faf9f5 0%, #f1efe6 100%);
+  --oc-card-bg: #f5f4ef;
+  --oc-card-border: rgba(217, 119, 6, 0.12);
+  --oc-card-shadow: rgba(217, 119, 6, 0.02);
+  --oc-subcard-bg: #ffffff;
+  --oc-text-title: #78350f;
+  --oc-text-primary: #1f2937;
+  --oc-text-secondary: #4b5563;
+  --oc-input-bg: #ffffff;
+  --oc-input-border: rgba(217, 119, 6, 0.22);
 }
 
 #root {
@@ -13,12 +25,14 @@
   margin: 0;
   padding: 0;
 }
+
 a {
   color: #646cff;
   font-weight: 500;
   font-size: 16px;
   text-decoration: none;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -31,6 +45,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
+
 .flex-row {
   display: flex;
   align-items: center;
@@ -41,13 +56,16 @@ body {
     background-color: #ffffff;
     color: #213547;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
 }
+
 ul,
 li {
   padding: 0;
@@ -57,4 +75,34 @@ li {
 p {
   margin: 0;
   padding: 0;
+}
+
+@media screen and (min-width: 768px) {
+  :root {
+    --oc-dashboard-padding: 1.5rem;
+  }
+}
+
+/* ==========================================
+   暗色主題 (Dark Theme) - 曜黑與霓虹金配色
+   ========================================== */
+[data-theme='dark'] {
+  --oc-bg-container: linear-gradient(135deg, #111115 0%, #17171d 100%);
+  --oc-card-bg: #1e1e24; /* 曜黑/曜金底色 */
+  --oc-card-border: rgba(245, 158, 11, 0.18); /* 霓虹金細框 */
+  --oc-card-shadow: rgba(0, 0, 0, 0.5);
+  --oc-subcard-bg: #26262e; /* 稍微明亮一點的深炭灰 */
+  --oc-text-title: #f59e0b; /* 霓虹金黃色標題，暗處發光 */
+  --oc-text-primary: #e5e7eb; /* 亮灰白文字 */
+  --oc-text-secondary: #9ca3af; /* 柔和灰文字 */
+  --oc-input-bg: #141418; /* 暗色輸入框 */
+  --oc-input-border: rgba(245, 158, 11, 0.25);
+  
+  background-color: #111115 !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme='dark'] body {
+  background-color: #111115 !important;
+  color: #e5e7eb !important;
 }

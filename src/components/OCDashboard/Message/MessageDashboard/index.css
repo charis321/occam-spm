@@ -1,6 +1,14 @@
 .oc-message-dashboard {
   width: 100%;
+  padding: var(--oc-dashboard-padding);
+  box-sizing: border-box;
 }
+
+.oc-message-header {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
 .oc-message-dashboard section {
   display: flex;
   flex-direction: column;
@@ -8,12 +16,15 @@
   align-items: center;
   width: 100%;
 }
+
 .oc-message-table {
   width: 100%;
 }
+
 .oc-message-row {
   cursor: pointer;
 }
+
 .oc-message-row:hover {
   box-shadow:
     0px 10px 10px rgba(0, 0, 0, 0.1),
@@ -21,7 +32,10 @@
 }
 
 @media screen and (min-width: 768px) {
-  .oc-message-table {
-    width: 80%;
+  .oc-message-table {}
+
+  .oc-message-header {
+    margin-left: auto;
+    margin-right: auto;
   }
 }

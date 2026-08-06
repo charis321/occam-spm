@@ -5,9 +5,13 @@
   width: 100%;
 }
 .oc-course-page section {
+  display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 1.5rem;
   padding: 1rem 5%;
+  width: 100%;
+  box-sizing: border-box;
 }
 .oc-lesson-table {
   width: 100%;
@@ -32,81 +36,118 @@
   width: 100%;
 }
 
-.oc-new-lesson-block {
-  display: flex;
-  position: fixed;
-  top: 0;
-  left: 0;
-  justify-content: center;
-  align-items: center;
-  z-index: var(--oc-z-index-screen-mark);
-  background: rgba(0, 0, 0, 0.6);
-  width: 100%;
-  height: 100%;
-}
-.oc-new-lesson-block-form {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  align-items: center;
-  background: #fff;
-  padding: 1rem;
-  width: 50vw;
-}
-.oc-new-lesson-block-form-item {
-  margin: 1rem;
-  width: 80%;
-  text-align: left;
-}
-
-.oc-new-lesson-block .close-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-}
-/*   oc-lesson-block */
-.oc-lesson-block {
-  display: flex;
-  position: fixed;
-  top: 0;
-  left: 16vw;
-  justify-content: center;
-  align-items: center;
-  z-index: var(--oc-z-index-screen-mark);
-  background: rgba(0, 0, 0, 0.6);
-  width: 84vw;
-  height: 100%;
-}
+/* 新增課堂與點名彈窗內容 */
+.oc-new-lesson-block-form,
 .oc-lesson-block-body {
   display: flex;
   position: relative;
   flex-direction: column;
   align-items: center;
-  background: #fff;
-  padding: 1rem;
-  width: 50vw;
+  background: #ffffff;
+  padding: 2rem;
+  width: 90%;
+  max-width: 480px;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
 }
 
-.close-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+.oc-new-lesson-block-form h2,
+.oc-new-lesson-block-form h3,
+.oc-lesson-block-body h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #78350f;
+  border-left: 3px solid #f59e0b;
+  padding-left: 8px;
+  width: 100%;
+  text-align: left;
 }
+
+.oc-new-lesson-block-form-item {
+  width: 100%;
+  margin-bottom: 1.25rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.oc-new-lesson-block-form-item label {
+  font-weight: 600;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+.oc-new-lesson-block-form-item input {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(217, 119, 6, 0.15);
+  background: #fdfdfb;
+  outline: none;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.oc-new-lesson-block-form-item input:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.1);
+}
+
+.oc-new-lesson-block-form-item span {
+  align-self: center;
+  font-weight: 500;
+  color: #9ca3af;
+  margin: 0.25rem 0;
+}
+
+/* 點名內容資訊 */
+.oc-lesson-info {
+  width: 100%;
+  text-align: left;
+  background: #fdfdfb;
+  border: 1px dashed rgba(217, 119, 6, 0.15);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  box-sizing: border-box;
+}
+
+.oc-lesson-info h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.75rem 0;
+}
+
+.oc-lesson-info p {
+  margin: 0.35rem 0;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.oc-lesson-attendance-control {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.oc-lesson-attendance-control button {
+  width: 100%;
+  max-width: 200px;
+  height: 40px;
+  font-weight: 600;
+  border-radius: 8px !important;
+}
+
 @media screen and (min-width: 768px) {
   .oc-course-page section {
     flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
   }
-  .oc-new-lesson-block {
-    left: 16vw;
-    width: 84vw;
-  }
-  /* .oc-new-lesson-block-form{
-        width: 50vw;
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: #fff;
-        position: relative;
-    } */
 }

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Form, Alert } from 'antd';
+import { Button, Form, Alert, Modal } from 'antd';
 import { apiUtil } from '@utils/WebApi';
 import { useAuth } from '@utils/AuthContext';
 
 export default function OCUserPwdChange(props) {
-  const { user, logoutAuth } = useAuth;
+  const { user, logoutAuth } = useAuth();
   const navigator = useNavigate();
   const [newPasswordform, setNewPasswordform] = useState({
     oldPwd: '',
@@ -34,9 +34,15 @@ export default function OCUserPwdChange(props) {
     };
     const res = await apiUtil(path, 'put', null, body);
     if (res?.code === 200) {
-      logoutAuth();
-      alert('密碼修改成功，請重新登入');
-      navigator('/login');
+      Modal.success({
+        title: '修改密碼成功',
+        content: '密碼已成功更新，請使用新密碼重新登入。',
+        okText: '確認',
+        onOk: () => {
+          logoutAuth();
+          navigator('/login');
+        },
+      });
     } else {
       setMessage(res.message || '密碼修改失敗');
     }

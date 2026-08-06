@@ -67,16 +67,16 @@ export default function OCUserInfoCard(props) {
     const path = `/user/${userInfo.id}/avatar`;
     const res = await apiUtil(path, 'PATCH', null, data, true);
     if (res?.code == 200) {
-      alert('頭像更新成功');
+      message.success('頭像更新成功');
       resetUserInfo && resetUserInfo();
     } else {
-      alert('頭像更新失敗');
+      message.error('頭像更新失敗');
     }
     setIsWaiting(false);
   };
   const handleAvatarSubmit = () => {
     if (!previewAvatar) {
-      alert('請上傳頭像');
+      message.warning('請選擇並上傳頭像');
       return;
     }
     updateUserAvatar(previewAvatar);

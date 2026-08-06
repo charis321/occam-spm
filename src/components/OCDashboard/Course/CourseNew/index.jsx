@@ -10,6 +10,7 @@ import {
   Select,
   TimePicker,
   Typography,
+  message,
 } from 'antd';
 import { useAuth } from '../../../../Util/AuthContext';
 import { apiUtil } from '../../../../Util/WebApi';
@@ -42,10 +43,10 @@ export default function CourseNew() {
   const addCourseData = async (course) => {
     const res = await apiUtil('/course', 'POST', null, course);
     if (res?.code === 200) {
-      alert('新增課程成功');
+      message.success('新增課程成功');
       navigate('/dashboard/course');
     } else {
-      alert('新增課程失敗');
+      message.error('新增課程失敗');
     }
   };
   const handleSubmit = async (params) => {

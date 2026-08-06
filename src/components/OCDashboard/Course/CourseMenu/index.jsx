@@ -1,4 +1,4 @@
-import { Button, Form, Row, Col, Select, Input } from 'antd';
+import { Button, Form, Row, Col, Select, Input, message } from 'antd';
 import {
   PicLeftOutlined,
   UserSwitchOutlined,
@@ -125,10 +125,30 @@ export default function OCCourseMenu(props) {
     const res = await apiUtil(path, 'DELETE', null);
     if (res?.isSystemError) return;
     if (res?.code === 200) {
-      alert('刪除成功，即將重回課程管理頁面');
+      message.success('刪除成功，即將重回課程管理頁面');
       navigator('/dashboard/course');
     } else {
-      alert('刪除失敗');
+      message.error('刪除失敗');
+    }
+  };
+
+  const getCardClass = (title) => {
+    switch (title) {
+      case '關於課程':
+        return 'oc-card-about';
+      case '學生管理':
+      case '學生列表':
+        return 'oc-card-student';
+      case '課堂安排':
+        return 'oc-card-calendar';
+      case '點名紀錄':
+        return 'oc-card-attendance';
+      case '編輯課程':
+        return 'oc-card-edit';
+      case '刪除課程':
+        return 'oc-card-danger';
+      default:
+        return '';
     }
   };
 
@@ -136,30 +156,20 @@ export default function OCCourseMenu(props) {
     <div
       className={`oc-course-menu ${user?.role === 0 ? 'student' : 'teacher'}`}
     >
-      <div className="oc-course-menu-body">
+      <ul className="oc-course-menu-grid">
         {menu.map((item, index) => {
           return (
-            <li className="oc-course-menu-item" key={index}>
-              <Button
-                type="primary"
-                onClick={item.onClick}
-                danger={item?.danger}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  gap: '8px',
-                }}
-              >
-                <span style={{ fontSize: '2rem' }}>{item.icon}</span>
-                <p style={{ padding: 0, margin: 0 }}>{item.title}</p>
-              </Button>
+            <li
+              className={`oc-course-menu-card ${getCardClass(item.title)} ${item?.danger ? 'danger' : ''}`}
+              key={index}
+              onClick={item.onClick}
+            >
+              <div className="oc-menu-card-icon">{item.icon}</div>
+              <div className="oc-menu-card-title">{item.title}</div>
             </li>
           );
         })}
-      </div>
+      </ul>
       {isEditing && (
         <OCOverlay
           className="oc-course-edit-block"
@@ -185,10 +195,10 @@ export function OCCourseEditForm(props) {
     const res = await apiUtil(path, 'PATCH', null, params);
     if (res?.isSystemError) return;
     if (res?.code === 200) {
-      alert('編輯成功');
+      message.success('編輯成功');
       resetCourse && resetCourse();
     } else {
-      alert('編輯失敗');
+      message.error('編輯失敗');
     }
     setIsWaiting(false);
   };

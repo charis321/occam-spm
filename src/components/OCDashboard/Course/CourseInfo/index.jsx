@@ -1,9 +1,21 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FileSearchOutlined, MessageOutlined } from '@ant-design/icons';
+import {
+  FileSearchOutlined,
+  MessageOutlined,
+  BookOutlined,
+  BarcodeOutlined,
+  UserOutlined,
+  BankOutlined,
+  AppstoreOutlined,
+  CalendarOutlined,
+  EnvironmentOutlined,
+  TeamOutlined,
+  OrderedListOutlined,
+} from '@ant-design/icons';
 import { useAuth } from '../../../../Util/AuthContext';
 import { apiUtil, handleErrer } from '../../../../Util/WebApi';
-import { Button, Form, Input, Select, Space, Row, Col } from 'antd';
+import { Button, Form, Input, Select, Space, Row, Col, message, Modal } from 'antd';
 import { WEEKTIME } from '../../../../config/time';
 
 import './index.css';
@@ -21,10 +33,10 @@ export default function OCCourseInfo(props) {
     const path = `/course/${courseData.id}`;
     const res = await apiUtil(path, 'DELETE');
     if (res.code === 200) {
-      alert('刪除成功，即將重回課程管理頁面');
+      message.success('刪除成功，即將重回課程管理頁面');
       navigator('/dashboard/course');
     } else {
-      alert('刪除失敗');
+      message.error('刪除失敗');
       console.log(res);
     }
   };
@@ -32,11 +44,17 @@ export default function OCCourseInfo(props) {
   const handleStudentManager = () =>
     navigate(`/dashboard/course/${courseData.id}/student`);
 
-  const handleDeleteCourse = async () => {
-    var result = confirm(
-      '警告!!即將刪除這門課程!\n提示您: 如果刪除課程，此課程的全部資料，包含學生選課，學生出席紀錄也會一併銷毀，是否確定?',
-    );
-    if (result) deleteCourse();
+  const handleDeleteCourse = () => {
+    Modal.confirm({
+      title: '確定要刪除這門課程嗎？',
+      content: '警告！如果刪除課程，此課程的全部資料（包含學生選課、學生出席紀錄）將會一併銷毀，此操作無法復原！',
+      okText: '確定刪除',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk() {
+        deleteCourse();
+      },
+    });
   };
   const handleReset = () => {
     setIsEditing(false);
@@ -96,41 +114,107 @@ export function OCCourseCardView(props) {
 
   return (
     <div className="oc-course-card-content">
-      <h2>課程名: {courseData.name}</h2>
-      <hr />
-      <ul>
-        <li>課程編號:&emsp;{courseData.id}</li>
-        <li>
-          負責教師:&emsp;{courseData.teacherName}{' '}
-          <Button
-            icon={<FileSearchOutlined />}
-            style={{ backgroundColor: '#74b9ff', color: '#f8f8f8' }}
-            shape="circle"
-            onClick={() => navigator(`/dashboard/user/${courseData.teacherId}`)}
-          />
-          <Button
-            icon={<MessageOutlined />}
-            shape="circle"
-            style={{ backgroundColor: '#55efc4', color: '#f8f8f8' }}
-            onClick={() =>
-              navigator(`/dashboard/message/new?to=${courseData.teacherId}`)
-            }
-          />
-        </li>
-        <li>開課學校:&emsp;{courseData.school}</li>
-        <li>開課系所:&emsp;{courseData.department}</li>
-        <li>
-          課程時間:&emsp;
-          {WEEKTIME(
-            courseData.scheduleWeek,
-            courseData.scheduleStartTime,
-            courseData.scheduleEndTime,
-          )}
-        </li>
-        <li>上課教室:&emsp;{courseData.classroom}</li>
-        <li>修課人數:&emsp;{courseData.studentCount}</li>
-        <li>總課堂數:&emsp;{courseData.lessonCount}</li>
-      </ul>
+      <div className="oc-course-card-header">
+        <div className="oc-course-avatar-badge">
+          <BookOutlined />
+        </div>
+        <h2>{courseData.name}</h2>
+      </div>
+      <div className="oc-course-card-body">
+        <ul>
+          <li>
+            <span className="oc-info-label">
+              <BarcodeOutlined className="oc-info-icon code-icon" />
+              課程代碼:
+            </span>
+            <span className="oc-info-val">{courseData.id}</span>
+          </li>
+          <li>
+            <span className="oc-info-label">
+              <UserOutlined className="oc-info-icon teacher-icon" />
+              負責教師:
+            </span>
+            <span className="teacher-info-wrapper oc-info-val">
+              <span className="teacher-name">{courseData.teacherName}</span>
+              <span className="teacher-actions">
+                <Button
+                  icon={<FileSearchOutlined />}
+                  shape="circle"
+                  className="oc-teacher-btn oc-teacher-btn-view"
+                  onClick={() => navigator(`/dashboard/user/${courseData.teacherId}`)}
+                />
+                <Button
+                  icon={<MessageOutlined />}
+                  shape="circle"
+                  className="oc-teacher-btn oc-teacher-btn-msg"
+                  onClick={() =>
+                    navigator(`/dashboard/message/new?to=${courseData.teacherId}`)
+                  }
+                />
+              </span>
+            </span>
+          </li>
+          <li>
+            <span className="oc-info-label">
+              <BankOutlined className="oc-info-icon school-icon" />
+              開課學校:
+            </span>
+            <span className="oc-info-val">{courseData.school}</span>
+          </li>
+          <li>
+            <span className="oc-info-label">
+              <AppstoreOutlined className="oc-info-icon dept-icon" />
+              開課系所:
+            </span>
+            <span className="oc-info-val">{courseData.department}</span>
+          </li>
+          <li>
+            <span className="oc-info-label">
+              <CalendarOutlined className="oc-info-icon time-icon" />
+              課程時間:
+            </span>
+            <span className="oc-info-val">
+              {WEEKTIME(
+                courseData.scheduleWeek,
+                courseData.scheduleStartTime,
+                courseData.scheduleEndTime,
+              )}
+            </span>
+          </li>
+          <li>
+            <span className="oc-info-label">
+              <EnvironmentOutlined className="oc-info-icon room-icon" />
+              上課教室:
+            </span>
+            <span className="oc-info-val">{courseData.classroom || '未分配'}</span>
+          </li>
+        </ul>
+
+        {/* 底部懸浮指標卡片列 */}
+        <div className="oc-course-stats-row">
+          <div className="oc-mini-stat-card credit">
+            <div className="oc-stat-badge"><BookOutlined /></div>
+            <div className="oc-stat-info">
+              <span className="oc-stat-num">{courseData.credits || 3}</span>
+              <span className="oc-stat-label">學分數</span>
+            </div>
+          </div>
+          <div className="oc-mini-stat-card student">
+            <div className="oc-stat-badge"><TeamOutlined /></div>
+            <div className="oc-stat-info">
+              <span className="oc-stat-num">{courseData.studentCount}</span>
+              <span className="oc-stat-label">學生數</span>
+            </div>
+          </div>
+          <div className="oc-mini-stat-card lesson">
+            <div className="oc-stat-badge"><OrderedListOutlined /></div>
+            <div className="oc-stat-info">
+              <span className="oc-stat-num">{courseData.lessonCount}</span>
+              <span className="oc-stat-label">課堂數</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -144,10 +228,10 @@ export function OCCourseEditForm(props) {
     const path = `/course/${courseData.id}`;
     const res = await apiUtil(path, 'PATCH', params);
     if (res.code === 200) {
-      alert('編輯成功');
+      message.success('編輯成功');
       reset && reset();
     } else {
-      alert('編輯失敗');
+      message.error('編輯失敗');
     }
     setIsWaiting(false);
   };

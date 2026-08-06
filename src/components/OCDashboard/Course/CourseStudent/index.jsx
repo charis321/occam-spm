@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import * as XLSX from 'xlsx';
-import { Button, Table, Form, Input, Space } from 'antd';
+import { Button, Table, Form, Input, Space, message } from 'antd';
 import { PlusCircleOutlined, FileAddOutlined } from '@ant-design/icons';
 import OCStudentTable from '../../Student/StudentTable';
 import OCCourseCard from '../CourseInfo';
@@ -70,7 +70,7 @@ export default function OCCourseStudent(props) {
     if (res?.code === 200) {
       setStudentData(res.data);
     } else {
-      alert('無法取得學生資料');
+      message.error('無法取得學生資料');
     }
     setIsLoading(false);
   };
@@ -81,7 +81,7 @@ export default function OCCourseStudent(props) {
     if (res?.code === 200) {
       setCourseData(res.data);
     } else {
-      alert('無法取得課程資料');
+      message.error('無法取得課程資料');
     }
   };
 
@@ -118,17 +118,17 @@ export default function OCCourseStudent(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (newStudentData.length === 0) {
-      return alert('請先上傳檔案');
+      return message.warning('請先上傳檔案！');
     }
     const path = `/course/${courseId}/enrollment`;
     const res = await apiUtil(path, 'POST', null, newStudentData);
     if (res?.isSystemError) return;
     if (res?.code === 200) {
-      alert('新增學生成功');
+      message.success('新增學生成功');
       getStudentData();
       setIsAdding(false);
     } else {
-      alert('新增學生失敗', res?.msg);
+      message.error('新增學生失敗：' + (res?.msg || ''));
     }
   };
   const handleAddStudent = () => {

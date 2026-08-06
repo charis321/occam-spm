@@ -10,6 +10,7 @@ import {
   Radio,
   Space,
   Flex,
+  message,
 } from 'antd';
 import {
   AppstoreAddOutlined,
@@ -26,6 +27,7 @@ import OCLessonCalendar from '../../Lesson/LessonCalendar';
 import OCLessonTable from '../../Lesson/LessonTable';
 // import OCLessonBlock from "../../Lesson/LessonBlock";
 import OCLoading from '@components/OCCommon/OCLoading';
+import OCOverlay from '@components/OCCommon/OCOverlay';
 
 import { apiUtil } from '../../../../Util/WebApi';
 import { useAuth } from '../../../../Util/AuthContext';
@@ -71,7 +73,7 @@ export default function OCCoursePage(props) {
     if (res?.code === 200) {
       setCourseData(res.data);
     } else if (res?.code === 400) {
-      alert('找不到課程，即將返回課程管理頁面!');
+      message.error('找不到課程，即將返回課程管理頁面!');
       navigator('/dashboard/course');
     }
   };
@@ -81,10 +83,10 @@ export default function OCCoursePage(props) {
     const res = await apiUtil(path, 'DELETE', signal);
     if (res?.isSystemError) return;
     if (res?.code === 200) {
-      alert('刪除課堂成功');
+      message.success('刪除課堂成功');
       navigator('/dashboard/course');
     } else {
-      alert('刪除失敗');
+      message.error('刪除失敗');
     }
   };
   const getLessonData = async (signal) => {
@@ -94,7 +96,7 @@ export default function OCCoursePage(props) {
     if (res?.code === 200) {
       setLessonData(res.data);
     } else {
-      alert('無法取得課堂資料');
+      message.error('無法取得課堂資料');
     }
   };
 
@@ -190,7 +192,7 @@ export default function OCCoursePage(props) {
                 <OCLessonCalendar
                   className="oc-lesson-calendar"
                   lessonData={lessonData}
-                  lessonClick={(lesson) => handleLessonClick(lesson)}
+                  // lessonClick={(lesson) => handleLessonClick(lesson)}
                   resetLesson={() => {
                     getLessonData();
                   }}
@@ -249,10 +251,10 @@ function OCNewLessonBlock(props) {
     const res = await apiUtil(path, 'POST', null, lessonData);
     if (res?.isSystemError) return;
     if (res?.code === 200) {
-      alert('新增課堂成功');
+      message.success('新增課堂成功');
       resetLesson();
     } else {
-      alert('無法新增課堂資料');
+      message.error('無法新增課堂資料');
     }
     closeBlock();
   };
@@ -289,7 +291,7 @@ function OCNewLessonBlock(props) {
       if (mode === 'auto') {
         const { startPeriod, endPeriod } = newLessonData;
 
-        if (!(startPeriod && endPeriod)) return alert('必填');
+        if (!(startPeriod && endPeriod)) return message.warning('請填寫完整時段！');
 
         let originDate = dayjs(startPeriod);
         let originWeekday = originDate.weekday();
@@ -382,13 +384,10 @@ function OCNewLessonBlock(props) {
   );
 
   return (
-    <div className="oc-new-lesson-block">
+    <OCOverlay toggle={handleClose}>
       {mode === 'single' && SingleModeForm}
       {mode === 'auto' && AutoModeForm}
-      <Button className="close-btn" variant="text" onClick={handleClose}>
-        <CloseOutlined />
-      </Button>
-    </div>
+    </OCOverlay>
   );
 }
 function OCLessonBlock(props) {
@@ -405,7 +404,7 @@ function OCLessonBlock(props) {
     } else if (attendanceStatus === 2) {
       setMessage('點名已停止');
     }
-  }, lessonData);
+  }, [lessonData]);
   const getLessonData = async () => {
     const path = `/attendance/${lessonData.id}`;
     // Fetch attendance data from the API
@@ -422,16 +421,16 @@ function OCLessonBlock(props) {
   //     return (<Button type="primary" onClick={handlestartAttendance}>開始點名</Button>)
   //   }
   // }
-  const handleCheckAttendance = (status) => {};
+  const handleCheckAttendance = (status) => { };
   const controlLessonAttendanceStatus = async (action) => {
     setIsLoading(true);
     if (action === 'start') {
       const path = `/course/${lessonData.id}/lesson/attendance/start`;
       const res = await apiUtil(path, 'POST');
       if (res.code === 200) {
-        alert('開始點名成功');
+        message.success('開始點名成功');
       } else {
-        alert('無法開始點名');
+        message.error('無法開始點名');
       }
       setIsLoading(false);
     }
@@ -439,9 +438,9 @@ function OCLessonBlock(props) {
       const path = `/course/${lessonData.id}/lesson/attendance/stop`;
       const res = await apiUtil(path, 'POST');
       if (res.code === 200) {
-        alert('停止點名成功');
+        message.success('停止點名成功');
       } else {
-        alert('無法停止點名');
+        message.error('無法停止點名');
       }
       setIsLoading(false);
     }
@@ -449,7 +448,7 @@ function OCLessonBlock(props) {
   };
 
   return (
-    <div className="oc-lesson-block">
+    <OCOverlay toggle={handleClose}>
       <div className="oc-lesson-block-body">
         <h2>{message}</h2>
         <div className="oc-lesson-info">
@@ -470,9 +469,6 @@ function OCLessonBlock(props) {
           </Button>
         </div>
       </div>
-      <Button className="close-btn" variant="text" onClick={handleClose}>
-        <CloseOutlined />
-      </Button>
-    </div>
+    </OCOverlay>
   );
 }

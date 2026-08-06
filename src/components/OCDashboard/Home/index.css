@@ -1,58 +1,22 @@
 .oc-home-dashboard {
   width: 100%;
 }
-/* .oc-home-dashboard section {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-}
-.oc-remind {
-  border: 2px solid #f8f8f8;
-  border-radius: 0.5rem;
-  background: #eee;
-  width: 90%;
-  overflow-y: auto;
-}
-@media screen and (min-width: 768px) {
-  .oc-home-dashboard section {
-    flex-direction: row;
-  }
-  .oc-remind {
-    width: 40%;
-    height: 30vh;
-  }
-} */
 
 .oc-dashboard-container {
-  background-color: #abf5e2;
-  padding: 2rem;
-  /* min-height: 100vh; */
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* background: linear-gradient(135deg, #faf9f5 0%, #f1efe6 100%); */
+  padding: var(--oc-dashboard-padding);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* min-height: calc(100vh - var(--oc-height-nav)); */
+  width: 100%;
 }
 
 /* 標題區塊 */
 .oc-dashboard-header {
   margin-bottom: 2rem;
-}
-
-.oc-dashboard-header h1 {
-  margin: 0;
-  color: #2d3436;
-  font-size: 1.75rem;
-}
-
-.oc-dashboard-header h1 span {
-  color: #0984e3; /* 品牌藍色 */
-}
-
-.oc-dashboard-header p {
-  margin-top: 0.5rem;
-  color: #636e72;
+  width: 100%;
 }
 
 /* 網格佈局：自動填滿，最小 300px */
@@ -60,66 +24,185 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
+
 /* 卡片外層容器 */
 .oc-card-wrapper {
   display: flex;
   flex-direction: column;
-  animation: popup 1s backwards;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border-left: 6px solid #dfe6e9; /* 預設邊框 */
-  border-radius: 12px;
-  background: #ffffff;
-  padding: 1rem;
+  min-height: 250px;
+  /* 解決空資料時排版塌陷變縱向的問題，並保持三個區塊高度對齊 */
+  animation: popup 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) backwards;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.02);
+  border: 1px solid rgba(217, 119, 6, 0.16) !important;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  padding: 1.5rem;
+  box-sizing: border-box;
 }
+
 .oc-card-wrapper:nth-of-type(1) {
   animation-delay: 0;
 }
+
 .oc-card-wrapper:nth-of-type(2) {
-  animation-delay: 0.2s;
+  animation-delay: 0.15s;
 }
+
 .oc-card-wrapper:nth-of-type(3) {
-  animation-delay: 0.4s;
+  animation-delay: 0.3s;
 }
 
-/* 懸停效果 */
+/* 懸停效果：向下微移並顯現溫暖琥珀陰影 */
 .oc-card-wrapper:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(4px);
+  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.12) !important;
 }
 
-/* 根據重要程度區分顏色 */
+/* 根據重要程度區分頂部裝飾條 */
 .oc-card-wrapper.urgent {
-  border-left-color: #ff7675; /* 紅色 - 點名 */
+  border-top: 4px solid #f87171 !important;
+  /* 柔和珊瑚紅 - 點名 */
 }
 
 .oc-card-wrapper.info {
-  border-left-color: #74b9ff; /* 藍色 - 課程 */
+  border-top: 4px solid #fbbf24 !important;
+  /* 暖金色 - 今日課程 */
 }
 
 .oc-card-wrapper.success {
-  border-left-color: #55efc4; /* 綠色 - 訊息 */
+  border-top: 4px solid #34d399 !important;
+  /* 柔和翠綠 - 訊息 */
 }
 
-/* 如果內容高度不一，強制子組件撐滿 */
-.oc-card-wrapper > * {
+/* 強制子組件撐滿 */
+.oc-card-wrapper>* {
   flex: 1;
+}
+
+/* 卡片內部排版樣式 */
+.oc-remind {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.oc-remind h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #78350f;
+  /* 統一採用深琥珀色 */
+}
+
+.oc-remind h4 {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* 當無資料時的垂直置中提示文字 */
+.oc-remind-empty {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #9ca3af !important;
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+  margin: 0 !important;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.oc-remind p {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* 分隔線 */
+.oc-remind .ant-divider {
+  margin: 0.75rem 0;
+  border-color: rgba(217, 119, 6, 0.12) !important;
+}
+
+/* 表格透明化以配合毛玻璃底色 */
+.oc-remind .ant-table {
+  background: transparent !important;
+}
+
+.oc-remind .ant-table-cell {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(217, 119, 6, 0.06) !important;
+  padding: 10px 8px !important;
+}
+
+.oc-remind .ant-table-row:hover>td {
+  background: rgba(254, 243, 199, 0.18) !important;
+  /* 滑過時的淡黃高亮 */
+}
+
+/* 去點名按鈕微調 */
+.oc-home-btn-rollcall {
+  border-radius: 8px !important;
+  font-size: 0.8rem !important;
+  height: 30px !important;
+  margin-top: 8px;
+}
+
+/* 今日課程查看按鈕 */
+.oc-remind .ant-btn-primary:not(.oc-home-btn-message):not(.oc-home-btn-rollcall) {
+  background-color: #f0ede1 !important;
+  border-color: #e4decb !important;
+  color: #78350f !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.oc-remind .ant-btn-primary:not(.oc-home-btn-message):not(.oc-home-btn-rollcall):hover {
+  background-color: #d97706 !important;
+  border-color: #d97706 !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+}
+
+/* 訊息詳情按鈕 - 暖金漸層 */
+.oc-home-btn-message {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 0.85rem !important;
+  height: 36px !important;
+  width: 100%;
+  margin-top: auto !important;
+  /* 確保按鈕被推到底部，與其他卡片底部對齊 */
+  transition: all 0.2s ease !important;
+  color: #ffffff !important;
+}
+
+.oc-home-btn-message:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25) !important;
+}
+
+.oc-home-btn-message:active {
+  transform: translateY(0);
 }
 
 @keyframes popup {
   0% {
-    transform: translateX(20px);
+    transform: translateY(20px);
     opacity: 0;
   }
-  50% {
-    transform: translateX(-10px);
-    opacity: 0.8;
-  }
+
   100% {
-    transform: translateX(0px);
+    transform: translateY(0px);
     opacity: 1;
   }
 }

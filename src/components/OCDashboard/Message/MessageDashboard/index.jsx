@@ -7,6 +7,7 @@ import { RELATIVE_TIME } from '../../../../config/time';
 import OCLoading from '@components/OCCommon/OCLoading';
 import OCOverlay from '@components/OCCommon/OCOverlay';
 import OCMessageView from '../MessageView';
+import OCTitle from '@components/OCCommon/OCTitle';
 import './index.css';
 
 export default function OCMessageDashboard(props) {
@@ -144,7 +145,12 @@ export default function OCMessageDashboard(props) {
         <OCLoading />
       ) : (
         <div className="oc-message-dashboard">
-          <h2>訊息中心</h2>
+          <div className="oc-message-header">
+            <OCTitle
+              title="訊息中心"
+              description="在此接收與發送班級通知、系統訊息與個人信件"
+            />
+          </div>
           <section>
             <Space style={{ padding: '0.2rem' }}>
               <Radio.Group

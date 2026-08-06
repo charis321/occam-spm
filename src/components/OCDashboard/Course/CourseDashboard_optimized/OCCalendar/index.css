@@ -1,0 +1,113 @@
+.oc-lesson-calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--oc-dashboard-padding);
+  box-sizing: border-box;
+}
+
+.oc-lesson-calendar-header {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.oc-lesson-calendar-body {
+  width: 100%;
+  background: linear-gradient(to bottom, #faf9f6, #f3f1e9);
+  padding: 1.5rem;
+  border-radius: 20px;
+  border: 1px solid rgba(217, 119, 6, 0.12);
+  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.02);
+  box-sizing: border-box;
+}
+
+@media screen and (min-width: 768px) {
+  .oc-lesson-calendar-body {
+    width: 100%;
+  }
+}
+
+/* ==========================================
+   Ant Design Calendar 客製化樣式 (琥珀橘/暖金系統)
+   ========================================== */
+.oc-calendar-root {
+  background: transparent !important;
+}
+
+/* 月份選擇與按鈕的暖金邊框與文字 */
+.oc-calendar-root .ant-select-selector,
+.oc-calendar-root .ant-radio-button-wrapper {
+  border-color: rgba(217, 119, 6, 0.22) !important;
+  color: #78350f !important;
+  border-radius: 6px !important;
+}
+
+.oc-calendar-root .ant-radio-button-wrapper-checked {
+  background-color: #f59e0b !important;
+  border-color: #d97706 !important;
+  color: #ffffff !important;
+}
+
+.oc-calendar-root .ant-select-focused .ant-select-selector {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* 星期頭部 (Sun, Mon...) */
+.oc-calendar-root thead th {
+  color: #b45309 !important;
+  font-weight: 600 !important;
+  padding-bottom: 12px !important;
+}
+
+/* 日曆單格框線 */
+.oc-calendar-root .ant-picker-cell {
+  border: 1px solid rgba(217, 119, 6, 0.06) !important;
+}
+
+/* 日期數字 */
+.oc-calendar-root .ant-picker-calendar-date-value {
+  color: #4b5563 !important;
+  font-weight: 500 !important;
+}
+
+/* 今天 (Today) 樣式 */
+.oc-calendar-root .ant-picker-cell-today .ant-picker-calendar-date-value {
+  color: #d97706 !important;
+  background-color: #fef3c7 !important;
+  border-radius: 4px;
+  padding: 0 6px;
+  display: inline-block;
+  border: 1.5px solid #fbbf24;
+}
+
+/* 選取中單格的背景 */
+.oc-calendar-root .ant-picker-cell-selected .ant-picker-calendar-date {
+  background-color: rgba(254, 243, 199, 0.45) !important;
+}
+
+.oc-calendar-root .ant-picker-cell-selected .ant-picker-calendar-date-value {
+  font-weight: bold !important;
+  color: #d97706 !important;
+}
+
+/* 滑鼠懸停單格 */
+.oc-calendar-root .ant-picker-cell:hover .ant-picker-calendar-date {
+  background-color: rgba(254, 243, 199, 0.25) !important;
+}
+
+/* 卡片中的課堂按鈕微調 */
+.oc-calendar-root .ant-btn {
+  border-radius: 6px !important;
+  margin-top: 4px !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.oc-calendar-root .ant-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important;
+}

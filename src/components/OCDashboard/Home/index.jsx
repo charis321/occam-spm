@@ -12,6 +12,7 @@ import { useAuth } from '../../../Util/AuthContext';
 import { apiUtil } from '@utils/WebApi';
 
 import OCLoading from '@components/OCCommon/OCLoading';
+import OCTitle from '@components/OCCommon/OCTitle';
 import { RELATIVE_TIME, PERIOD_TIME } from '@config/time';
 
 import REMIND_BG_1 from '@/assets/images/remind_bg_1.png';
@@ -127,10 +128,10 @@ export default function OCHomeDashboard(props) {
       ) : (
         <div className="oc-dashboard-container">
           <header className="oc-dashboard-header">
-            <h1>
-              歡迎回來，<span>{user.name}</span> 👋
-            </h1>
-            <p>以下是您今天的待辦摘要</p>
+            <OCTitle
+              title={`歡迎回來，${user.name} 👋`}
+              description="以下是您今天的待辦摘要"
+            />
           </header>
 
           <section className="oc-remind-grid">
@@ -161,9 +162,10 @@ export const OCRollcallRemind = (props) => {
           <div>
             <h3>{record.courseName}</h3>
             <Button
-              variant="solid"
+              type="primary"
+              danger
               icon={<ArrowRightOutlined />}
-              style={{ backgroundColor: '#ff7675' }}
+              className="oc-home-btn-rollcall"
               onClick={() =>
                 navigator(
                   `/dashboard/course/${record.courseId}/lesson/${record.lessonId}`,
@@ -201,10 +203,8 @@ export const OCRollcallRemind = (props) => {
     <div className="oc-home-rollcall-remind oc-remind">
       <h3>注意! 進行中的點名</h3>
       <Divider />
-      {rollcallData && rollcallData.length == 0 ? (
-        <div>
-          <h4>目前沒有進行中的點名</h4>
-        </div>
+      {!rollcallData || rollcallData.length == 0 ? (
+        <h4 className="oc-remind-empty">目前沒有進行中的點名</h4>
       ) : (
         <Table
           rowKey={(record) => record.lessonId}
@@ -266,9 +266,7 @@ export const OCLessonRemind = (props) => {
       <h3>今日的課程</h3>
       <Divider />
       {!lessonData || lessonData.length == 0 ? (
-        <div>
-          <h4>今日沒有編排課程</h4>
-        </div>
+        <h4 className="oc-remind-empty">今日沒有編排課程</h4>
       ) : (
         <Table
           rowKey={(record) => record.lessonId}
@@ -330,8 +328,8 @@ export const OCMessageRemind = (props) => {
     <div className="oc-home-lesson-remind oc-remind">
       <h3>新的訊息</h3>
       <Divider />
-      {!messageData && messageData.length == 0 ? (
-        <h4>沒有新的訊息</h4>
+      {!messageData || messageData.length == 0 ? (
+        <h4 className="oc-remind-empty">沒有新的訊息</h4>
       ) : (
         <>
           <Table
@@ -348,9 +346,9 @@ export const OCMessageRemind = (props) => {
             </div>
           )}
           <Button
-            style={{ backgroundColor: '#55efc4', color: '#000' }}
             type="primary"
             icon={<MessageOutlined />}
+            className="oc-home-btn-message"
             onClick={() => {
               navigator('/dashboard/message');
             }}

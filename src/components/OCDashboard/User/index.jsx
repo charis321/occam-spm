@@ -12,6 +12,7 @@ import {
   Row,
   Col,
   Spin,
+  message,
 } from 'antd';
 import {
   PlusCircleOutlined,
@@ -48,7 +49,7 @@ export default function OCUserDashboard(props) {
 
   useEffect(() => {
     if (user.role !== 2) {
-      alert('您沒有權限訪問此頁面，即將返回首頁');
+      message.error('您沒有權限訪問此頁面，即將返回首頁');
       navigator('/dashboard');
     }
     const controller = new AbortController();
@@ -198,7 +199,7 @@ export default function OCUserDashboard(props) {
     const path = `/user/${userId}`;
     const res = await apiUtil(path, 'PATCH', null, patch);
     if (res?.code === 200) {
-      alert('用戶更新成功');
+      message.success('用戶更新成功');
       getUserData();
     }
   };
@@ -208,10 +209,10 @@ export default function OCUserDashboard(props) {
     const res = await apiUtil(path, 'DELETE');
 
     if (res?.code === 200) {
-      alert('用戶刪除成功');
+      message.success('用戶刪除成功');
       getUserData();
     } else {
-      alert('用戶刪除失敗');
+      message.error('用戶刪除失敗');
     }
   };
   const handleAddUser = () => {
@@ -384,10 +385,10 @@ export function OCUserNewBlock(props) {
     const path = `/auth/register`;
     const res = await apiUtil(path, 'POST', null, data);
     if (res?.code === 200) {
-      alert('新增用戶成功');
+      message.success('新增用戶成功');
       resetUserData();
     } else {
-      alert('新增用戶失敗');
+      message.error('新增用戶失敗');
     }
     setIsWaiting(false);
   };
@@ -699,18 +700,19 @@ export function OCUserNewBatchBlock(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (newUserData.length === 0) {
-      return alert('請先上傳檔案');
+      message.warning('請先選擇並解析上傳 Excel 檔案');
+      return;
     }
     setIsWaiting(true);
     const path = `/auth/register/batch`;
     const res = await apiUtil(path, 'POST', null, newUserData);
     if (res?.isSystemError) return;
     if (res?.code === 200) {
-      alert('批量新增用戶成功');
+      message.success('批量新增用戶成功');
       closeBlock();
       resetUserData();
     } else {
-      // message;
+      message.error(res?.message || '批量新增用戶失敗');
     }
     setIsWaiting(false);
   };

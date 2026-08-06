@@ -231,7 +231,7 @@ export default function OCLessonStudentPage(props) {
                 className="oc-start-attendance-btn"
                 onClick={() => setIsAttending(true)}
                 danger={rollcallData?.status === 1}
-                disabled={attendanceData && attendanceData?.status !== 0}
+                disabled={rollcallData?.status !== 1 || (attendanceData && attendanceData?.status !== 0)}
               >
                 開始點名
               </Button>

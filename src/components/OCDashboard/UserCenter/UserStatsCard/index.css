@@ -1,0 +1,120 @@
+.oc-user-stats-card {
+  box-shadow: 0 8px 30px var(--oc-card-shadow);
+  border: 1px solid var(--oc-card-border) !important;
+  border-radius: 16px;
+  background: var(--oc-card-bg);
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 450px;
+  box-sizing: border-box;
+  margin-top: 1rem;
+}
+
+.oc-stats-header h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--oc-text-title);
+  border-left: 3px solid #f59e0b;
+  padding-left: 8px;
+  text-align: left;
+}
+
+.oc-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.oc-stats-progress-block {
+  flex-shrink: 0;
+  background: var(--oc-subcard-bg);
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+  border: 1px solid var(--oc-card-border);
+}
+
+.oc-progress-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.percent-num {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #78350f;
+}
+
+.percent-label {
+  font-size: 0.65rem;
+  color: var(--oc-text-secondary);
+  margin-top: 2px;
+}
+
+.oc-stats-metrics {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.metric-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--oc-subcard-bg);
+  border: 1px solid var(--oc-card-border);
+  padding: 8px 12px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.metric-icon {
+  font-size: 1.1rem;
+  color: #f59e0b;
+}
+
+.metric-icon.success {
+  color: #10b981;
+}
+
+.metric-icon.info {
+  color: #3b82f6;
+}
+
+.metric-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.metric-label {
+  font-size: 0.7rem;
+  color: var(--oc-text-secondary);
+}
+
+.metric-val {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--oc-text-primary);
+}
+
+@media screen and (min-width: 768px) {
+  .oc-user-stats-card {
+    width: 60%;
+    max-width: 600px;
+    padding: 1.5rem;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .oc-user-stats-card {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0;
+    padding: 1.5rem;
+  }
+}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Card,
   Typography,
@@ -8,6 +8,7 @@ import {
   Descriptions,
   Divider,
   Badge,
+  message,
 } from 'antd';
 import {
   BookOutlined,
@@ -22,6 +23,7 @@ import './index.css';
 
 export default function OCCourseDescription() {
   const { courseId } = useParams();
+  const navigate = useNavigate();
   const [courseData, setCourseData] = useState();
   const data = courseData || {
     title: '實用商務英文',
@@ -48,8 +50,8 @@ export default function OCCourseDescription() {
     if (res?.code === 200) {
       setCourseData(res.data);
     } else if (res?.code === 400) {
-      alert('找不到課程，即將返回課程管理頁面!');
-      navigator('/dashboard/course');
+      message.error('找不到課程，即將返回課程管理頁面!');
+      navigate('/dashboard/course');
     }
   };
 

@@ -36,5 +36,9 @@
   width: 100%;
 } */
 .curr-user-row {
-  background-color: rgb(154, 254, 252);
+  background-color: rgba(254, 243, 199, 0.35) !important;
+}
+
+.curr-user-row:hover > td {
+  background-color: rgba(254, 243, 199, 0.5) !important;
 }

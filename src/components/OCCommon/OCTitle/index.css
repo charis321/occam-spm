@@ -1,0 +1,29 @@
+.oc-title-wrapper {
+  text-align: left;
+}
+
+.oc-title-wrapper h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #78350f; /* 深琥珀色 */
+  margin: 0 0 0.35rem 0;
+  position: relative;
+  display: inline-block;
+}
+
+.oc-title-wrapper h2::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 32px;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  border-radius: 2px;
+}
+
+.oc-title-wrapper p {
+  font-size: 0.85rem;
+  color: #b45309; /* 暖橘色輔助說明 */
+  margin: 0;
+}
