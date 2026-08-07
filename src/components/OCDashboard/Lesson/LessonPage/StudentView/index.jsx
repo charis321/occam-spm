@@ -10,7 +10,6 @@ import {
   FileDoneOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
-import jsQR from 'jsqr';
 import OCCountDown from '@components/OCCommon/OCCountDown';
 import OCOverlay from '@components/OCCommon/OCOverlay';
 import OCTitle from '@components/OCCommon/OCTitle';
@@ -68,8 +67,9 @@ export default function OCLessonStudentPage() {
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const animationFrameRef = useRef(null);
+  const jsQRRef = useRef(null);
 
-  const navigator = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -184,10 +184,14 @@ export default function OCLessonStudentPage() {
     setIsScanning(true);
     setLocalMsg('');
     try {
+      if (!jsQRRef.current) {
+        const module = await import('jsqr');
+        jsQRRef.current = module.default || module;
+      }
       const constraints = {
         video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } },
       };
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const stream = await window.navigator.mediaDevices.getUserMedia(constraints);
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -224,6 +228,8 @@ export default function OCLessonStudentPage() {
       canvas.height = videoRef.current.videoHeight;
       ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
 
+      const jsQR = jsQRRef.current;
+      if (!jsQR) return;
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const code = jsQR(imageData.data, imageData.width, imageData.height, {
         inversionAttempts: 'dontInvert',
@@ -293,7 +299,7 @@ export default function OCLessonStudentPage() {
                 variant="outlined"
                 icon={<BookOutlined />}
                 onClick={() => {
-                  navigator('../../');
+                  navigate('../../');
                 }}
               >
                 回到課程
@@ -357,7 +363,7 @@ export default function OCLessonStudentPage() {
               <Button
                 type="primary"
                 ghost
-                onClick={() => navigator(`attendance`)}
+                onClick={() => navigate(`attendance`)}
                 icon={<FileDoneOutlined />}
                 aria-label="查看詳細點名紀錄"
               >
