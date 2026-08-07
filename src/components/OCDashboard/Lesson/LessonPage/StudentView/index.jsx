@@ -243,7 +243,16 @@ export default function OCLessonStudentPage() {
         if (decodedText.startsWith('http://') || decodedText.startsWith('https://')) {
           try {
             const urlObj = new URL(decodedText);
-            const codeParam = urlObj.searchParams.get('code');
+            // 1. Try standard query params
+            let codeParam = urlObj.searchParams.get('code');
+
+            // 2. Try hash router query params (since React HashRouter puts params after #)
+            if (!codeParam && urlObj.hash.includes('?')) {
+              const hashQuery = urlObj.hash.split('?')[1];
+              const hashParams = new URLSearchParams(hashQuery);
+              codeParam = hashParams.get('code');
+            }
+
             if (codeParam) {
               parsedCode = codeParam;
             }
