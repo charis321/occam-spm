@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Button, Input, Alert, Row, Col, Card, Space, Tag, message } from 'antd';
+import { Button, Input, Alert, Row, Col, Space, Tag, message } from 'antd';
 import {
   CheckCircleOutlined,
   SyncOutlined,
@@ -9,6 +9,7 @@ import {
   QrcodeOutlined,
   FileDoneOutlined,
   ClockCircleOutlined,
+  BarcodeOutlined,
 } from '@ant-design/icons';
 import OCCountDown from '@components/OCCommon/OCCountDown';
 import OCOverlay from '@components/OCCommon/OCOverlay';
@@ -22,12 +23,12 @@ import { PERIOD_TIME } from '@config/time';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';
 import './index.css';
+import '../../../Course/CourseInfo/index.css';
 
 export default function OCLessonStudentPage() {
   const { user } = useAuth();
   const { lessonId, courseId } = useParams();
   const [searchParams] = useSearchParams();
-  const attendingFromUrl = searchParams.get('attending') === 'true';
   const codeFromUrl = searchParams.get('code');
 
   const [lessonData, setLessonData] = useState();
@@ -59,7 +60,6 @@ export default function OCLessonStudentPage() {
   const [localMsg, setLocalMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
-  const [isAttending, setIsAttending] = useState(attendingFromUrl || false);
 
   // QR Code Scanner State & Refs
   const [isScanning, setIsScanning] = useState(false);
@@ -275,219 +275,213 @@ export default function OCLessonStudentPage() {
 
   return (
     <article className="oc-lesson-page">
-      <Row gutter={[24, 24]} style={{ width: '100%', margin: '1rem' }}>
+      <Row gutter={[24, 24]} style={{ width: '100%' }}>
         <Col xs={24} md={10}>
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
-            <Card
-              title={
-                <span>
-                  <BookOutlined /> 課堂資訊
-                </span>
-              }
-              styles={{
-                body: { paddingTop: '0' },
-              }}
-            >
-              <h1 style={{ fontSize: '1.8rem', marginBottom: '12px' }}>
-                {lessonData?.courseName}
-              </h1>
-
-              <p style={{ color: '#666' }}>
-                <strong>課堂進度：</strong>第 {lessonData?.lessonIndex} 堂
-              </p>
-              <p style={{ color: '#666' }}>
-                <strong>課堂代碼：</strong>
-                {lessonData?.id}
-              </p>
-              <p style={{ color: '#666' }}>
-                <strong>上課時間：</strong>
-                {PERIOD_TIME(lessonData?.startTime, lessonData?.endTime)}
-              </p>
-              <Button
-                color="primary"
-                variant="outlined"
-                icon={<BookOutlined />}
-                onClick={() => {
-                  navigate('../../');
-                }}
-              >
-                回到課程
-              </Button>
-            </Card>
-            <Card
-              title={
-                <span>
-                  <ControlOutlined /> 點名操作面板
-                </span>
-              }
-            >
-              <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-                <p style={{ color: '#999', marginBottom: '4px' }}>
-                  目前系統時間: {new Date().toLocaleString()}
-                </p>
-                <Tag color={checkAttendanceTime() ? 'success' : 'warning'}>
-                  {checkAttendanceTime() ? '在上課時間內' : '不在上課時間內'}
-                </Tag>
-
-                <h2
-                  style={{
-                    marginTop: '16px',
-                    color: rollcallData?.status === 1 ? '#52c41a' : '#ff4d4f',
-                  }}
-                >
-                  {ATTENDANCE_STATUS_MAP[
-                    rollcallData?.status ? rollcallData?.status : 0
-                  ]?.title || '未知狀態'}
-                </h2>
+            <div className="oc-course-info" style={{ flex: 'none', width: '100%', boxSizing: 'border-box' }}>
+              <div className="oc-course-card-content">
+                <div className="oc-course-card-header">
+                  <div className="oc-course-avatar-badge">
+                    <BookOutlined />
+                  </div>
+                  <h2>{lessonData?.courseName}</h2>
+                </div>
+                <div className="oc-course-card-body">
+                  <ul>
+                    <li>
+                      <span className="oc-info-label">
+                        <BookOutlined className="oc-info-icon code-icon" />
+                        課堂進度:
+                      </span>
+                      <span className="oc-info-val">第 {lessonData?.lessonIndex} 堂</span>
+                    </li>
+                    <li>
+                      <span className="oc-info-label">
+                        <BarcodeOutlined className="oc-info-icon teacher-icon" />
+                        課堂代碼:
+                      </span>
+                      <span className="oc-info-val">{lessonData?.id}</span>
+                    </li>
+                    <li>
+                      <span className="oc-info-label">
+                        <ClockCircleOutlined className="oc-info-icon time-icon" />
+                        上課時間:
+                      </span>
+                      <span className="oc-info-val">
+                        {PERIOD_TIME(lessonData?.startTime, lessonData?.endTime)}
+                      </span>
+                    </li>
+                  </ul>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    icon={<BookOutlined />}
+                    onClick={() => {
+                      navigate('../../');
+                    }}
+                    style={{ width: 'fit-content', marginTop: '0.5rem' }}
+                  >
+                    回到課程
+                  </Button>
+                </div>
               </div>
-
-              <Button
-                type="primary"
-                block
-                size="large"
-                className="oc-start-attendance-btn"
-                onClick={() => setIsAttending(true)}
-                danger={rollcallData?.status === 1}
-                disabled={rollcallData?.status !== 1 || (attendanceData && attendanceData?.status !== 0)}
-              >
-                開始點名
-              </Button>
-            </Card>
+            </div>
+            <div className="oc-custom-card">
+              <div className="oc-custom-card-header">
+                <div className="oc-custom-card-title">
+                  <ControlOutlined /> 點名狀態
+                </div>
+              </div>
+              <div className="oc-custom-card-body">
+                <div className="oc-status-container">
+                  <div className="oc-status-time">
+                    目前系統時間: {new Date().toLocaleString()}
+                  </div>
+                  <div className="oc-status-badges">
+                    <Tag color={checkAttendanceTime() ? 'success' : 'warning'} className="oc-time-tag">
+                      {checkAttendanceTime() ? '在上課時間內' : '不在上課時間內'}
+                    </Tag>
+                  </div>
+                  <div className={`oc-status-title-banner ${rollcallData?.status === 1 ? 'active' : 'inactive'}`}>
+                    <span className="oc-status-pulse-dot" />
+                    <span className="oc-status-text">
+                      {ATTENDANCE_STATUS_MAP[rollcallData?.status ? rollcallData?.status : 0]?.title || '未知狀態'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </Space>
         </Col>
 
         <Col xs={24} md={14}>
-          <Card
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              minWidth: 300,
-            }}
-            title={
-              <span>
+          <div className="oc-custom-card" style={{ display: 'flex', flexDirection: 'column', minWidth: 300 }}>
+            <div className="oc-custom-card-header">
+              <div className="oc-custom-card-title">
                 <QrcodeOutlined /> 學生端簽到入口
-              </span>
-            }
-            extra={
-              <Button
-                type="primary"
-                ghost
-                onClick={() => navigate(`attendance`)}
-                icon={<FileDoneOutlined />}
-                aria-label="查看詳細點名紀錄"
-              >
-                檢視點名紀錄
-              </Button>
-            }
-          >
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              {rollcallData?.status === 1 ? (
-                <Space direction="vertical" size="large" align="center" style={{ width: '100%' }}>
-                  {attendanceData?.status === 1 ? (
-                    <div className="oc-lesson-attendance-block-body success">
-                      <CheckCircleOutlined
-                        style={{ fontSize: '3rem', color: '#82be6c' }}
-                      />
-                      <h2>您已完成點名</h2>
-                    </div>
-                  ) : (
-                    <div className="oc-lesson-attendance-block-body" style={{ width: '100%' }}>
-                      <Space direction="vertical" size="large" align="center" style={{ width: '100%' }}>
-                        {rollcallData?.rotationTime !== 0 && (
-                          <Alert
-                            message={
-                              <span style={{ fontWeight: 600 }}>
-                                安全點名碼定期輪換中（防截圖代簽）：
-                                <OCCountDown
-                                  key={rollcallData?.nextRotationTime}
-                                  time={getCountDownTime(
-                                    rollcallData?.nextRotationTime,
-                                  )}
-                                />
-                              </span>
-                            }
-                            type="info"
-                            showIcon
-                            icon={<SyncOutlined spin />}
-                            style={{
-                              width: '100%',
-                              borderRadius: '6px',
-                              textAlign: 'left',
-                            }}
-                          />
-                        )}
-                        {rollcallData?.autoClose === 1 &&
-                          rollcallData?.endTime && (
+              </div>
+              <div className="oc-custom-card-extra">
+                <Button
+                  type="primary"
+                  ghost
+                  onClick={() => navigate(`attendance`)}
+                  icon={<FileDoneOutlined />}
+                  aria-label="查看詳細點名紀錄"
+                >
+                  檢視紀錄
+                </Button>
+              </div>
+            </div>
+            <div className="oc-custom-card-body">
+              <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                {rollcallData?.status === 1 ? (
+                  <Space direction="vertical" size="large" align="center" style={{ width: '100%' }}>
+                    {attendanceData?.status === 1 ? (
+                      <div className="oc-lesson-attendance-block-body success">
+                        <CheckCircleOutlined
+                          style={{ fontSize: '3rem', color: '#82be6c' }}
+                        />
+                        <h2>您已完成點名</h2>
+                      </div>
+                    ) : (
+                      <div className="oc-lesson-attendance-block-body" style={{ width: '100%' }}>
+                        <Space direction="vertical" size="large" align="center" style={{ width: '100%' }}>
+                          {rollcallData?.rotationTime !== 0 && (
                             <Alert
                               message={
-                                <span style={{ fontWeight: 'bold' }}>
-                                  簽到通道截止倒數：
+                                <span style={{ fontWeight: 600 }}>
+                                  點名碼定期輪換中（防截圖代簽）：
                                   <OCCountDown
-                                    key={rollcallData?.endTime}
+                                    key={rollcallData?.nextRotationTime}
                                     time={getCountDownTime(
-                                      rollcallData?.endTime,
+                                      rollcallData?.nextRotationTime,
                                     )}
                                   />
                                 </span>
                               }
-                              type="error"
+                              type="info"
                               showIcon
-                              icon={<ClockCircleOutlined />}
+                              icon={<SyncOutlined spin />}
                               style={{
                                 width: '100%',
                                 borderRadius: '6px',
                                 textAlign: 'left',
-                                border: '1px solid #ffccc7',
                               }}
                             />
                           )}
-                        <h2>請輸入點名碼</h2>
-                        {localMsg && (
-                          <Alert type="error" message={localMsg} showIcon style={{ marginBottom: '1rem' }} />
-                        )}
-                        <div className="code-input" style={{ marginBottom: '1rem' }}>
-                          <Input.OTP
-                            length={6}
-                            placeholder="請輸入點名碼"
-                            value={rollcallCode}
-                            onChange={(value) => setRollcallCode(value)}
-                          />
-                        </div>
-                        <Space direction="vertical" size="middle" align="center" style={{ width: '100%' }}>
-                          <Button
-                            type="primary"
-                            onClick={handleRollcall}
-                            disabled={isWaiting}
-                            loading={isWaiting}
-                            className="oc-btn-amber-solid"
-                            style={{ height: '40px', width: '220px' }}
-                          >
-                            送出點名碼
-                          </Button>
-                          <Button
-                            icon={<QrcodeOutlined />}
-                            onClick={handleOpenScanner}
-                            className="oc-btn-amber-outline"
-                            style={{ height: '40px', width: '220px' }}
-                          >
-                            掃描 QR Code
-                          </Button>
+                          {rollcallData?.autoClose === 1 &&
+                            rollcallData?.endTime && (
+                              <Alert
+                                message={
+                                  <span style={{ fontWeight: 'bold' }}>
+                                    簽到截止倒數：
+                                    <OCCountDown
+                                      key={rollcallData?.endTime}
+                                      time={getCountDownTime(
+                                        rollcallData?.endTime,
+                                      )}
+                                    />
+                                  </span>
+                                }
+                                type="error"
+                                showIcon
+                                icon={<ClockCircleOutlined />}
+                                style={{
+                                  width: '100%',
+                                  borderRadius: '6px',
+                                  textAlign: 'left',
+                                  border: '1px solid #ffccc7',
+                                }}
+                              />
+                            )}
+                          <h2>請輸入點名碼</h2>
+                          {localMsg && (
+                            <Alert type="error" message={localMsg} showIcon style={{ marginBottom: '1rem' }} />
+                          )}
+                          <div className="code-input" style={{ marginBottom: '1rem' }}>
+                            <Input.OTP
+                              length={6}
+                              placeholder="請輸入點名碼"
+                              value={rollcallCode}
+                              onChange={(value) => setRollcallCode(value)}
+                            />
+                          </div>
+                          <Space direction="vertical" size="middle" align="center" style={{ width: '100%' }}>
+                            <Button
+                              type="primary"
+                              onClick={handleRollcall}
+                              disabled={isWaiting}
+                              loading={isWaiting}
+                              className="oc-btn-amber-solid"
+                              style={{ height: '40px', width: '220px' }}
+                            >
+                              送出點名碼
+                            </Button>
+                            <Button
+                              icon={<QrcodeOutlined />}
+                              onClick={handleOpenScanner}
+                              className="oc-btn-amber-outline"
+                              style={{ height: '40px', width: '220px' }}
+                            >
+                              掃描 QR Code
+                            </Button>
+                          </Space>
                         </Space>
-                      </Space>
+                      </div>
+                    )}
+                  </Space>
+                ) : (
+                  <div className="oc-student-waiting-panel">
+                    <div className="oc-panel-icon-wrapper">
+                      <ClockCircleOutlined className="oc-pulsing-icon" />
                     </div>
-                  )}
-                </Space>
-              ) : (
-                <div className="oc-student-waiting-panel">
-                  <div className="oc-panel-icon-wrapper">
-                    <ClockCircleOutlined className="oc-pulsing-icon" />
+                    <h3>點名尚未開始</h3>
+                    <p>教師目前尚未發布本堂課的點名碼。請稍候，點名開啟時頁面將自動更新。</p>
                   </div>
-                  <h3>點名尚未開始</h3>
-                  <p>教師目前尚未發布本堂課的點名碼。請稍候，通道開啟時頁面將自動更新。</p>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </Card>
+          </div>
         </Col>
       </Row>
 

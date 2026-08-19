@@ -52,19 +52,7 @@
   box-sizing: border-box;
 }
 
-.oc-new-lesson-block-form h2,
-.oc-new-lesson-block-form h3,
-.oc-lesson-block-body h2 {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #78350f;
-  border-left: 3px solid #f59e0b;
-  padding-left: 8px;
-  width: 100%;
-  text-align: left;
-}
+
 
 .oc-new-lesson-block-form-item {
   width: 100%;

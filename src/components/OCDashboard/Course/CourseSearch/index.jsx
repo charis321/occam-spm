@@ -29,12 +29,12 @@ export default function OCCourseSearch(props) {
       >
         <Input placeholder="輸入課程關鍵字" className="oc-search-input" />
       </Form.Item>
-      <Form.Item
+      {/* <Form.Item
         name="school"
         label={<span className="oc-form-label">開課學校</span>}
       >
         <Input placeholder="輸入學校名稱" className="oc-search-input" />
-      </Form.Item>
+      </Form.Item> */}
 
       <Form.Item
         name="department"

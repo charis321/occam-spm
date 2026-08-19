@@ -216,7 +216,7 @@ export function OCCourseEditForm(props) {
       initialValues={courseData}
       onFinish={handleEditCourse}
     >
-      <h2>編輯課程</h2>
+      <h2 className="oc-block-title">編輯課程</h2>
       <Row gutter={8}>
         <Col span={24}>
           <Form.Item name="name" label="課程名稱" rules={[{ required: true }]}>

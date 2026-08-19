@@ -265,7 +265,7 @@ function OCNewLessonBlock(props) {
 
   const SingleModeForm = (
     <form className="oc-new-lesson-block-form">
-      <h3>新增課堂</h3>
+      <h3 className="oc-block-title">新增課堂</h3>
       <div className="oc-new-lesson-block-form-item">
         <label>選擇日期: </label>
         <input
@@ -304,7 +304,7 @@ function OCNewLessonBlock(props) {
 
   const AutoModeForm = (
     <form className="oc-new-lesson-block-form">
-      <h2>自動新增</h2>
+      <h2 className="oc-block-title">自動新增</h2>
       <div className="oc-new-lesson-block-form-item">
         <label>選擇時段: </label>
         <input

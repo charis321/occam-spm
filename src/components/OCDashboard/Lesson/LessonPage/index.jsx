@@ -17,8 +17,8 @@ export default function OCLessonPage(props) {
   const title = user.role === 0 ? '學生課堂點名' : '課堂點名控制台';
   const description =
     user.role === 0
-      ? '請依照教師指示輸入安全點名碼進行課堂簽到'
-      : '設定安全點名參數、即時發布動態點名二維碼並管理學生簽到記錄';
+      ? '請依照教師指示輸入點名碼進行課堂簽到'
+      : '管理點名狀態、即時發布動態點名二維碼並管理學生簽到記錄';
 
   return (
     <div className="oc-lesson-page-container">

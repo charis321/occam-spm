@@ -38,3 +38,75 @@
   padding: 1.25rem;
   box-sizing: border-box;
 }
+
+/* Statistics Grid & Cards */
+.oc-attendance-stats-cards {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.oc-stat-card {
+  background: var(--oc-subcard-bg, #fdfbfa);
+  border: 1px solid var(--oc-card-border, #f0e6df);
+  box-shadow: var(--oc-card-shadow);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.oc-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.oc-stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.oc-stat-card-title {
+  font-size: 0.875rem;
+  color: var(--oc-text-secondary, #6b7280);
+  font-weight: 500;
+}
+
+.oc-stat-card-icon {
+  font-size: 1.25rem;
+  opacity: 0.8;
+}
+
+.oc-stat-card-value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.oc-stat-card-desc {
+  font-size: 0.75rem;
+  color: var(--oc-text-secondary, #9ca3af);
+  margin-top: 0.5rem;
+}
+
+@media screen and (min-width: 640px) {
+  .oc-attendance-stats-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .oc-attendance-stats-cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

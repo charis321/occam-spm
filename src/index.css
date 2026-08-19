@@ -224,6 +224,145 @@ p {
   background-color: rgba(254, 243, 199, 0.25) !important;
 }
 
+/* 行動端有課時的精緻點標示 */
+.oc-calendar-dot-marker {
+  width: 5px;
+  height: 5px;
+  background-color: var(--oc-primary);
+  border-radius: 50%;
+  margin: 4px auto 0 auto;
+  display: block;
+  animation: oc-dot-scale 0.25s ease-out;
+}
+
+@keyframes oc-dot-scale {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 行動端日程行程清單 */
+.oc-mobile-schedule-list {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--oc-subcard-bg);
+  border-radius: 16px;
+  border: 1px solid var(--oc-card-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.oc-mobile-schedule-list h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: var(--oc-text-title);
+  font-weight: 600;
+}
+
+.oc-mobile-schedule-empty {
+  text-align: center;
+  padding: 2.5rem 0;
+  color: var(--oc-text-secondary);
+  font-size: 0.95rem;
+}
+
+.oc-mobile-schedule-card {
+  background: var(--oc-card-bg-gradient);
+  border: 1px solid var(--oc-card-border);
+  border-radius: 12px;
+  padding: 1.15rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.oc-mobile-schedule-card:last-child {
+  margin-bottom: 0;
+}
+
+.oc-mobile-schedule-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(217, 119, 6, 0.06);
+}
+
+.oc-sched-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px dashed var(--oc-card-border);
+  padding-bottom: 0.5rem;
+}
+
+.oc-sched-card-header h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--oc-text-primary);
+}
+
+.oc-sched-status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 6px;
+}
+
+/* 狀態徽章配色與文字樣式微調 */
+.oc-sched-status-badge.rollcall-not-started {
+  background-color: rgba(107, 114, 128, 0.1) !important;
+  color: var(--oc-text-secondary) !important;
+}
+.oc-sched-status-badge.rollcall-ongoing {
+  background-color: var(--oc-primary-light) !important;
+  color: var(--oc-primary) !important;
+}
+.oc-sched-status-badge.rollcall-ended {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+}
+
+.oc-sched-card-body {
+  margin-bottom: 1.15rem;
+}
+
+.oc-sched-card-body p {
+  margin: 0 0 0.4rem 0;
+  font-size: 0.88rem;
+  color: var(--oc-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.oc-sched-card-body p:last-child {
+  margin-bottom: 0;
+}
+
+.oc-sched-card-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.oc-sched-btn {
+  background-color: var(--oc-primary) !important;
+  border-color: var(--oc-primary) !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-weight: 500;
+  transition: all 0.25s ease !important;
+}
+
+.oc-sched-btn:hover {
+  background-color: var(--oc-primary-hover) !important;
+  border-color: var(--oc-primary-hover) !important;
+  transform: translateY(-1px);
+}
+
 /* 卡片中的課堂按鈕微調 */
 .oc-calendar-root .ant-btn {
   border-radius: 6px !important;
@@ -321,4 +460,19 @@ p {
   background-color: var(--oc-secondary-hover) !important;
   border-color: var(--oc-secondary-hover) !important;
   transform: translateY(-1px);
+}
+
+/* ==========================================
+   子區域標題範本 (Sub-Area / Block Title Template)
+   ========================================== */
+.oc-block-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--oc-text-title, #78350f);
+  border-left: 3px solid var(--oc-primary, #f59e0b);
+  padding-left: 10px;
+  width: 100%;
+  text-align: left;
 }

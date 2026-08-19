@@ -1,40 +1,40 @@
 .oc-lesson-attendance {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
   width: 100%;
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
 }
-.oc-lesson-attendance section {
+
+.oc-lesson-attendance-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 0.5rem 1rem;
+  gap: 1.5rem;
+  width: 100%;
 }
-.oc-lesson-attendance section:nth-of-type(2) {
+
+.oc-lesson-attendance-info-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.oc-lesson-attendance-table-section {
+  width: 100%;
+  box-sizing: border-box;
   flex: 1;
 }
 
-.oc-lesson-attendance .oc-lesson-info {
-  border-radius: 5px;
-  background-color: azure;
-  padding: 1rem 0;
-
-  width: 100%;
-}
-.oc-lesson-attendance-table {
-  width: 100%;
-}
-
-.nowrap-column {
-  width: 1%;
-  white-space: nowrap;
-}
-
 @media screen and (min-width: 768px) {
-  .oc-lesson-attendance {
+  .oc-lesson-attendance-content {
     flex-direction: row;
+    align-items: flex-start;
   }
-  .oc-lesson-attendance .oc-lesson-info {
-    padding: 1rem;
-    width: auto;
+  
+  .oc-lesson-attendance-info-section {
+    width: 340px;
+    flex-shrink: 0;
   }
 }

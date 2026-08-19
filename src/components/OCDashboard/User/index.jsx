@@ -258,7 +258,7 @@ export default function OCUserDashboard(props) {
                 };
                 changeUserData(user.id, user_patch);
               },
-              () => {},
+              () => { },
             );
             break;
           }
@@ -280,7 +280,7 @@ export default function OCUserDashboard(props) {
               const userId = user.id;
               deleteUserData(userId);
             },
-            () => {},
+            () => { },
           );
           break;
       }
@@ -358,7 +358,6 @@ export default function OCUserDashboard(props) {
               }}
             >
               <OCUserNewBatchBlock
-                closeBlock={() => setIsUserBatchAdding(false)}
                 resetUserData={() => {
                   setIsUserBatchAdding(false);
                   getUserData();
@@ -404,7 +403,7 @@ export function OCUserNewBlock(props) {
         onFinish={handleSubmit}
         style={{ transition: 'all 0.5s ease-in-out' }}
       >
-        <h2>新增用戶</h2>
+        <h2 className="oc-block-title">新增用戶</h2>
         <Row>
           <Col span={24}>
             <Form.Item
@@ -649,7 +648,7 @@ export function OCUserNewBatchBlock(props) {
 
       const rawData = XLSX.utils.sheet_to_json(worksheet, {
         header: ['name', 'email', 'role', 'sex', 'no', 'school', 'department'],
-        range: 2,
+        range: 1,
       });
       console.log('Excel 內容：', rawData);
 
@@ -709,7 +708,6 @@ export function OCUserNewBatchBlock(props) {
     if (res?.isSystemError) return;
     if (res?.code === 200) {
       message.success('批量新增用戶成功');
-      closeBlock();
       resetUserData();
     } else {
       message.error(res?.message || '批量新增用戶失敗');
